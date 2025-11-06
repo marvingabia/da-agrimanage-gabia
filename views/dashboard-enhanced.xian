@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - AgriSystem Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .sidebar-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.875rem;
+            margin: 0.5rem 0 0 0;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 1rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .sidebar .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar .nav-link.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .sidebar .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .nav-badge {
+            position: absolute;
+            right: 1rem;
+            background: #ef4444;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            min-width: 1.5rem;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        
+        .top-navbar {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .dashboard-content {
+            padding: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .stat-icon.blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+        .stat-icon.green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .stat-icon.yellow { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .stat-icon.red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+        .stat-icon.indigo { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0.5rem 0;
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .stat-change {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+        
+        .stat-change.positive {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .content-section {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+        }
+        
+        .btn-add {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-outline-secondary {
+            border: 2px solid #6b7280;
+            color: #6b7280;
+            background: transparent;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-secondary:hover {
+            background: #6b7280;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+        }
+        
+        .table-responsive {
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        
+        .table {
+            margin: 0;
+        }
+        
+        .table th {
+            background: #f8fafc;
+            border: none;
+            font-weight: 600;
+            color: #475569;
+            padding: 1rem;
+        }
+        
+        .table td {
+            border: none;
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-approved { background: #dcfce7; color: #166534; }
+        .status-rejected { background: #fecaca; color: #991b1b; }
+        .status-active { background: #dbeafe; color: #1d4ed8; }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+        }
+        
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e5e7eb;
+            border-radius: 1.5rem;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Oval Button Styles for All Buttons */
+        .btn, .btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark {
+            border-radius: 2rem !important;
+            padding: 0.75rem 1.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .btn-sm {
+            border-radius: 1.5rem !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.875rem !important;
+        }
+        
+        .btn-lg {
+            border-radius: 2.5rem !important;
+            padding: 1rem 2rem !important;
+            font-size: 1.125rem !important;
+        }
+        
+        .btn-outline-primary, .btn-outline-secondary, .btn-outline-success, 
+        .btn-outline-danger, .btn-outline-warning, .btn-outline-info {
+            border-radius: 2rem !important;
+            padding: 0.75rem 1.5rem !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            border-width: 2px !important;
+        }
+        
+        .btn-outline-primary:hover, .btn-outline-secondary:hover, .btn-outline-success:hover,
+        .btn-outline-danger:hover, .btn-outline-warning:hover, .btn-outline-info:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        /* Modal buttons */
+        .modal-footer .btn {
+            border-radius: 2rem !important;
+            padding: 0.75rem 1.5rem !important;
+            min-width: 120px !important;
+        }
+        
+        /* Table action buttons */
+        .table .btn-sm {
+            border-radius: 1.5rem !important;
+            padding: 0.4rem 0.8rem !important;
+            font-size: 0.8rem !important;
+        }
+        
+        /* Status badges - more oval */
+        .status-badge {
+            border-radius: 1.5rem !important;
+            padding: 0.4rem 1rem !important;
+        }
+        
+        /* Nav badges - more oval */
+        .nav-badge {
+            border-radius: 1.5rem !important;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-leaf me-2"></i>AgriSystem</h3>
+            <p>Agricultural Management</p>
+        </div>
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </li>
+            {{#if (eq user.role 'admin')}}
+            <li class="nav-item">
+                <a class="nav-link" data-section="farmers">
+                    <i class="fas fa-users"></i>
+                    Farmers
+                    <span class="nav-badge" id="farmers-count">{{default stats.totalFarmers 0}}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="staff">
+                    <i class="fas fa-user-tie"></i>
+                    Staff
+                    <span class="nav-badge" id="staff-count">{{default stats.totalStaff 0}}</span>
+                </a>
+            </li>
+            {{/if}}
+            <li class="nav-item">
+                <a class="nav-link" data-section="inventory">
+                    <i class="fas fa-boxes"></i>
+                    Inventory
+                    <span class="nav-badge" id="inventory-count">{{default stats.inventoryItems 0}}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="claims">
+                    <i class="fas fa-file-invoice"></i>
+                    Claims
+                    <span class="nav-badge" id="claims-count">{{default stats.totalClaims 0}}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="damage-reports">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Damage Reports
+                    <span class="nav-badge" id="reports-count">{{default stats.pendingReports 0}}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="insurance">
+                    <i class="fas fa-shield-alt"></i>
+                    Insurance
+                    <span class="nav-badge" id="insurance-count">0</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="announcements">
+                    <i class="fas fa-bullhorn"></i>
+                    Announcements
+                    <span class="nav-badge" id="announcements-count">{{default stats.activeAnnouncements 0}}</span>
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-navbar">
+            <h1 class="page-title" id="page-title">Dashboard Overview</h1>
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{firstChar user.name}}
+                </div>
+                <div>
+                    <div style="font-weight: 600; font-size: 0.875rem;">{{user.name}}</div>
+                    <div style="color: #64748b; font-size: 0.75rem;">{{user.role}}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="content-section">
+                {{#if (eq user.role 'admin')}}
+                <!-- Admin Quick Actions -->
+                <div class="content-section mb-4">
+                    <div class="section-header">
+                        <h4 class="section-title"><i class="fas fa-tachometer-alt me-2"></i>Admin Quick Actions</h4>
+                        <button class="btn btn-primary" onclick="showAllRecords()">
+                            <i class="fas fa-list me-2"></i>Show All Records
+                        </button>
+                    </div>
+                </div>
+                {{/if}}
+                
+                <!-- Statistics Cards -->
+                <div class="stats-grid"></div>
+                    {{#if (eq user.role 'admin')}}
+                    <div class="stat-card" data-section="farmers">
+                        <div class="stat-card-header">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{default stats.totalFarmers 0}}</div>
+                        <div class="stat-label">Registered Farmers</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> Active Users
+                        </div>
+                    </div>
+
+                    <div class="stat-card" data-section="staff">
+                        <div class="stat-card-header">
+                            <div class="stat-icon green">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{default stats.totalStaff 0}}</div>
+                        <div class="stat-label">Registered Staff</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> Active Staff
+                        </div>
+                    </div>
+                    {{/if}}
+
+                    <div class="stat-card" data-section="claims">
+                        <div class="stat-card-header">
+                            <div class="stat-icon yellow">
+                                <i class="fas fa-file-invoice"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{default stats.totalClaims 0}}</div>
+                        <div class="stat-label">Total Claims</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-chart-line"></i> All Claims
+                        </div>
+                    </div>
+
+                    <div class="stat-card" data-section="inventory">
+                        <div class="stat-card-header">
+                            <div class="stat-icon red">
+                                <i class="fas fa-boxes"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{default stats.inventoryItems 0}}</div>
+                        <div class="stat-label">Inventory Items</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-warehouse"></i> Total Items
+                        </div>
+                    </div>
+
+                    <div class="stat-card" data-section="damage-reports">
+                        <div class="stat-card-header">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{default stats.pendingReports 0}}</div>
+                        <div class="stat-label">Damage Reports</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-file-alt"></i> Reports
+                        </div>
+                    </div>
+
+                    <div class="stat-card" data-section="announcements">
+                        <div class="stat-card-header">
+                            <div class="stat-icon indigo">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{default stats.activeAnnouncements 0}}</div>
+                        <div class="stat-label">Announcements</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-bullhorn"></i> Active
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Content Sections -->
+            <div id="dynamic-content"></div>
+        </div>
+    </div>
+
+    <!-- Modals will be dynamically inserted here -->
+    <div id="modal-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/modals.js"></script>
+    <script>
+        // Global variables
+        let currentSection = 'dashboard';
+        let currentData = {};
+        
+        // Get user role
+        function getUserRole() {
+            return '{{user.role}}';
+        }
+        
+        // Set global user role for modals
+        window.currentUserRole = '{{user.role}}';
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSidebar();
+            loadDashboardData();
+        });
+        
+        // Sidebar navigation
+        function initializeSidebar() {
+            const navLinks = document.querySelectorAll('.nav-link[data-section]');
+            const statCards = document.querySelectorAll('.stat-card[data-section]');
+            
+            // Handle sidebar navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    navigateToSection(section);
+                });
+            });
+            
+            // Handle stat card clicks
+            statCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    navigateToSection(section);
+                });
+            });
+        }
+        
+        // Navigate to section
+        function navigateToSection(section) {
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${section}"]`).classList.add('active');
+            
+            // Update page title
+            const titles = {
+                'dashboard': 'Dashboard Overview',
+                'farmers': 'Farmers Management',
+                'staff': 'Staff Management',
+                'inventory': 'Inventory Management',
+                'claims': 'Claims Management',
+                'damage-reports': 'Damage Reports',
+                'insurance': 'Insurance Management',
+                'announcements': 'Announcements'
+            };
+            document.getElementById('page-title').textContent = titles[section] || 'Dashboard';
+            
+            // Load section content
+            currentSection = section;
+            if (section === 'dashboard') {
+                document.getElementById('dashboard-section').style.display = 'block';
+                document.getElementById('dynamic-content').innerHTML = '';
+            } else {
+                document.getElementById('dashboard-section').style.display = 'none';
+                loadSectionContent(section);
+            }
+        }
+        
+        // Load section content
+        function loadSectionContent(section) {
+            const dynamicContent = document.getElementById('dynamic-content');
+            
+            // Show loading
+            dynamicContent.innerHTML = `
+                <div class="content-section">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3">Loading ${section}...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Load data based on section
+            switch(section) {
+                case 'farmers':
+                    loadFarmersSection();
+                    break;
+                case 'staff':
+                    loadStaffSection();
+                    break;
+                case 'inventory':
+                    loadInventorySection();
+                    break;
+                case 'claims':
+                    loadClaimsSection();
+                    break;
+                case 'damage-reports':
+                    loadDamageReportsSection();
+                    break;
+                case 'insurance':
+                    loadInsuranceSection();
+                    break;
+                case 'announcements':
+                    loadAnnouncementsSection();
+                    break;
+            }
+        }
+        
+        // Load dashboard data
+        function loadDashboardData() {
+            // Fetch real-time stats for sidebar badges
+            fetch('/api/dashboard/quick-stats')
+                .then(response => response.json())
+                .then(stats => {
+                    updateSidebarBadges(stats);
+                })
+                .catch(error => {
+                    console.error('Error loading dashboard stats:', error);
+                });
+        }
+        
+        // Update sidebar badges with real-time counts
+        function updateSidebarBadges(stats) {
+            const badges = {
+                'farmers-count': stats.farmers,
+                'staff-count': stats.staff,
+                'inventory-count': stats.inventory,
+                'claims-count': stats.claims,
+                'reports-count': stats.reports,
+                'insurance-count': stats.insurance,
+                'announcements-count': stats.announcements
+            };
+            
+            Object.keys(badges).forEach(id => {
+                const badge = document.getElementById(id);
+                if (badge) {
+                    badge.textContent = badges[id];
+                    // Add animation for updated counts
+                    badge.style.animation = 'pulse 0.5s ease-in-out';
+                    setTimeout(() => {
+                        badge.style.animation = '';
+                    }, 500);
+                }
+            });
+        }
+        
+        // Section loaders
+        function loadFarmersSection() {
+            const content = `
+                <div class="content-section">
+                    <div class="section-header">
+                        <button class="btn btn-outline-secondary me-3" onclick="navigateToSection('dashboard')">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </button>
+                        <h4 class="section-title"><i class="fas fa-users me-2"></i>Farmers Management</h4>
+                        <button class="btn btn-add" onclick="openFarmerModal()">
+                            <i class="fas fa-plus me-2"></i>Add Farmer
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Barangay</th>
+                                    <th>Land Area</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="farmers-table-body">
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2">Loading farmers...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            document.getElementById('dynamic-content').innerHTML = content;
+            
+            // Load farmers data
+            setTimeout(() => {
+                loadFarmersData();
+            }, 500);
+        }
+        
+        function loadInventorySection() {
+            const content = `
+                <div class="content-section">
+                    <div class="section-header">
+                        <button class="btn btn-outline-secondary me-3" onclick="navigateToSection('dashboard')">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </button>
+                        <h4 class="section-title"><i class="fas fa-boxes me-2"></i>Inventory Management</h4>
+                        <button class="btn btn-add" onclick="openInventoryModal()">
+                            <i class="fas fa-plus me-2"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Type</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Barangay</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body">
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2">Loading inventory...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            document.getElementById('dynamic-content').innerHTML = content;
+            
+            setTimeout(() => {
+                loadInventoryData();
+            }, 500);
+        }
+        
+        function loadClaimsSection() {
+            const content = `
+                <div class="content-section">
+                    <div class="section-header">
+                        <button class="btn btn-outline-secondary me-3" onclick="navigateToSection('dashboard')">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </button>
+                        <h4 class="section-title"><i class="fas fa-file-invoice me-2"></i>Claims Management</h4>
+                        <button class="btn btn-add" onclick="openClaimModal()">
+                            <i class="fas fa-plus me-2"></i>New Claim
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Farmer</th>
+                                    <th>Claim Type</th>
+                                    <th>Item Requested</th>
+                                    <th>Quantity</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="claims-table-body">
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2">Loading claims...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            document.getElementById('dynamic-content').innerHTML = content;
+            
+            setTimeout(() => {
+                loadClaimsData();
+            }, 500);
+        }
+        
+        function loadAnnouncementsSection() {
+            const content = `
+                <div class="content-section">
+                    <div class="section-header">
+                        <button class="btn btn-outline-secondary me-3" onclick="navigateToSection('dashboard')">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </button>
+                        <h4 class="section-title"><i class="fas fa-bullhorn me-2"></i>Announcements</h4>
+                        <button class="btn btn-add" onclick="openAnnouncementModal()">
+                            <i class="fas fa-plus me-2"></i>New Announcement
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Priority</th>
+                                    <th>Target Barangays</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="announcements-table-body">
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2">Loading announcements...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            document.getElementById('dynamic-content').innerHTML = content;
+            
+            setTimeout(() => {
+                loadAnnouncementsData();
+            }, 500);
+        }
+        
+        // Placeholder functions for other sections
+        function loadStaffSection() {
+            document.getElementById('dynamic-content').innerHTML = `
+                <div class="content-section">
+                    <div class="section-header">
+                        <button class="btn btn-outline-secondary me-3" onclick="navigateToSection('dashboard')">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </button>
+                        <h4 class="section-title"><i class="fas fa-user-tie me-2"></i>Staff Management</h4>
+                        <button class="btn btn-add" onclick="openStaffModal()">
+                            <i class="fas fa-plus me-2"></i>Add Staff
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Position</th>
+                                    <th>Barangay</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staff-table-body">
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2">Loading staff...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                loadStaffData();
+            }, 500);
+        }
+        
+        function loadDamageReportsSection() {
+            document.getElementById('dynamic-content').innerHTML = `
+                <div class="content-section">
+                    <div class="section-header">
+                        <button class="btn btn-outline-secondary me-3" onclick="navigateToSection('dashboard')">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </button>
+                        <h4 class="section-title"><i class="fas fa-exclamation-triangle me-2"></i>Damage Reports</h4>
+                        <button class="btn btn-add" onclick="openDamageReportModal()">
+                            <i class="fas fa-plus me-2"></i>Report Damage
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Farmer</th>
+                                    <th>Calamity Type</th>
+                                    <th>Affected Crop</th>
+                                    <th>Damage %</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="damage-reports-table-body">
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2">Loading damage reports...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                loadDamageReportsData();
+            }, 500);
+        }
+        
+        function loadInsuranceSection() {
+            document.getElementById('dynamic-content').innerHTML = `
+                <div class="content-section">
+                    <div class="section-header">
+                        <button class="btn btn-outline-secondary me-3" onclick="navigateToSection('dashboard')">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </button>
+                        <h4 class="section-title"><i class="fas fa-shield-alt me-2"></i>Insurance Management</h4>
+                        <button class="btn btn-add" onclick="openInsuranceModal()">
+                            <i class="fas fa-plus me-2"></i>Apply Insurance
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Farmer</th>
+                                    <th>Crop Type</th>
+                                    <th>Insured Area</th>
+                                    <th>Premium</th>
+                                    <th>Coverage</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="insurance-table-body">
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2">Loading insurance applications...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                loadInsuranceData();
+            }, 500);
+        }
+        
+        // Data loading functions
+        function loadFarmersData() {
+            const farmers = window.appData ? window.appData.farmers : [
+                { id: 1, name: 'Juan Dela Cruz', email: 'juan@example.com', barangay: 'Bagong Sikat', landArea: '2.5 hectares', description: 'Rice and corn farmer', status: 'active' },
+                { id: 2, name: 'Maria Santos', email: 'maria@example.com', barangay: 'Balatasan', landArea: '1.8 hectares', description: 'Vegetable farming specialist', status: 'active' },
+                { id: 3, name: 'Pedro Garcia', email: 'pedro@example.com', barangay: 'Benli', landArea: '3.2 hectares', description: 'Mixed farming operations', status: 'active' },
+                { id: 4, name: 'Ana Reyes', email: 'ana@example.com', barangay: 'Cabugao', landArea: '1.2 hectares', description: 'Organic farming advocate', status: 'active' },
+                { id: 5, name: 'Carlos Lopez', email: 'carlos@example.com', barangay: 'Cambunang', landArea: '4.1 hectares', description: 'Large scale rice production', status: 'active' }
+            ];
+            
+            const tbody = document.getElementById('farmers-table-body');
+            if (tbody) {
+                tbody.innerHTML = farmers.map(farmer => `
+                    <tr>
+                        <td>${farmer.name}</td>
+                        <td>${farmer.email}</td>
+                        <td>${farmer.barangay}</td>
+                        <td>${farmer.landArea}</td>
+                        <td>${farmer.description || 'N/A'}</td>
+                        <td><span class="status-badge status-${farmer.status}">${farmer.status}</span></td>
+                        <td>
+                            ${getUserRole() === 'admin' ? `
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="editFarmer(${farmer.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteFarmer(${farmer.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : '<span class="text-muted">View Only</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        function loadInventoryData() {
+            const inventory = window.appData ? window.appData.inventory : [
+                { id: 1, itemName: 'Rice Seeds IR64', type: 'seeds', quantity: 100, unit: 'kg', barangay: 'Main Warehouse', description: 'High-yield rice variety suitable for irrigated fields', status: 'available' },
+                { id: 2, itemName: 'NPK Fertilizer', type: 'fertilizer', quantity: 50, unit: 'sacks', barangay: 'Bagong Sikat', description: 'Complete fertilizer for all crop types', status: 'available' },
+                { id: 3, itemName: 'Hand Tractor', type: 'equipment', quantity: 2, unit: 'units', barangay: 'Balatasan', description: 'Small farming equipment for land preparation', status: 'available' },
+                { id: 4, itemName: 'Corn Seeds', type: 'seeds', quantity: 75, unit: 'kg', barangay: 'Main Warehouse', description: 'Hybrid corn seeds with high germination rate', status: 'available' },
+                { id: 5, itemName: 'Organic Fertilizer', type: 'fertilizer', quantity: 30, unit: 'sacks', barangay: 'Benli', description: 'Organic compost for sustainable farming', status: 'reserved' },
+                { id: 6, itemName: 'Water Pump', type: 'equipment', quantity: 5, unit: 'units', barangay: 'Cabugao', description: 'Irrigation pump for water management', status: 'available' }
+            ];
+            
+            const tbody = document.getElementById('inventory-table-body');
+            if (tbody) {
+                tbody.innerHTML = inventory.map(item => `
+                    <tr>
+                        <td>${item.itemName}</td>
+                        <td>${item.type}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.unit}</td>
+                        <td>${item.barangay}</td>
+                        <td>${item.description || 'N/A'}</td>
+                        <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                        <td>
+                            ${getUserRole() === 'admin' ? `
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="editInventory(${item.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteInventory(${item.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : '<span class="text-muted">View Only</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        function loadClaimsData() {
+            const claims = window.appData ? window.appData.claims : [
+                { id: 1, farmer: 'Juan Dela Cruz', claimType: 'seeds', itemRequested: 'Rice Seeds IR64', quantity: '10 kg', reason: 'Need seeds for next planting season', status: 'pending', date: '2024-01-15' },
+                { id: 2, farmer: 'Maria Santos', claimType: 'fertilizer', itemRequested: 'NPK Fertilizer', quantity: '5 sacks', reason: 'Soil nutrient deficiency in vegetable plots', status: 'approved', date: '2024-01-14' },
+                { id: 3, farmer: 'Pedro Garcia', claimType: 'allowance', itemRequested: 'Planting Allowance', quantity: '₱5,000', reason: 'Financial assistance for crop establishment', status: 'pending', date: '2024-01-13' },
+                { id: 4, farmer: 'Ana Reyes', claimType: 'seeds', itemRequested: 'Corn Seeds', quantity: '8 kg', reason: 'Expanding corn production area', status: 'approved', date: '2024-01-12' },
+                { id: 5, farmer: 'Carlos Lopez', claimType: 'equipment', itemRequested: 'Water Pump', quantity: '1 unit', reason: 'Irrigation system improvement needed', status: 'pending', date: '2024-01-11' },
+                { id: 6, farmer: 'Juan Dela Cruz', claimType: 'fertilizer', itemRequested: 'Organic Fertilizer', quantity: '3 sacks', reason: 'Transitioning to organic farming methods', status: 'rejected', date: '2024-01-10' }
+            ];
+            
+            const tbody = document.getElementById('claims-table-body');
+            if (tbody) {
+                tbody.innerHTML = claims.map(claim => `
+                    <tr>
+                        <td>${claim.farmer}</td>
+                        <td>${claim.claimType}</td>
+                        <td>${claim.itemRequested}</td>
+                        <td>${claim.quantity}</td>
+                        <td>${claim.reason || 'N/A'}</td>
+                        <td><span class="status-badge status-${claim.status}">${claim.status}</span></td>
+                        <td>${claim.date}</td>
+                        <td>
+                            ${getUserRole() === 'admin' ? `
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="editClaim(${claim.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success me-1" onclick="approveClaim(${claim.id})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="rejectClaim(${claim.id})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            ` : '<span class="text-muted">View Only</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        function loadAnnouncementsData() {
+            const announcements = window.appData ? window.appData.announcements : [
+                { id: 1, title: 'Free Seed Distribution Program', type: 'distribution', priority: 'high', targetBarangays: 'All Barangays', description: 'Distribution of high-quality rice and corn seeds to registered farmers', status: 'active', date: '2024-01-15' },
+                { id: 2, title: 'Monthly Farmers Meeting', type: 'meeting', priority: 'normal', targetBarangays: 'Bagong Sikat, Balatasan', description: 'Regular meeting to discuss farming techniques and updates', status: 'active', date: '2024-01-14' },
+                { id: 3, title: 'Claim Window Now Open', type: 'claim_window', priority: 'urgent', targetBarangays: 'All Barangays', description: 'Farmers can now submit claims for agricultural inputs and assistance', status: 'active', date: '2024-01-13' },
+                { id: 4, title: 'Agricultural Training Workshop', type: 'training', priority: 'normal', targetBarangays: 'Benli, Cabugao, Cambunang', description: 'Training on modern farming techniques and pest management', status: 'active', date: '2024-01-12' },
+                { id: 5, title: 'Weather Advisory - Heavy Rains', type: 'general', priority: 'urgent', targetBarangays: 'All Barangays', description: 'Prepare for heavy rainfall and protect crops from flooding', status: 'active', date: '2024-01-11' }
+            ];
+            
+            const tbody = document.getElementById('announcements-table-body');
+            if (tbody) {
+                tbody.innerHTML = announcements.map(announcement => `
+                    <tr>
+                        <td>${announcement.title}</td>
+                        <td>${announcement.type}</td>
+                        <td><span class="status-badge status-${announcement.priority === 'urgent' ? 'rejected' : announcement.priority === 'high' ? 'pending' : 'approved'}">${announcement.priority}</span></td>
+                        <td>${announcement.targetBarangays}</td>
+                        <td>${announcement.description || 'N/A'}</td>
+                        <td><span class="status-badge status-${announcement.status}">${announcement.status}</span></td>
+                        <td>${announcement.date}</td>
+                        <td>
+                            ${getUserRole() === 'admin' ? `
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="editAnnouncement(${announcement.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteAnnouncement(${announcement.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : '<span class="text-muted">View Only</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        // Additional data loading functions
+        function loadStaffData() {
+            const staff = window.appData && window.appData.staff ? window.appData.staff : [
+                { id: 1, name: 'Alice Johnson', email: 'alice@agrisystem.com', position: 'Agricultural Technician', barangay: 'Bagong Sikat', description: 'Specializes in crop management and soil analysis', status: 'active' },
+                { id: 2, name: 'Bob Martinez', email: 'bob@agrisystem.com', position: 'Field Coordinator', barangay: 'Balatasan', description: 'Coordinates field operations and farmer training', status: 'active' },
+                { id: 3, name: 'Carol Davis', email: 'carol@agrisystem.com', position: 'Extension Officer', barangay: 'Benli', description: 'Provides technical assistance to farmers', status: 'active' }
+            ];
+            
+            const tbody = document.getElementById('staff-table-body');
+            if (tbody) {
+                tbody.innerHTML = staff.map(member => `
+                    <tr>
+                        <td>${member.name}</td>
+                        <td>${member.email}</td>
+                        <td>${member.position}</td>
+                        <td>${member.barangay}</td>
+                        <td>${member.description || 'N/A'}</td>
+                        <td><span class="status-badge status-${member.status}">${member.status}</span></td>
+                        <td>
+                            ${getUserRole() === 'admin' ? `
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="editStaff(${member.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteStaff(${member.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : '<span class="text-muted">View Only</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        function loadDamageReportsData() {
+            const reports = window.appData && window.appData.damageReports ? window.appData.damageReports : [
+                { id: 1, farmer: 'Juan Dela Cruz', barangay: 'Bagong Sikat', calamityType: 'Typhoon', affectedCrop: 'Rice', damagePercentage: 75, affectedArea: 2.0, incidentDate: '2024-01-10', description: 'Severe damage due to strong winds and heavy rainfall', status: 'verified', date: '2024-01-10' },
+                { id: 2, farmer: 'Maria Santos', barangay: 'Balatasan', calamityType: 'Flood', affectedCrop: 'Corn', damagePercentage: 50, affectedArea: 1.5, incidentDate: '2024-01-12', description: 'Flooding caused by continuous heavy rains', status: 'submitted', date: '2024-01-12' },
+                { id: 3, farmer: 'Pedro Garcia', barangay: 'Benli', calamityType: 'Drought', affectedCrop: 'Vegetables', damagePercentage: 90, affectedArea: 1.0, incidentDate: '2024-01-08', description: 'Extended dry period affected vegetable crops', status: 'processed', date: '2024-01-08' }
+            ];
+            
+            const tbody = document.getElementById('damage-reports-table-body');
+            if (tbody) {
+                tbody.innerHTML = reports.map(report => `
+                    <tr>
+                        <td>${report.farmer}</td>
+                        <td>${report.calamityType}</td>
+                        <td>${report.affectedCrop}</td>
+                        <td>${report.damagePercentage}%</td>
+                        <td>${report.description || 'N/A'}</td>
+                        <td><span class="status-badge status-${report.status === 'verified' ? 'approved' : report.status === 'submitted' ? 'pending' : 'active'}">${report.status}</span></td>
+                        <td>${report.date}</td>
+                        <td>
+                            ${getUserRole() === 'admin' ? `
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="editDamageReport(${report.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success me-1" onclick="verifyDamageReport(${report.id})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteDamageReport(${report.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : '<span class="text-muted">View Only</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        function loadInsuranceData() {
+            const insurance = window.appData && window.appData.insurance ? window.appData.insurance : [
+                { id: 1, farmer: 'Juan Dela Cruz', barangay: 'Bagong Sikat', cropType: 'Rice', insuredArea: 2.5, premiumAmount: 2500, coverageAmount: 125000, description: 'Comprehensive insurance for rice production', status: 'active' },
+                { id: 2, farmer: 'Maria Santos', barangay: 'Balatasan', cropType: 'Corn', insuredArea: 1.8, premiumAmount: 1800, coverageAmount: 90000, description: 'Basic insurance coverage for corn farming', status: 'pending' },
+                { id: 3, farmer: 'Ana Reyes', barangay: 'Cabugao', cropType: 'Vegetables', insuredArea: 1.2, premiumAmount: 1200, coverageAmount: 60000, description: 'Insurance for organic vegetable production', status: 'approved' }
+            ];
+            
+            const tbody = document.getElementById('insurance-table-body');
+            if (tbody) {
+                tbody.innerHTML = insurance.map(policy => `
+                    <tr>
+                        <td>${policy.farmer}</td>
+                        <td>${policy.cropType}</td>
+                        <td>${policy.insuredArea} ha</td>
+                        <td>₱${policy.premiumAmount.toLocaleString()}</td>
+                        <td>₱${policy.coverageAmount.toLocaleString()}</td>
+                        <td>${policy.description || 'N/A'}</td>
+                        <td><span class="status-badge status-${policy.status}">${policy.status}</span></td>
+                        <td>
+                            ${getUserRole() === 'admin' ? `
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="editInsurance(${policy.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success me-1" onclick="approveInsurance(${policy.id})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteInsurance(${policy.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : '<span class="text-muted">View Only</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        // Global data storage for real-time updates
+        window.appData = {
+            farmers: [
+                { id: 1, name: 'Juan Dela Cruz', email: 'juan@example.com', barangay: 'Bagong Sikat', landArea: '2.5 hectares', description: 'Rice and corn farmer', status: 'active' },
+                { id: 2, name: 'Maria Santos', email: 'maria@example.com', barangay: 'Balatasan', landArea: '1.8 hectares', description: 'Vegetable farming specialist', status: 'active' },
+                { id: 3, name: 'Pedro Garcia', email: 'pedro@example.com', barangay: 'Benli', landArea: '3.2 hectares', description: 'Mixed farming operations', status: 'active' },
+                { id: 4, name: 'Ana Reyes', email: 'ana@example.com', barangay: 'Cabugao', landArea: '1.2 hectares', description: 'Organic farming advocate', status: 'active' },
+                { id: 5, name: 'Carlos Lopez', email: 'carlos@example.com', barangay: 'Cambunang', landArea: '4.1 hectares', description: 'Large scale rice production', status: 'active' }
+            ],
+            staff: [
+                { id: 1, name: 'Alice Johnson', email: 'alice@agrisystem.com', position: 'Agricultural Technician', barangay: 'Bagong Sikat', description: 'Specializes in crop management and soil analysis', status: 'active' },
+                { id: 2, name: 'Bob Martinez', email: 'bob@agrisystem.com', position: 'Field Coordinator', barangay: 'Balatasan', description: 'Coordinates field operations and farmer training', status: 'active' },
+                { id: 3, name: 'Carol Davis', email: 'carol@agrisystem.com', position: 'Extension Officer', barangay: 'Benli', description: 'Provides technical assistance to farmers', status: 'active' }
+            ],
+            inventory: [
+                { id: 1, itemName: 'Rice Seeds IR64', type: 'seeds', quantity: 100, unit: 'kg', barangay: 'Main Warehouse', description: 'High-yield rice variety suitable for irrigated fields', status: 'available' },
+                { id: 2, itemName: 'NPK Fertilizer', type: 'fertilizer', quantity: 50, unit: 'sacks', barangay: 'Bagong Sikat', description: 'Complete fertilizer for all crop types', status: 'available' },
+                { id: 3, itemName: 'Hand Tractor', type: 'equipment', quantity: 2, unit: 'units', barangay: 'Balatasan', description: 'Small farming equipment for land preparation', status: 'available' },
+                { id: 4, itemName: 'Corn Seeds', type: 'seeds', quantity: 75, unit: 'kg', barangay: 'Main Warehouse', description: 'Hybrid corn seeds with high germination rate', status: 'available' },
+                { id: 5, itemName: 'Organic Fertilizer', type: 'fertilizer', quantity: 30, unit: 'sacks', barangay: 'Benli', description: 'Organic compost for sustainable farming', status: 'reserved' },
+                { id: 6, itemName: 'Water Pump', type: 'equipment', quantity: 5, unit: 'units', barangay: 'Cabugao', description: 'Irrigation pump for water management', status: 'available' }
+            ],
+            claims: [
+                { id: 1, farmer: 'Juan Dela Cruz', claimType: 'seeds', itemRequested: 'Rice Seeds IR64', quantity: '10 kg', reason: 'Need seeds for next planting season', status: 'pending', date: '2024-01-15' },
+                { id: 2, farmer: 'Maria Santos', claimType: 'fertilizer', itemRequested: 'NPK Fertilizer', quantity: '5 sacks', reason: 'Soil nutrient deficiency in vegetable plots', status: 'approved', date: '2024-01-14' },
+                { id: 3, farmer: 'Pedro Garcia', claimType: 'allowance', itemRequested: 'Planting Allowance', quantity: '₱5,000', reason: 'Financial assistance for crop establishment', status: 'pending', date: '2024-01-13' },
+                { id: 4, farmer: 'Ana Reyes', claimType: 'seeds', itemRequested: 'Corn Seeds', quantity: '8 kg', reason: 'Expanding corn production area', status: 'approved', date: '2024-01-12' },
+                { id: 5, farmer: 'Carlos Lopez', claimType: 'equipment', itemRequested: 'Water Pump', quantity: '1 unit', reason: 'Irrigation system improvement needed', status: 'pending', date: '2024-01-11' },
+                { id: 6, farmer: 'Juan Dela Cruz', claimType: 'fertilizer', itemRequested: 'Organic Fertilizer', quantity: '3 sacks', reason: 'Transitioning to organic farming methods', status: 'rejected', date: '2024-01-10' }
+            ],
+            announcements: [
+                { id: 1, title: 'Free Seed Distribution Program', type: 'distribution', priority: 'high', targetBarangays: 'All Barangays', description: 'Distribution of high-quality rice and corn seeds to registered farmers', status: 'active', date: '2024-01-15' },
+                { id: 2, title: 'Monthly Farmers Meeting', type: 'meeting', priority: 'normal', targetBarangays: 'Bagong Sikat, Balatasan', description: 'Regular meeting to discuss farming techniques and updates', status: 'active', date: '2024-01-14' },
+                { id: 3, title: 'Claim Window Now Open', type: 'claim_window', priority: 'urgent', targetBarangays: 'All Barangays', description: 'Farmers can now submit claims for agricultural inputs and assistance', status: 'active', date: '2024-01-13' },
+                { id: 4, title: 'Agricultural Training Workshop', type: 'training', priority: 'normal', targetBarangays: 'Benli, Cabugao, Cambunang', description: 'Training on modern farming techniques and pest management', status: 'active', date: '2024-01-12' },
+                { id: 5, title: 'Weather Advisory - Heavy Rains', type: 'general', priority: 'urgent', targetBarangays: 'All Barangays', description: 'Prepare for heavy rainfall and protect crops from flooding', status: 'active', date: '2024-01-11' }
+            ],
+            damageReports: [
+                { id: 1, farmer: 'Juan Dela Cruz', barangay: 'Bagong Sikat', calamityType: 'Typhoon', affectedCrop: 'Rice', damagePercentage: 75, affectedArea: 2.0, incidentDate: '2024-01-10', description: 'Severe damage due to strong winds and heavy rainfall', status: 'verified', date: '2024-01-10' },
+                { id: 2, farmer: 'Maria Santos', barangay: 'Balatasan', calamityType: 'Flood', affectedCrop: 'Corn', damagePercentage: 50, affectedArea: 1.5, incidentDate: '2024-01-12', description: 'Flooding caused by continuous heavy rains', status: 'submitted', date: '2024-01-12' },
+                { id: 3, farmer: 'Pedro Garcia', barangay: 'Benli', calamityType: 'Drought', affectedCrop: 'Vegetables', damagePercentage: 90, affectedArea: 1.0, incidentDate: '2024-01-08', description: 'Extended dry period affected vegetable crops', status: 'processed', date: '2024-01-08' }
+            ],
+            insurance: [
+                { id: 1, farmer: 'Juan Dela Cruz', barangay: 'Bagong Sikat', cropType: 'Rice', insuredArea: 2.5, plantingDate: '2024-01-01', expectedHarvestDate: '2024-06-01', insuranceType: 'comprehensive', premiumAmount: 2500, coverageAmount: 125000, description: 'Comprehensive insurance for rice production', status: 'active', date: '2024-01-01' },
+                { id: 2, farmer: 'Maria Santos', barangay: 'Balatasan', cropType: 'Corn', insuredArea: 1.8, plantingDate: '2024-01-15', expectedHarvestDate: '2024-07-15', insuranceType: 'basic', premiumAmount: 1800, coverageAmount: 90000, description: 'Basic insurance coverage for corn farming', status: 'pending', date: '2024-01-15' },
+                { id: 3, farmer: 'Ana Reyes', barangay: 'Cabugao', cropType: 'Vegetables', insuredArea: 1.2, plantingDate: '2024-02-01', expectedHarvestDate: '2024-05-01', insuranceType: 'comprehensive', premiumAmount: 1200, coverageAmount: 60000, description: 'Insurance for organic vegetable production', status: 'approved', date: '2024-02-01' }
+            ]
+        };
+        
+        // Function to refresh current table data
+        function refreshCurrentTable() {
+            switch(currentSection) {
+                case 'farmers':
+                    loadFarmersData();
+                    break;
+                case 'inventory':
+                    loadInventoryData();
+                    break;
+                case 'claims':
+                    loadClaimsData();
+                    break;
+                case 'announcements':
+                    loadAnnouncementsData();
+                    break;
+                case 'staff':
+                    loadStaffData();
+                    break;
+                case 'damage-reports':
+                    loadDamageReportsData();
+                    break;
+                case 'insurance':
+                    loadInsuranceData();
+                    break;
+            }
+        }
+        
+        // Function to update quick stats after data changes
+        function updateQuickStatsAfterChange() {
+            const stats = {
+                farmers: window.appData.farmers ? window.appData.farmers.length : 0,
+                staff: window.appData.staff ? window.appData.staff.length : 0,
+                inventory: window.appData.inventory ? window.appData.inventory.length : 0,
+                claims: window.appData.claims ? window.appData.claims.length : 0,
+                reports: window.appData.damageReports ? window.appData.damageReports.length : 0,
+                insurance: window.appData.insurance ? window.appData.insurance.length : 0,
+                announcements: window.appData.announcements ? window.appData.announcements.length : 0
+            };
+            
+            updateSidebarBadges(stats);
+        }
+        
+        // Show All Records function (Admin only)
+        function showAllRecords() {
+            const userRole = '{{user.role}}';
+            if (userRole !== 'admin') {
+                alert('Access denied. Only administrators can view all records.');
+                return;
+            }
+            
+            const content = `
+                <div class="content-section">
+                    <div class="section-header">
+                        <button class="btn btn-outline-secondary me-3" onclick="navigateToSection('dashboard')">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </button>
+                        <h4 class="section-title"><i class="fas fa-list me-2"></i>All Records Overview</h4>
+                    </div>
+                    
+                    <!-- Farmers Section -->
+                    <div class="mb-4">
+                        <h5 class="text-primary"><i class="fas fa-users me-2"></i>Farmers (${window.appData.farmers.length})</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Barangay</th>
+                                        <th>Land Area</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${window.appData.farmers.map(farmer => `
+                                        <tr>
+                                            <td>${farmer.name}</td>
+                                            <td>${farmer.email}</td>
+                                            <td>${farmer.barangay}</td>
+                                            <td>${farmer.landArea}</td>
+                                            <td>${farmer.description || 'N/A'}</td>
+                                            <td><span class="status-badge status-${farmer.status}">${farmer.status}</span></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Inventory Section -->
+                    <div class="mb-4">
+                        <h5 class="text-success"><i class="fas fa-boxes me-2"></i>Inventory (${window.appData.inventory.length})</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Type</th>
+                                        <th>Quantity</th>
+                                        <th>Location</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${window.appData.inventory.map(item => `
+                                        <tr>
+                                            <td>${item.itemName}</td>
+                                            <td>${item.type}</td>
+                                            <td>${item.quantity} ${item.unit}</td>
+                                            <td>${item.barangay}</td>
+                                            <td>${item.description || 'N/A'}</td>
+                                            <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Claims Section -->
+                    <div class="mb-4">
+                        <h5 class="text-warning"><i class="fas fa-file-invoice me-2"></i>Claims (${window.appData.claims.length})</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Farmer</th>
+                                        <th>Item Requested</th>
+                                        <th>Quantity</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${window.appData.claims.map(claim => `
+                                        <tr>
+                                            <td>${claim.farmer}</td>
+                                            <td>${claim.itemRequested}</td>
+                                            <td>${claim.quantity}</td>
+                                            <td>${claim.reason || 'N/A'}</td>
+                                            <td><span class="status-badge status-${claim.status}">${claim.status}</span></td>
+                                            <td>${claim.date}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Staff Section -->
+                    <div class="mb-4">
+                        <h5 class="text-success"><i class="fas fa-user-tie me-2"></i>Staff (${window.appData.staff ? window.appData.staff.length : 0})</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Position</th>
+                                        <th>Barangay</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${window.appData.staff ? window.appData.staff.map(member => `
+                                        <tr>
+                                            <td>${member.name}</td>
+                                            <td>${member.email}</td>
+                                            <td>${member.position}</td>
+                                            <td>${member.barangay}</td>
+                                            <td>${member.description || 'N/A'}</td>
+                                            <td><span class="status-badge status-${member.status}">${member.status}</span></td>
+                                        </tr>
+                                    `).join('') : '<tr><td colspan="6" class="text-center">No staff records found</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Damage Reports Section -->
+                    <div class="mb-4">
+                        <h5 class="text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Damage Reports (${window.appData.damageReports ? window.appData.damageReports.length : 0})</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Farmer</th>
+                                        <th>Barangay</th>
+                                        <th>Calamity Type</th>
+                                        <th>Affected Crop</th>
+                                        <th>Damage %</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${window.appData.damageReports ? window.appData.damageReports.map(report => `
+                                        <tr>
+                                            <td>${report.farmer}</td>
+                                            <td>${report.barangay}</td>
+                                            <td>${report.calamityType}</td>
+                                            <td>${report.affectedCrop}</td>
+                                            <td>${report.damagePercentage}%</td>
+                                            <td>${report.description || 'N/A'}</td>
+                                            <td><span class="status-badge status-${report.status === 'verified' ? 'approved' : report.status === 'submitted' ? 'pending' : 'active'}">${report.status}</span></td>
+                                            <td>${report.date}</td>
+                                        </tr>
+                                    `).join('') : '<tr><td colspan="8" class="text-center">No damage reports found</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Insurance Section -->
+                    <div class="mb-4">
+                        <h5 class="text-primary"><i class="fas fa-shield-alt me-2"></i>Insurance Applications (${window.appData.insurance ? window.appData.insurance.length : 0})</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Farmer</th>
+                                        <th>Barangay</th>
+                                        <th>Crop Type</th>
+                                        <th>Insured Area</th>
+                                        <th>Premium</th>
+                                        <th>Coverage</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${window.appData.insurance ? window.appData.insurance.map(policy => `
+                                        <tr>
+                                            <td>${policy.farmer}</td>
+                                            <td>${policy.barangay}</td>
+                                            <td>${policy.cropType}</td>
+                                            <td>${policy.insuredArea} ha</td>
+                                            <td>₱${policy.premiumAmount ? policy.premiumAmount.toLocaleString() : '0'}</td>
+                                            <td>₱${policy.coverageAmount ? policy.coverageAmount.toLocaleString() : '0'}</td>
+                                            <td>${policy.description || 'N/A'}</td>
+                                            <td><span class="status-badge status-${policy.status}">${policy.status}</span></td>
+                                            <td>${policy.date}</td>
+                                        </tr>
+                                    `).join('') : '<tr><td colspan="9" class="text-center">No insurance applications found</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Announcements Section -->
+                    <div class="mb-4">
+                        <h5 class="text-info"><i class="fas fa-bullhorn me-2"></i>Announcements (${window.appData.announcements.length})</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Type</th>
+                                        <th>Priority</th>
+                                        <th>Target Barangays</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${window.appData.announcements.map(announcement => `
+                                        <tr>
+                                            <td>${announcement.title}</td>
+                                            <td>${announcement.type}</td>
+                                            <td><span class="status-badge status-${announcement.priority === 'urgent' ? 'rejected' : announcement.priority === 'high' ? 'pending' : 'approved'}">${announcement.priority}</span></td>
+                                            <td>${announcement.targetBarangays}</td>
+                                            <td>${announcement.description || 'N/A'}</td>
+                                            <td><span class="status-badge status-${announcement.status}">${announcement.status}</span></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('dynamic-content').innerHTML = content;
+            document.getElementById('page-title').textContent = 'All Records Overview';
+            currentSection = 'all-records';
+        }
+        
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('show');
+        }
+        
+        // Add mobile menu button if needed
+        if (window.innerWidth <= 768) {
+            const navbar = document.querySelector('.top-navbar');
+            const menuBtn = document.createElement('button');
+            menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            menuBtn.className = 'btn btn-outline-secondary';
+            menuBtn.onclick = toggleSidebar;
+            navbar.insertBefore(menuBtn, navbar.firstChild);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - Professional Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: 
+                linear-gradient(rgba(45, 80, 22, 0.1), rgba(45, 80, 22, 0.1)),
+                url('/images/backgrounds/agriculture-bg.jpg'),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%2387CEEB"/><stop offset="30%" style="stop-color:%23B0E0E6"/><stop offset="70%" style="stop-color:%2398FB98"/></linearGradient></defs><rect width="1200" height="800" fill="url(%23sky)"/><ellipse cx="600" cy="500" rx="800" ry="150" fill="%236B8E23" opacity="0.8"/><ellipse cx="300" cy="550" rx="500" ry="100" fill="%23228B22" opacity="0.7"/><ellipse cx="900" cy="580" rx="400" ry="80" fill="%2332CD32" opacity="0.6"/><rect x="0" y="650" width="1200" height="150" fill="%23228B22"/><g opacity="0.8"><circle cx="150" cy="400" r="60" fill="%23006400"/><circle cx="200" cy="420" r="40" fill="%23228B22"/><circle cx="180" cy="380" r="30" fill="%2332CD32"/><circle cx="1000" cy="420" r="70" fill="%23006400"/><circle cx="1050" cy="400" r="50" fill="%23228B22"/><circle cx="950" cy="440" r="35" fill="%2332CD32"/></g><g opacity="0.6"><rect x="80" y="500" width="8" height="60" fill="%23654321"/><rect x="120" y="480" width="6" height="80" fill="%23654321"/><rect x="900" y="490" width="10" height="70" fill="%23654321"/><rect x="950" y="470" width="7" height="90" fill="%23654321"/></g><g opacity="0.4"><path d="M100,600 Q150,580 200,600 T300,600" stroke="%23228B22" stroke-width="3" fill="none"/><path d="M400,620 Q500,600 600,620 T800,620" stroke="%2332CD32" stroke-width="2" fill="none"/><path d="M850,640 Q950,620 1050,640" stroke="%23228B22" stroke-width="2" fill="none"/></g></svg>'),
+                radial-gradient(ellipse at top, #87CEEB 0%, #98FB98 40%, #90EE90 70%, #228B22 100%);
+            background-size: cover, cover, cover, 100% 100%;
+            background-position: center, center, center, center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: #2d5016;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                /* Rice field rows pattern */
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 20px,
+                    rgba(34, 139, 34, 0.1) 20px,
+                    rgba(34, 139, 34, 0.1) 25px
+                ),
+                /* Agricultural landscape */
+                linear-gradient(180deg, 
+                    #87CEEB 0%,           /* Sky blue */
+                    #B0E0E6 20%,          /* Light sky blue */
+                    #98FB98 40%,          /* Pale green */
+                    #90EE90 60%,          /* Light green */
+                    #32CD32 80%,          /* Lime green */
+                    #228B22 100%          /* Forest green */
+                );
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: -2;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(0deg, rgba(34, 139, 34, 0.6) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c59 50%, #1a4731 100%);
+            box-shadow: 4px 0 25px rgba(45, 80, 22, 0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border-right: 3px solid rgba(106, 155, 71, 0.3);
+        }
+        
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h3 {
+            color: white;
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .sidebar-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.875rem;
+            margin: 0.5rem 0 0 0;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 1rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .sidebar .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar .nav-link.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .sidebar .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            background: transparent;
+            position: relative;
+        }
+        
+        .main-content::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 280px;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 30%),
+                radial-gradient(circle at 70% 30%, rgba(50, 205, 50, 0.1) 0%, transparent 30%),
+                linear-gradient(45deg, transparent 40%, rgba(107, 142, 35, 0.05) 50%, transparent 60%);
+            z-index: -1;
+        }
+        
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: 1rem;
+        }
+        
+        .btn-logout {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+        
+        .btn-logout:hover {
+            background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+            color: white;
+        }
+        
+        .btn-back {
+            background: linear-gradient(135deg, #4a7c59 0%, #2d5016 100%);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(74, 124, 89, 0.3);
+        }
+        
+        .btn-back:hover {
+            background: linear-gradient(135deg, #2d5016 0%, #1a4731 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 124, 89, 0.4);
+            color: white;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a7c59 0%, #2d5016 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(45, 80, 22, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dashboard-content {
+            padding: 2rem;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            max-width: 1200px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(74, 124, 89, 0.6) 0%, rgba(107, 155, 71, 0.6) 50%, rgba(45, 80, 22, 0.6) 100%);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .stat-card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .stat-icon.blue { 
+            background: linear-gradient(135deg, #4a7c59 0%, #2d5016 100%); 
+            box-shadow: 0 4px 15px rgba(74, 124, 89, 0.3);
+        }
+        .stat-icon.green { 
+            background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%); 
+            box-shadow: 0 4px 15px rgba(107, 155, 71, 0.3);
+        }
+        .stat-icon.yellow { 
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+        .stat-icon.red { 
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); 
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0.75rem 0;
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+        }
+        
+        .stat-label {
+            color: #374151;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .stat-change {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+        
+        .stat-change.positive {
+            background: linear-gradient(135deg, rgba(107, 155, 71, 0.2) 0%, rgba(74, 124, 89, 0.2) 100%);
+            color: #2d5016;
+            border: 1px solid rgba(107, 155, 71, 0.3);
+            font-weight: 600;
+        }
+        
+        .stat-change.negative {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(74, 124, 89, 0.6) 0%, rgba(107, 155, 71, 0.6) 50%, rgba(45, 80, 22, 0.6) 100%);
+        }
+        
+        .content-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .content-card h4 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        
+        .activity-time {
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+        
+        /* Footer Styles */
+        .dashboard-footer {
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c59 50%, #1a4731 100%);
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            text-align: center;
+            border-top: 4px solid #6b9b47;
+            box-shadow: 0 -8px 30px rgba(45, 80, 22, 0.2);
+            position: relative;
+        }
+        
+        .dashboard-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, #6b9b47 50%, transparent 100%);
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .footer-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #6b9b47;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .footer-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+        
+        .footer-creator {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1.25rem;
+            margin-top: 1.25rem;
+            font-weight: 400;
+        }
+        
+        .footer-creator strong {
+            color: #6b9b47;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .top-navbar {
+                padding: 1rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .user-info {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .action-buttons {
+                margin-left: 0;
+                gap: 0.25rem;
+            }
+            
+            .btn-logout, .btn-back {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.8rem;
+            }
+            
+            .btn-logout span, .btn-back span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-leaf me-2"></i>AgriSystem</h3>
+            <p>Agricultural Management</p>
+        </div>
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a class="nav-link active" href="/dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/farmers">
+                    <i class="fas fa-users"></i>
+                    Farmers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/inventory">
+                    <i class="fas fa-boxes"></i>
+                    Inventory
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/claims">
+                    <i class="fas fa-file-invoice"></i>
+                    Claims
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/damage-reports">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Damage Reports
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/insurance">
+                    <i class="fas fa-shield-alt"></i>
+                    Insurance
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/announcements">
+                    <i class="fas fa-bullhorn"></i>
+                    Announcements
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/staff">
+                    <i class="fas fa-user-tie"></i>
+                    Staff
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link" href="/settings">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation -->
+        <div class="top-navbar">
+            <h1 class="page-title">Dashboard Overview</h1>
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{firstChar user.name}}
+                </div>
+                <div>
+                    <div style="font-weight: 600; font-size: 0.875rem;">{{user.name}}</div>
+                    <div style="color: #64748b; font-size: 0.75rem;">{{user.role}}</div>
+                </div>
+                <div class="action-buttons">
+                    <a href="/" class="btn-back" title="Back to Login">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back</span>
+                    </a>
+                    <a href="/logout" class="btn-logout" title="Logout" onclick="return confirmLogout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                {{#if (eq user.role 'admin')}}
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">{{default stats.totalFarmers 0}}</div>
+                    <div class="stat-label">Registered Farmers</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> Active Users
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-icon green">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">{{default stats.totalStaff 0}}</div>
+                    <div class="stat-label">Registered Staff</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> Active Staff
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-icon yellow">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">{{default stats.totalClaims 0}}</div>
+                    <div class="stat-label">Total Claims</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-chart-line"></i> All Claims
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-icon red">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">{{default stats.inventoryItems 25}}</div>
+                    <div class="stat-label">Inventory Items</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-warehouse"></i> Total Items
+                    </div>
+                </div>
+                {{else}}
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">My Profile</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-check"></i> Active
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-icon green">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">{{default stats.totalClaims 0}}</div>
+                    <div class="stat-label">My Claims</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> Submitted
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-icon yellow">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">{{default stats.pendingReports 0}}</div>
+                    <div class="stat-label">My Reports</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-file-alt"></i> Reports
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-icon red">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">{{default stats.activeAnnouncements 0}}</div>
+                    <div class="stat-label">Announcements</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-bullhorn"></i> Active
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Recent Activity -->
+                <div class="content-card">
+                    <h4><i class="fas fa-clock me-2"></i>Recent Activity</h4>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: #dbeafe; color: #1d4ed8;">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">New farmer registered</div>
+                                <div class="activity-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: #dcfce7; color: #166534;">
+                                <i class="fas fa-file-check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Claim approved</div>
+                                <div class="activity-time">4 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: #fef3c7; color: #92400e;">
+                                <i class="fas fa-exclamation"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Damage report submitted</div>
+                                <div class="activity-time">6 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: #fce7f3; color: #be185d;">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">New announcement posted</div>
+                                <div class="activity-time">1 day ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="content-card">
+                    <h4><i class="fas fa-bolt me-2"></i>Quick Actions</h4>
+                    <div class="d-grid gap-2">
+                        <a href="/farmers/new" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Add New Farmer
+                        </a>
+                        <a href="/claims/new" class="btn btn-success">
+                            <i class="fas fa-file-plus me-2"></i>Create Claim
+                        </a>
+                        <a href="/damage-reports/new" class="btn btn-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Report Damage
+                        </a>
+                        <a href="/announcements/new" class="btn btn-info">
+                            <i class="fas fa-bullhorn me-2"></i>New Announcement
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Agricultural Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-content">
+                <div class="footer-title">
+                    <i class="fas fa-leaf me-2"></i>DA-AgriManagement
+                </div>
+                <div class="footer-subtitle">
+                    Municipality of Bulalacao, Oriental Mindoro
+                </div>
+                <div class="footer-creator">
+                    Created by <strong>Gabia</strong> | Professional Agricultural Management System
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('show');
+        }
+        
+        // Logout confirmation function
+        function confirmLogout() {
+            return confirm('Are you sure you want to logout?');
+        }
+        
+        // Add mobile menu button if needed
+        if (window.innerWidth <= 768) {
+            const navbar = document.querySelector('.top-navbar');
+            const menuBtn = document.createElement('button');
+            menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            menuBtn.className = 'btn btn-outline-secondary';
+            menuBtn.onclick = toggleSidebar;
+            navbar.insertBefore(menuBtn, navbar.firstChild);
+        }
+    </script>
+</body>
+</html>
+           

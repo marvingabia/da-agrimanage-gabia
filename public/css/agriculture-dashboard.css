@@ -73,34 +73,52 @@ body {
     position: fixed;
     top: 15px;
     left: 15px;
-    z-index: 1001;
-    background: var(--forest-green);
+    z-index: 10000 !important; /* Ensure it's always on top */
+    background: linear-gradient(135deg, var(--forest-green) 0%, var(--leaf-green) 100%);
     color: white;
     border: none;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    width: 56px;
+    height: 56px;
+    font-size: 1.6rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    pointer-events: auto !important;
 }
 
 @media (max-width: 768px) {
     .hamburger-btn {
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
+    }
+    
+    .hamburger-btn:hover,
+    .hamburger-btn:focus {
+        background: linear-gradient(135deg, var(--leaf-green) 0%, var(--forest-green) 100%);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+    
+    .hamburger-btn:active {
+        transform: scale(0.92);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 }
 
 /* Navigation Links - Oval Shape */
 .nav-link {
     color: rgba(255,255,255,0.85);
-    padding: 12px 20px;
-    margin: 8px 15px;
+    padding: 14px 20px;
+    margin: 6px 12px;
     border-radius: 25px;
     transition: all 0.3s ease;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .nav-link:hover {
@@ -118,6 +136,35 @@ body {
 .nav-link i {
     width: 24px;
     text-align: center;
+    font-size: 1.1rem;
+}
+
+/* Mobile sidebar adjustments */
+@media (max-width: 768px) {
+    .nav-link {
+        padding: 16px 20px;
+        margin: 4px 10px;
+        font-size: 0.95rem;
+    }
+    
+    .nav-link i {
+        font-size: 1.2rem;
+    }
+    
+    /* Better spacing for sidebar header */
+    .sidebar h4 {
+        padding: 20px 15px 15px;
+        margin-bottom: 10px;
+        font-size: 1.3rem;
+    }
+    
+    /* Scrollable sidebar content */
+    .sidebar .position-sticky {
+        height: 100vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 20px;
+    }
 }
 
 /* ===================================

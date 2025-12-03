@@ -13,7 +13,11 @@ import {
     loginUser, 
     registerUser, 
     logoutUser,
-    googleAuth
+    googleAuth,
+    getPendingStaff,
+    approveStaff,
+    rejectStaff,
+    getAllStaff
 } from "../controllers/authController.js";
 import { requireAuth, requireRole, redirectIfAuthenticated } from "../middleware/auth.js";
 
@@ -32,7 +36,7 @@ async function getLocalDashboardStats() {
             totalClaims: Math.floor(farmerStats.totalFarmers * 1.5),
             pendingReports: Math.floor(farmerStats.totalFarmers * 0.3),
             inventoryItems: 25,
-            totalStaff: 3,
+            totalStaff: 5,
             totalAdmins: 1,
             pendingClaims: Math.floor(farmerStats.totalFarmers * 0.2),
             availableItems: 20,
@@ -66,68 +70,88 @@ import {
     getFarmerClaims,
     getFarmerDamageReports,
     getFarmerInsurance,
-    getFarmerAnnouncements
+    getFarmerAnnouncements,
+    submitRequestLetter,
+    getFarmerRequestLetters
 } from "../controllers/farmerController.js";
-
-// Admin Controller
-import {
-    getAllFarmers,
-    getAllStaff,
-    createStaff,
-    getAllInventory,
-    createInventoryItem,
-    updateInventoryItem,
-    deleteInventoryItem,
-    getAllClaims,
-    updateClaimStatus,
-    getAllDamageReports,
-    updateDamageReportStatus,
-    getAllInsurance,
-    updateInsuranceStatus,
-    getAllAnnouncements,
-    createAnnouncement,
-    updateAnnouncement,
-    deleteAnnouncement,
-    getDashboardStats as adminGetDashboardStats
-} from "../controllers/adminController.js";
-
-// Staff Controller
-import {
-    getInventory,
-    createInventoryItem as staffCreateInventory,
-    updateInventoryItem as staffUpdateInventory,
-    getAnnouncements,
-    createAnnouncement as staffCreateAnnouncement,
-    updateAnnouncement as staffUpdateAnnouncement,
-    getClaims,
-    getDamageReports,
-    getInsurance
-} from "../controllers/staffController.js";
 
 const router = express.Router();
 
-// Public routes - Redirect root to login
+// Public routes - Main Landing Pages (Farmer/Public)
 router.get("/", (req, res) => {
     if (req.session.userId) {
         return res.redirect("/dashboard");
     }
-    res.redirect("/login");
+    res.render("home", { title: "Home - Municipal Agriculture Office" });
 });
+
+router.get("/about", (req, res) => {
+    res.render("about", { title: "About Us - Municipal Agriculture Office" });
+});
+
+router.get("/contact", (req, res) => {
+    res.render("contact", { title: "Contact Us - Municipal Agriculture Office" });
+});
+
 router.get("/login", redirectIfAuthenticated, loginPage);
 router.post("/login", loginUser);
-router.get("/register", redirectIfAuthenticated, registerPage);
+router.get("/register", redirectIfAuthenticated, (req, res) => {
+    res.render("register", { title: "Register - AgriSystem Dashboard" });
+});
 router.post("/register", registerUser);
 router.post("/auth/google", googleAuth);
 router.get("/forgot-password", redirectIfAuthenticated, forgotPasswordPage);
 
+// Staff Landing Pages - Separate from main pages
+router.get("/staff", (req, res) => {
+    if (req.session.userId && req.session.userRole === 'staff') {
+        return res.redirect("/dashboard");
+    }
+    res.render("staff-landing", { title: "Staff Portal - Municipal Agriculture Office" });
+});
+
+router.get("/staff/about", (req, res) => {
+    res.render("staff-about", { title: "Tungkol sa Staff Portal" });
+});
+
+router.get("/staff/contact", (req, res) => {
+    res.render("staff-contact", { title: "Makipag-ugnayan - Staff Portal" });
+});
+
+router.get("/staff/login", redirectIfAuthenticated, (req, res) => {
+    res.render("staff-login", { title: "Staff Login - Municipal Agriculture Office" });
+});
+
+router.get("/staff/register", redirectIfAuthenticated, (req, res) => {
+    res.render("staff-register", { title: "Staff Registration - Municipal Agriculture Office" });
+});
+
 // Protected routes
 router.get("/dashboard", requireAuth, dashboardPage);
+router.get("/settings", requireAuth, (req, res) => {
+    res.render("settings", { 
+        title: "Settings - AgriSystem",
+        user: {
+            id: req.session.userId,
+            name: req.session.userName || req.session.userEmail,
+            email: req.session.userEmail,
+            role: req.session.userRole,
+            barangay: req.session.userBarangay
+        }
+    });
+});
 router.get("/logout", logoutUser);
 
 // All section navigation is now handled by the enhanced dashboard SPA
 // No separate page routes needed - everything is modal-based
 
 // API Routes for AJAX calls
+
+// Admin routes - Staff Management
+router.get("/api/admin/pending-staff", requireRole(['admin']), getPendingStaff);
+router.post("/api/admin/approve-staff/:staffId", requireRole(['admin']), approveStaff);
+router.post("/api/admin/reject-staff/:staffId", requireRole(['admin']), rejectStaff);
+router.get("/api/admin/all-staff", requireRole(['admin']), getAllStaff);
 
 // Farmer routes
 router.get("/api/farmer/data", requireRole(['farmer']), getFarmerData);
@@ -138,37 +162,670 @@ router.get("/api/farmer/claims", requireRole(['farmer']), getFarmerClaims);
 router.get("/api/farmer/damage-reports", requireRole(['farmer']), getFarmerDamageReports);
 router.get("/api/farmer/insurance", requireRole(['farmer']), getFarmerInsurance);
 router.get("/api/farmer/announcements", requireRole(['farmer']), getFarmerAnnouncements);
+router.post("/api/farmer/request-letters", requireRole(['farmer']), submitRequestLetter);
+router.get("/api/farmer/request-letters", requireRole(['farmer']), getFarmerRequestLetters);
+router.post("/api/farmer/request-letter", requireRole(['farmer']), submitRequestLetter); // Alternative endpoint
+router.post("/api/farmer/damage-report", requireRole(['farmer']), submitDamageReport); // Alternative endpoint
 
-// Admin routes
-router.get("/api/admin/farmers", requireRole(['admin']), getAllFarmers);
-router.get("/api/admin/staff", requireRole(['admin']), getAllStaff);
-router.post("/api/admin/staff", requireRole(['admin']), createStaff);
-router.get("/api/admin/inventory", requireRole(['admin']), getAllInventory);
-router.post("/api/admin/inventory", requireRole(['admin']), createInventoryItem);
-router.put("/api/admin/inventory/:id", requireRole(['admin']), updateInventoryItem);
-router.delete("/api/admin/inventory/:id", requireRole(['admin']), deleteInventoryItem);
-router.get("/api/admin/claims", requireRole(['admin']), getAllClaims);
-router.put("/api/admin/claims/:id/status", requireRole(['admin']), updateClaimStatus);
-router.get("/api/admin/damage-reports", requireRole(['admin']), getAllDamageReports);
-router.put("/api/admin/damage-reports/:id/status", requireRole(['admin']), updateDamageReportStatus);
-router.get("/api/admin/insurance", requireRole(['admin']), getAllInsurance);
-router.put("/api/admin/insurance/:id/status", requireRole(['admin']), updateInsuranceStatus);
-router.get("/api/admin/announcements", requireRole(['admin']), getAllAnnouncements);
-router.post("/api/admin/announcements", requireRole(['admin']), createAnnouncement);
-router.put("/api/admin/announcements/:id", requireRole(['admin']), updateAnnouncement);
-router.delete("/api/admin/announcements/:id", requireRole(['admin']), deleteAnnouncement);
-router.get("/api/admin/stats", requireRole(['admin']), adminGetDashboardStats);
+// General API routes (accessible by all authenticated users)
+router.get("/api/damage-reports", requireAuth, async (req, res) => {
+    try {
+        const { DamageReport } = await import("../models/DamageReportMySQL.js");
+        const damageReports = await DamageReport.findAll();
+        res.json({ success: true, damageReports });
+    } catch (error) {
+        console.error('Error getting damage reports:', error);
+        res.status(500).json({ success: false, error: 'Failed to load damage reports' });
+    }
+});
 
-// Staff routes
-router.get("/api/staff/inventory", requireRole(['staff', 'admin']), getInventory);
-router.post("/api/staff/inventory", requireRole(['staff', 'admin']), staffCreateInventory);
-router.put("/api/staff/inventory/:id", requireRole(['staff', 'admin']), staffUpdateInventory);
-router.get("/api/staff/announcements", requireRole(['staff', 'admin']), getAnnouncements);
-router.post("/api/staff/announcements", requireRole(['staff', 'admin']), staffCreateAnnouncement);
-router.put("/api/staff/announcements/:id", requireRole(['staff', 'admin']), staffUpdateAnnouncement);
-router.get("/api/staff/claims", requireRole(['staff', 'admin']), getClaims);
-router.get("/api/staff/damage-reports", requireRole(['staff', 'admin']), getDamageReports);
-router.get("/api/staff/insurance", requireRole(['staff', 'admin']), getInsurance);
+router.get("/api/damage-reports/:id", requireAuth, async (req, res) => {
+    try {
+        const { DamageReport } = await import("../models/DamageReportMySQL.js");
+        const damageReport = await DamageReport.findById(req.params.id);
+        if (!damageReport) {
+            return res.status(404).json({ success: false, error: 'Damage report not found' });
+        }
+        res.json({ success: true, damageReport });
+    } catch (error) {
+        console.error('Error getting damage report:', error);
+        res.status(500).json({ success: false, error: 'Failed to load damage report' });
+    }
+});
+
+// Insurance API routes (accessible by all authenticated users)
+router.get("/api/insurance", requireAuth, async (req, res) => {
+    try {
+        const { Insurance } = await import("../models/InsuranceMySQL.js");
+        const insurance = await Insurance.findAll();
+        res.json({ success: true, insurance });
+    } catch (error) {
+        console.error('Error getting insurance:', error);
+        res.status(500).json({ success: false, error: 'Failed to load insurance applications' });
+    }
+});
+
+router.get("/api/insurance/:id", requireAuth, async (req, res) => {
+    try {
+        const { Insurance } = await import("../models/InsuranceMySQL.js");
+        const insurance = await Insurance.findById(req.params.id);
+        if (!insurance) {
+            return res.status(404).json({ success: false, error: 'Insurance application not found' });
+        }
+        res.json({ success: true, insurance });
+    } catch (error) {
+        console.error('Error getting insurance:', error);
+        res.status(500).json({ success: false, error: 'Failed to load insurance application' });
+    }
+});
+
+// Staff routes for benefits/claims
+router.post("/api/staff/benefits/distribute", requireRole(['staff', 'admin']), async (req, res) => {
+    try {
+        const { Benefit } = await import("../models/BenefitMySQL.js");
+        const { User } = await import("../models/UserMySQL.js");
+        
+        const farmer = await User.findById(req.body.farmerId);
+        if (!farmer) {
+            return res.status(404).json({ success: false, error: 'Farmer not found' });
+        }
+        
+        const benefitData = {
+            ...req.body,
+            farmerName: farmer.name,
+            farmerEmail: farmer.email,
+            barangay: farmer.barangay,
+            createdBy: req.session.userId,
+            createdByName: req.session.userName || req.session.userEmail,
+            status: 'for_claim'
+        };
+        
+        const benefit = new Benefit(benefitData);
+        await benefit.save();
+        
+        res.json({ success: true, benefit });
+    } catch (error) {
+        console.error('Error distributing benefit:', error);
+        res.status(500).json({ success: false, error: 'Failed to distribute benefit' });
+    }
+});
+
+router.get("/api/staff/eligible-farmers", requireRole(['staff', 'admin']), async (req, res) => {
+    try {
+        const { DamageReport } = await import("../models/DamageReport.js");
+        const damageReports = await DamageReport.findAll();
+        
+        // Get unique farmers with damage reports
+        const farmersMap = new Map();
+        damageReports.forEach(report => {
+            if (!farmersMap.has(report.farmerId)) {
+                farmersMap.set(report.farmerId, {
+                    id: report.farmerId,
+                    name: report.farmerName,
+                    barangay: report.barangay,
+                    disasterType: report.disasterType,
+                    damagePercentage: report.damagePercentage,
+                    damageReportId: report.id
+                });
+            }
+        });
+        
+        const farmers = Array.from(farmersMap.values());
+        res.json({ success: true, farmers });
+    } catch (error) {
+        console.error('Error getting eligible farmers:', error);
+        res.status(500).json({ success: false, error: 'Failed to load eligible farmers' });
+    }
+});
+
+router.get("/api/benefits", requireAuth, async (req, res) => {
+    try {
+        const { Benefit } = await import("../models/BenefitMySQL.js");
+        const benefits = await Benefit.findAll();
+        console.log(`🎁 Retrieved ${benefits.length} benefits`);
+        res.json({ success: true, benefits });
+    } catch (error) {
+        console.error('❌ Error getting benefits:', error);
+        console.error('   Error message:', error.message);
+        res.status(500).json({ success: false, error: 'Failed to load benefits: ' + error.message });
+    }
+});
+
+// Staff routes for inventory (Staff only - no admin)
+router.post("/api/staff/inventory", requireRole(['staff', 'admin']), async (req, res) => {
+    try {
+        const { Inventory } = await import("../models/InventoryMySQL.js");
+        
+        console.log('📦 Received inventory data:', JSON.stringify(req.body, null, 2));
+        
+        const inventoryData = {
+            ...req.body,
+            createdBy: req.session.userId,
+            createdByName: req.session.userName || req.session.userEmail
+        };
+        
+        console.log('📦 Creating inventory item with data:', JSON.stringify(inventoryData, null, 2));
+        
+        const item = new Inventory(inventoryData);
+        const savedItem = await item.save();
+        
+        console.log('✅ Inventory item saved successfully with ID:', savedItem.id);
+        
+        // Verify it was saved
+        const verify = await Inventory.findById(savedItem.id);
+        if (verify) {
+            console.log('✅ Verified: Inventory item exists in database');
+        } else {
+            console.log('⚠️  Warning: Inventory item not found after save!');
+        }
+        
+        res.json({ success: true, item: savedItem });
+    } catch (error) {
+        console.error('❌ Error adding inventory item:', error);
+        console.error('❌ Error stack:', error.stack);
+        res.status(500).json({ success: false, error: 'Failed to add inventory item: ' + error.message });
+    }
+});
+
+router.get("/api/inventory", requireAuth, async (req, res) => {
+    try {
+        const { Inventory } = await import("../models/InventoryMySQL.js");
+        const inventory = await Inventory.findAll();
+        console.log(`📦 Retrieved ${inventory.length} inventory items`);
+        res.json({ success: true, inventory });
+    } catch (error) {
+        console.error('❌ Error getting inventory:', error);
+        res.status(500).json({ success: false, error: 'Failed to load inventory: ' + error.message });
+    }
+});
+
+router.get("/api/inventory/:id", requireAuth, async (req, res) => {
+    try {
+        const { Inventory } = await import("../models/Inventory.js");
+        const item = await Inventory.findById(req.params.id);
+        if (!item) {
+            return res.status(404).json({ success: false, error: 'Item not found' });
+        }
+        res.json({ success: true, item });
+    } catch (error) {
+        console.error('Error getting inventory item:', error);
+        res.status(500).json({ success: false, error: 'Failed to load item' });
+    }
+});
+
+// Staff routes for announcements
+router.post("/api/staff/announcements", requireRole(['staff']), async (req, res) => {
+    try {
+        const { Announcement } = await import("../models/AnnouncementMySQL.js");
+        
+        console.log('📢 Received announcement data:', JSON.stringify(req.body, null, 2));
+        
+        const announcementData = {
+            ...req.body,
+            createdBy: req.session.userId,
+            createdByName: req.session.userName || req.session.userEmail,
+            status: 'active'
+        };
+        
+        console.log('📢 Creating announcement with data:', JSON.stringify(announcementData, null, 2));
+        
+        const announcement = new Announcement(announcementData);
+        const savedAnnouncement = await announcement.save();
+        
+        console.log('✅ Announcement saved successfully with ID:', savedAnnouncement.id);
+        
+        // Verify it was saved by reading it back
+        const verify = await Announcement.findById(savedAnnouncement.id);
+        if (verify) {
+            console.log('✅ Verified: Announcement exists in database');
+        } else {
+            console.log('⚠️  Warning: Announcement not found after save!');
+        }
+        
+        res.json({ success: true, announcement: savedAnnouncement });
+    } catch (error) {
+        console.error('❌ Error creating announcement:', error);
+        console.error('❌ Error stack:', error.stack);
+        res.status(500).json({ success: false, error: 'Failed to create announcement: ' + error.message });
+    }
+});
+
+router.get("/api/announcements", requireAuth, async (req, res) => {
+    try {
+        const { Announcement } = await import("../models/AnnouncementMySQL.js");
+        const announcements = await Announcement.findActive();
+        console.log(`📢 Retrieved ${announcements.length} announcements`);
+        res.json({ success: true, announcements });
+    } catch (error) {
+        console.error('❌ Error getting announcements:', error);
+        res.status(500).json({ success: false, error: 'Failed to load announcements: ' + error.message });
+    }
+});
+
+router.get("/api/announcements/:id", requireAuth, async (req, res) => {
+    try {
+        const { Announcement } = await import("../models/AnnouncementMySQL.js");
+        const announcement = await Announcement.findById(req.params.id);
+        if (!announcement) {
+            return res.status(404).json({ success: false, error: 'Announcement not found' });
+        }
+        res.json({ success: true, announcement });
+    } catch (error) {
+        console.error('Error getting announcement:', error);
+        res.status(500).json({ success: false, error: 'Failed to load announcement' });
+    }
+});
+
+// Data Analytics API
+router.get("/api/analytics", requireAuth, async (req, res) => {
+    try {
+        const period = parseInt(req.query.period) || 30;
+        console.log(`📊 Generating analytics for ${period} days...`);
+        
+        const { User } = await import("../models/UserMySQL.js");
+        const { Inventory } = await import("../models/InventoryMySQL.js");
+        const { Benefit } = await import("../models/BenefitMySQL.js");
+        const { DamageReport } = await import("../models/DamageReportMySQL.js");
+        const { Insurance } = await import("../models/InsuranceMySQL.js");
+        
+        // Get data
+        const [farmers, inventory, benefits, reports, insurance] = await Promise.all([
+            User.findByRole('farmer'),
+            Inventory.findAll(),
+            Benefit.findAll(),
+            DamageReport.findAll(),
+            Insurance.findAll()
+        ]);
+        
+        // Calculate metrics
+        const metrics = {
+            totalFarmers: farmers.length,
+            totalCrops: inventory.length,
+            totalBenefits: benefits.length,
+            totalReports: reports.length,
+            farmersTrend: 12.5,
+            cropsTrend: 8.3,
+            benefitsTrend: 5.2,
+            reportsTrend: -15.7
+        };
+        
+        // Generate chart data
+        const charts = {
+            farmersLabels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            farmersData: [5, 8, 12, farmers.length],
+            barangayLabels: ['Barangay 1', 'Barangay 2', 'Barangay 3', 'Others'],
+            barangayData: [15, 12, 8, 5],
+            cropLabels: ['Seeds', 'Fertilizer', 'Equipment', 'Pesticide'],
+            cropData: [
+                inventory.filter(i => i.category === 'seeds').length,
+                inventory.filter(i => i.category === 'fertilizer').length,
+                inventory.filter(i => i.category === 'equipment').length,
+                inventory.filter(i => i.category === 'pesticide').length
+            ],
+            benefitsLabels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            benefitsData: [2, 5, 8, benefits.length],
+            insuranceData: [
+                insurance.filter(i => i.status === 'approved').length,
+                insurance.filter(i => i.status === 'pending').length,
+                insurance.filter(i => i.status === 'rejected').length
+            ],
+            damageLabels: ['Typhoon', 'Flood', 'Drought', 'Pest'],
+            damageData: [5, 3, 2, 4]
+        };
+        
+        // Statistics table
+        const statistics = [
+            { metric: 'Total Farmers', current: farmers.length, previous: Math.floor(farmers.length * 0.9), change: '+' + Math.floor(farmers.length * 0.1), trend: 12.5 },
+            { metric: 'Crop Items', current: inventory.length, previous: Math.floor(inventory.length * 0.92), change: '+' + Math.floor(inventory.length * 0.08), trend: 8.3 },
+            { metric: 'Benefits', current: benefits.length, previous: Math.floor(benefits.length * 0.95), change: '+' + Math.floor(benefits.length * 0.05), trend: 5.2 },
+            { metric: 'Damage Reports', current: reports.length, previous: Math.floor(reports.length * 1.18), change: '-' + Math.floor(reports.length * 0.18), trend: -15.7 }
+        ];
+        
+        res.json({ success: true, metrics, charts, statistics });
+        
+    } catch (error) {
+        console.error('❌ Error generating analytics:', error);
+        res.status(500).json({ success: false, error: 'Failed to generate analytics: ' + error.message });
+    }
+});
+
+// Send Notifications API (Staff/Admin only)
+router.post("/api/notifications/send", requireRole(['staff', 'admin']), async (req, res) => {
+    try {
+        const { recipientType, barangay, notificationType, subject, message, sendEmail, sendSMS } = req.body;
+        
+        console.log('📧 Sending notifications...');
+        console.log('   Type:', notificationType);
+        console.log('   Recipients:', recipientType);
+        console.log('   Email:', sendEmail, 'SMS:', sendSMS);
+        
+        const { User } = await import("../models/UserMySQL.js");
+        const { sendEmailNotification, sendSMSNotification } = await import("../services/notificationService.js");
+        const NotificationMySQL = (await import("../models/NotificationMySQL.js")).default;
+        
+        // Get farmers
+        let farmers = await User.findByRole('farmer');
+        farmers = farmers.filter(f => f.isApproved !== false);
+        
+        // Filter by barangay if needed
+        if (recipientType === 'barangay' && barangay) {
+            farmers = farmers.filter(f => f.barangay === barangay);
+        }
+        
+        console.log(`📊 Sending to ${farmers.length} farmers...`);
+        
+        const results = {
+            total: farmers.length,
+            emailSent: 0,
+            smsSent: 0,
+            failed: 0
+        };
+        
+        // Send notifications
+        for (const farmer of farmers) {
+            // Send Email
+            if (sendEmail && farmer.email) {
+                try {
+                    const emailResult = await sendEmailNotification(
+                        farmer.email,
+                        subject,
+                        message
+                    );
+                    if (emailResult.success) results.emailSent++;
+                    else results.failed++;
+                } catch (error) {
+                    console.error(`Email error for ${farmer.email}:`, error.message);
+                    results.failed++;
+                }
+            }
+            
+            // Send SMS
+            if (sendSMS && farmer.phone) {
+                try {
+                    const smsResult = await sendSMSNotification(
+                        farmer.phone,
+                        `${subject}\n\n${message}`
+                    );
+                    if (smsResult.success) results.smsSent++;
+                    else results.failed++;
+                } catch (error) {
+                    console.error(`SMS error for ${farmer.phone}:`, error.message);
+                    results.failed++;
+                }
+            }
+            
+            // Small delay to avoid rate limiting
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Save notification to database
+        try {
+            const notificationStatus = results.failed === 0 ? 'sent' : 
+                                       results.failed === results.total ? 'failed' : 'partial';
+            
+            // Get user info from session (stored as userId, userName, userRole)
+            const userId = req.session?.userId || 'system';
+            const userName = req.session?.userName || 'System';
+            
+            await NotificationMySQL.create({
+                subject,
+                message,
+                notificationType,
+                recipientType,
+                barangay: barangay || null,
+                totalRecipients: results.total,
+                emailSent: results.emailSent,
+                smsSent: results.smsSent,
+                failed: results.failed,
+                status: notificationStatus,
+                sentBy: userId,
+                sentByName: userName
+            });
+            
+            console.log('✅ Notification saved to database');
+        } catch (dbError) {
+            console.error('⚠️ Error saving notification to database:', dbError.message);
+            // Continue even if database save fails - notification was still sent
+        }
+        
+        console.log('✅ Notification results:', results);
+        res.json({ success: true, results });
+        
+    } catch (error) {
+        console.error('❌ Error sending notifications:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get Notification History API (Staff/Admin only)
+router.get("/api/notifications/history", requireRole(['staff', 'admin']), async (req, res) => {
+    try {
+        console.log('📜 Fetching notification history...');
+        const NotificationMySQL = (await import("../models/NotificationMySQL.js")).default;
+        const limit = parseInt(req.query.limit) || 50;
+        
+        console.log(`   Limit: ${limit}`);
+        const notifications = await NotificationMySQL.findAll(limit);
+        console.log(`   Found ${notifications.length} notifications`);
+        
+        res.json({ success: true, notifications });
+    } catch (error) {
+        console.error('❌ Error fetching notification history:', error);
+        console.error('   Error stack:', error.stack);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get Farmer Notifications API (Farmer only)
+router.get("/api/farmer/notifications", requireAuth, async (req, res) => {
+    try {
+        console.log('🔔 Fetching farmer notifications...');
+        const NotificationMySQL = (await import("../models/NotificationMySQL.js")).default;
+        const { User } = await import("../models/UserMySQL.js");
+        
+        // Get farmer's barangay
+        const farmer = await User.findById(req.session.userId);
+        if (!farmer) {
+            return res.status(404).json({ success: false, error: 'Farmer not found' });
+        }
+        
+        const limit = parseInt(req.query.limit) || 20;
+        console.log(`   Farmer: ${farmer.name}, Barangay: ${farmer.barangay}`);
+        
+        // Get notifications for this farmer (all farmers or specific barangay)
+        const notifications = await NotificationMySQL.findForFarmer(farmer.barangay, limit);
+        console.log(`   Found ${notifications.length} notifications`);
+        
+        res.json({ success: true, notifications });
+    } catch (error) {
+        console.error('❌ Error fetching farmer notifications:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get list of available staff (for farmers to select)
+router.get("/api/staff/list", requireAuth, async (req, res) => {
+    try {
+        const { User } = await import("../models/UserMySQL.js");
+        const allStaff = await User.findByRole('staff');
+        const allAdmins = await User.findByRole('admin');
+        
+        // Combine staff and admin, filter for approved only
+        const allStaffAndAdmin = [...allStaff, ...allAdmins];
+        const approvedStaffAndAdmin = allStaffAndAdmin
+            .filter(user => user.isApproved === true)
+            .map(user => ({
+                id: user.id,
+                name: user.name,
+                barangay: user.barangay || 'All Areas',
+                dob: user.dob || null,
+                role: user.role
+            }));
+        
+        res.json({ success: true, staff: approvedStaffAndAdmin });
+    } catch (error) {
+        console.error('Error getting staff list:', error);
+        res.status(500).json({ success: false, error: 'Failed to load staff list' });
+    }
+});
+
+// Staff routes for request letters
+router.get("/api/staff/request-letters", requireRole(['staff', 'admin']), async (req, res) => {
+    try {
+        const { RequestLetter } = await import("../models/RequestLetterMySQL.js");
+        const requests = await RequestLetter.findAll();
+        res.json({ success: true, requests });
+    } catch (error) {
+        console.error('Error getting request letters:', error);
+        res.status(500).json({ success: false, error: 'Failed to load request letters' });
+    }
+});
+
+router.post("/api/staff/respond-request", requireRole(['staff', 'admin']), async (req, res) => {
+    try {
+        const { requestId, response, status, actionTaken } = req.body;
+        const { RequestLetter } = await import("../models/RequestLetterMySQL.js");
+        
+        const request = await RequestLetter.findById(requestId);
+        if (!request) {
+            return res.status(404).json({ success: false, error: 'Request not found' });
+        }
+        
+        await request.respond(response, req.session.userName || 'Staff', status, actionTaken);
+        res.json({ success: true, message: 'Response sent successfully', request });
+    } catch (error) {
+        console.error('Error responding to request:', error);
+        res.status(500).json({ success: false, error: 'Failed to send response' });
+    }
+});
+
+// Staff routes for real-time notifications
+router.get("/api/staff/notifications", requireRole(['staff', 'admin']), async (req, res) => {
+    try {
+        const notifications = global.staffNotifications || [];
+        
+        // Get counts
+        const newDamageReports = notifications.filter(n => n.type === 'new_damage_report').length;
+        const newRequestLetters = notifications.filter(n => n.type === 'new_request_letter').length;
+        
+        res.json({
+            success: true,
+            notifications: notifications,
+            counts: {
+                damageReports: newDamageReports,
+                requestLetters: newRequestLetters,
+                total: notifications.length
+            }
+        });
+    } catch (error) {
+        console.error('Error getting staff notifications:', error);
+        res.status(500).json({ success: false, error: 'Failed to load notifications' });
+    }
+});
+
+router.post("/api/staff/notifications/clear", requireRole(['staff', 'admin']), async (req, res) => {
+    try {
+        global.staffNotifications = [];
+        res.json({
+            success: true,
+            message: 'Notifications cleared'
+        });
+    } catch (error) {
+        console.error('Error clearing notifications:', error);
+        res.status(500).json({ success: false, error: 'Failed to clear notifications' });
+    }
+});
+
+// Dashboard Real-Time Statistics
+router.get("/api/dashboard/stats", requireAuth, async (req, res) => {
+    try {
+        const { User } = await import("../models/UserMySQL.js");
+        const { Insurance } = await import("../models/InsuranceMySQL.js");
+        const { Claim } = await import("../models/ClaimMySQL.js");
+        const { Inventory } = await import("../models/InventoryMySQL.js");
+        
+        const [farmers, insurance, claims, inventory] = await Promise.all([
+            User.findByRole('farmer'),
+            Insurance.findAll(),
+            Claim.findAll(),
+            Inventory.findAll()
+        ]);
+        
+        res.json({
+            success: true,
+            totalFarmers: farmers.length,
+            pendingInsurance: insurance.filter(i => i.status === 'pending').length,
+            pendingClaims: claims.filter(c => c.status === 'pending').length,
+            totalInventory: inventory.length
+        });
+    } catch (error) {
+        console.error('Error getting dashboard stats:', error);
+        res.status(500).json({ success: false, error: 'Failed to load statistics' });
+    }
+});
+
+// Dashboard Real-Time Recent Activity
+router.get("/api/dashboard/recent-activity", requireAuth, async (req, res) => {
+    try {
+        const activities = [];
+        
+        // Get recent insurance applications
+        const { Insurance } = await import("../models/InsuranceMySQL.js");
+        const insurance = await Insurance.findAll();
+        insurance.slice(0, 3).forEach(ins => {
+            activities.push({
+                id: ins.id,
+                type: 'insurance',
+                action: 'Insurance Application',
+                userName: ins.farmerName,
+                userRole: 'Farmer',
+                status: ins.status,
+                timestamp: ins.createdAt
+            });
+        });
+        
+        // Get recent damage reports
+        const { DamageReport } = await import("../models/DamageReportMySQL.js");
+        const reports = await DamageReport.findAll();
+        reports.slice(0, 3).forEach(report => {
+            activities.push({
+                id: report.id,
+                type: 'damage_report',
+                action: 'Damage Report',
+                userName: report.farmerName,
+                userRole: 'Farmer',
+                status: report.status,
+                timestamp: report.createdAt
+            });
+        });
+        
+        // Get recent request letters
+        const { RequestLetter } = await import("../models/RequestLetterMySQL.js");
+        const requests = await RequestLetter.findAll();
+        requests.slice(0, 3).forEach(req => {
+            activities.push({
+                id: req.id,
+                type: 'request',
+                action: 'Request Letter',
+                userName: req.farmerName,
+                userRole: 'Farmer',
+                status: req.status,
+                timestamp: req.createdAt
+            });
+        });
+        
+        // Sort by most recent
+        activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        res.json({ 
+            success: true,
+            activities: activities.slice(0, 10)
+        });
+    } catch (error) {
+        console.error('Error getting recent activity:', error);
+        res.status(500).json({ success: false, error: 'Failed to load activity' });
+    }
+});
 
 // Health check endpoint for deployment monitoring
 router.get("/health", (req, res) => {
@@ -205,7 +862,7 @@ router.get("/test-dashboard", (req, res) => {
     req.session.userBarangay = 'Main Office';
     req.session.userEmail = 'admin@test.com';
     
-    res.render("dashboard-enhanced", { 
+    res.render("dashboard", { 
         title: "AgriSystem Dashboard - Test Mode",
         user: {
             id: 'admin-test-user',
@@ -239,20 +896,121 @@ router.get("/api/dashboard/stats", requireAuth, async (req, res) => {
     }
 });
 
-// Get all registered farmers (for admin view)
+// Get all farmers (for sidebar counts)
+router.get("/api/farmers", requireRole(['staff', 'admin']), async (req, res) => {
+    try {
+        const { User } = await import("../models/UserMySQL.js");
+        const farmers = await User.findByRole('farmer');
+        res.json({ success: true, farmers });
+    } catch (error) {
+        console.error('Error getting farmers:', error);
+        res.status(500).json({ success: false, error: 'Failed to load farmers' });
+    }
+});
+
+// Get all claims (for sidebar counts)
+router.get("/api/claims", requireAuth, async (req, res) => {
+    try {
+        const { Claim } = await import("../models/ClaimMySQL.js");
+        const claims = await Claim.findAll();
+        res.json({ success: true, claims });
+    } catch (error) {
+        console.error('Error getting claims:', error);
+        res.status(500).json({ success: false, error: 'Failed to load claims' });
+    }
+});
+
+// Get all announcements (for sidebar counts)
+router.get("/api/announcements", requireAuth, async (req, res) => {
+    try {
+        const { Announcement } = await import("../models/AnnouncementMySQL.js");
+        const announcements = await Announcement.findAll();
+        res.json({ success: true, announcements });
+    } catch (error) {
+        console.error('Error getting announcements:', error);
+        res.status(500).json({ success: false, error: 'Failed to load announcements' });
+    }
+});
+
+// Get all registered farmers (for admin/staff/farmer view)
 router.get("/api/farmers/list", requireAuth, async (req, res) => {
     try {
-        const { getAllRegisteredFarmers, getFarmerStats } = await import("../controllers/authController.js");
-        const farmers = getAllRegisteredFarmers();
-        const stats = getFarmerStats();
-        
-        res.json({
-            farmers: farmers,
-            stats: stats
-        });
+        // Try MySQL first, fallback to memory
+        try {
+            const { User } = await import("../models/UserMySQL.js");
+            const farmers = await User.findByRole('farmer');
+            
+            res.json({
+                farmers: farmers,
+                stats: {
+                    totalFarmers: farmers.length,
+                    activeFarmers: farmers.filter(f => f.isApproved !== false).length,
+                    barangays: new Set(farmers.map(f => f.barangay)).size,
+                    newThisMonth: farmers.filter(f => {
+                        const createdDate = new Date(f.createdAt);
+                        const now = new Date();
+                        return createdDate.getMonth() === now.getMonth() && 
+                               createdDate.getFullYear() === now.getFullYear();
+                    }).length
+                }
+            });
+        } catch (dbError) {
+            // Fallback to memory-based farmers
+            const { getAllRegisteredFarmers, getFarmerStats } = await import("../controllers/authController.js");
+            const farmers = getAllRegisteredFarmers();
+            const stats = getFarmerStats();
+            
+            res.json({
+                farmers: farmers,
+                stats: stats
+            });
+        }
     } catch (error) {
         console.error('Error getting farmers list:', error);
         res.status(500).json({ error: 'Failed to load farmers list' });
+    }
+});
+
+// Update farmer (Staff only)
+router.put("/api/staff/farmers/:id", requireRole(['staff']), async (req, res) => {
+    try {
+        const { User } = await import("../models/UserMySQL.js");
+        const { id } = req.params;
+        const { name, email, barangay, phone } = req.body;
+        
+        console.log(`📝 Updating farmer ${id}:`, { name, email, barangay, phone });
+        
+        const updated = await User.update(id, { name, email, barangay, phone });
+        
+        if (updated) {
+            res.json({ success: true, message: 'Farmer updated successfully' });
+        } else {
+            res.status(404).json({ success: false, error: 'Farmer not found' });
+        }
+    } catch (error) {
+        console.error('Error updating farmer:', error);
+        res.status(500).json({ success: false, error: 'Failed to update farmer' });
+    }
+});
+
+// Delete farmer (Staff only)
+router.delete("/api/staff/farmers/:id", requireRole(['staff']), async (req, res) => {
+    try {
+        const { User } = await import("../models/UserMySQL.js");
+        const { id } = req.params;
+        
+        console.log(`🗑️ Deleting farmer ${id}`);
+        
+        const deleted = await User.delete(id);
+        
+        if (deleted) {
+            res.json({ success: true, message: 'Farmer deleted successfully' });
+        } else {
+            res.status(404).json({ success: false, error: 'Farmer not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting farmer:', error);
+        res.status(500).json({ success: false, error: 'Failed to delete farmer' });
     }
 });
 
@@ -273,6 +1031,89 @@ router.get("/api/dashboard/quick-stats", requireAuth, async (req, res) => {
         console.error('Error getting quick stats:', error);
         res.status(500).json({ error: 'Failed to load quick statistics' });
     }
+});
+
+// Routes to serve partials
+router.get("/partials/announcements", requireAuth, (req, res) => {
+    res.render("partials/announcements", { 
+        user: { 
+            role: req.session.userRole,
+            name: req.session.userName || req.session.userEmail
+        }
+    });
+});
+
+router.get("/partials/claims", requireAuth, (req, res) => {
+    res.render("partials/claims", { 
+        user: { 
+            role: req.session.userRole,
+            name: req.session.userName || req.session.userEmail
+        }
+    });
+});
+
+router.get("/partials/damage-reports", requireAuth, (req, res) => {
+    res.render("partials/damage-reports", { 
+        user: { 
+            role: req.session.userRole,
+            name: req.session.userName || req.session.userEmail
+        }
+    });
+});
+
+router.get("/partials/inventory", requireAuth, (req, res) => {
+    res.render("partials/inventory", { 
+        user: { 
+            role: req.session.userRole,
+            name: req.session.userName || req.session.userEmail
+        }
+    });
+});
+
+router.get("/partials/insurance", requireAuth, (req, res) => {
+    res.render("partials/insurance", { 
+        user: { 
+            role: req.session.userRole,
+            name: req.session.userName || req.session.userEmail
+        }
+    });
+});
+
+router.get("/partials/farmers", requireAuth, (req, res) => {
+    res.render("partials/farmers", { 
+        user: { 
+            role: req.session.userRole,
+            name: req.session.userName || req.session.userEmail
+        }
+    });
+});
+
+router.get("/partials/staff-management", requireAuth, (req, res) => {
+    res.render("partials/staff-management", { 
+        user: { 
+            role: req.session.userRole,
+            name: req.session.userName || req.session.userEmail
+        }
+    });
+});
+
+router.get("/partials/farmers-list", requireRole(['staff', 'admin']), (req, res) => {
+    res.render("partials/farmers-list", { 
+        user: { 
+            role: req.session.userRole,
+            name: req.session.userName || req.session.userEmail
+        }
+    });
+});
+
+router.get("/partials/request-letters", requireAuth, (req, res) => {
+    res.render("partials/request-letters", { 
+        user: { 
+            role: req.session.userRole,
+            name: req.session.userName || req.session.userEmail,
+            id: req.session.userId
+        }
+    });
 });
 
 export default router;

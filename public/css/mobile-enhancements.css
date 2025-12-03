@@ -1,0 +1,325 @@
+/* 
+ * Mobile Enhancements CSS
+ * Additional mobile-specific improvements
+ */
+
+/* Mobile Menu Toggle Button */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1100;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.mobile-menu-toggle i {
+    font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(5px);
+}
+
+.mobile-overlay.show {
+    display: block;
+}
+
+/* Mobile-Friendly Tables */
+@media (max-width: 768px) {
+    /* Horizontal scroll indicator */
+    .premium-table-container::after {
+        content: '← Swipe to see more →';
+        display: block;
+        text-align: center;
+        padding: 0.5rem;
+        color: #6b7280;
+        font-size: 0.75rem;
+        font-style: italic;
+    }
+    
+    /* Hide scroll indicator when scrolled */
+    .premium-table-container.scrolled::after {
+        display: none;
+    }
+}
+
+/* Mobile Card View (Alternative to Tables) */
+.mobile-card-view {
+    display: none;
+}
+
+@media (max-width: 576px) {
+    .premium-table-container {
+        display: none;
+    }
+    
+    .mobile-card-view {
+        display: block;
+    }
+    
+    .mobile-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.3s ease-in;
+    }
+    
+    .mobile-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .mobile-card-title {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1f2937;
+    }
+    
+    .mobile-card-body {
+        display: grid;
+        gap: 0.5rem;
+    }
+    
+    .mobile-card-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+    }
+    
+    .mobile-card-label {
+        font-weight: 600;
+        color: #6b7280;
+        font-size: 0.85rem;
+    }
+    
+    .mobile-card-value {
+        font-weight: 500;
+        color: #1f2937;
+        font-size: 0.85rem;
+        text-align: right;
+    }
+    
+    .mobile-card-actions {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 2px solid #f0f0f0;
+        display: flex;
+        gap: 0.5rem;
+    }
+}
+
+/* Touch-Friendly Buttons */
+@media (max-width: 768px) {
+    button,
+    .premium-btn,
+    .btn {
+        min-height: 44px; /* iOS recommended touch target */
+        min-width: 44px;
+    }
+    
+    /* Larger tap targets for mobile */
+    .premium-table tbody tr {
+        cursor: pointer;
+    }
+}
+
+/* Mobile-Friendly Modals */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+    
+    .modal-content {
+        border-radius: 15px;
+    }
+    
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+}
+
+/* Mobile-Friendly Forms */
+@media (max-width: 768px) {
+    .form-control,
+    .form-select,
+    .premium-search,
+    .premium-filter {
+        font-size: 16px; /* Prevents zoom on iOS */
+        min-height: 44px;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+}
+
+/* Mobile Stats Cards */
+@media (max-width: 768px) {
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card p {
+        font-size: 0.85rem;
+    }
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .sidebar .nav-link {
+        padding: 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .sidebar .badge {
+        font-size: 0.75rem;
+    }
+}
+
+/* Pull to Refresh Indicator */
+.pull-to-refresh {
+    display: none;
+    text-align: center;
+    padding: 1rem;
+    color: #6b7280;
+}
+
+@media (max-width: 768px) {
+    .pull-to-refresh.show {
+        display: block;
+    }
+}
+
+/* Mobile-Friendly Badges */
+@media (max-width: 768px) {
+    .badge,
+    .premium-badge {
+        font-size: 0.7rem;
+        padding: 0.35rem 0.7rem;
+    }
+}
+
+/* Landscape Orientation Optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+    .premium-section-header {
+        padding: 0.75rem;
+    }
+    
+    .premium-card {
+        padding: 0.75rem;
+    }
+    
+    .modal-body {
+        max-height: 50vh;
+    }
+}
+
+/* iOS Safe Area Support */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    
+    .sidebar {
+        padding-left: env(safe-area-inset-left);
+    }
+    
+    .mobile-menu-toggle {
+        left: calc(1rem + env(safe-area-inset-left));
+    }
+}
+
+/* Smooth Scrolling for Mobile */
+@media (max-width: 768px) {
+    * {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Loading States for Mobile */
+@media (max-width: 768px) {
+    .premium-empty-state {
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Mobile-Friendly Notifications */
+@media (max-width: 768px) {
+    .premium-notification {
+        left: 0.5rem;
+        right: 0.5rem;
+        top: 0.5rem;
+        min-width: auto;
+        max-width: calc(100% - 1rem);
+    }
+}
+
+/* Accessibility - Larger Touch Targets */
+@media (max-width: 768px) {
+    a, button, input, select, textarea {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Prevent Text Selection on Double Tap */
+@media (max-width: 768px) {
+    .premium-btn,
+    .premium-badge,
+    .mobile-card-header {
+        -webkit-user-select: none;
+        user-select: none;
+    }
+}

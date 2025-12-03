@@ -1,0 +1,524 @@
+﻿<!-- Staff Management Section (Admin Only) -->
+<style>
+/* Premium Staff Management Styles */
+.staff-management-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    margin-bottom: 2rem;
+}
+
+.staff-section-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.staff-section-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.staff-section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #f0f0f0;
+}
+
+.staff-section-header h5 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.staff-section-header .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+.staff-table-container {
+    overflow-x: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.staff-table {
+    margin: 0;
+    background: white;
+}
+
+.staff-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.staff-table thead th {
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.staff-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.staff-table tbody tr:hover {
+    background: linear-gradient(90deg, #f8f9ff 0%, #fff 100%);
+    transform: scale(1.01);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+.staff-table tbody td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
+}
+
+.staff-table tbody td strong {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.staff-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.staff-badge.badge-info {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.staff-action-btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.staff-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.staff-action-btn.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+}
+
+.staff-action-btn.btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.staff-action-btn.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: none;
+}
+
+.staff-action-btn.btn-danger:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.staff-action-btn.btn-info {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: none;
+}
+
+.staff-action-btn.btn-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border: none;
+}
+
+.staff-empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6b7280;
+}
+
+.staff-empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.staff-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 350px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+.staff-stats-badge {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    color: white;
+    font-weight: 600;
+    margin-left: auto;
+}
+</style>
+
+<div class="staff-management-container">
+    <!-- Pending Staff Approvals -->
+    <div class="staff-section-card">
+        <div class="staff-section-header">
+            <h5 class="text-warning">
+                <i class="fas fa-clock"></i>
+                Pending Staff Approvals
+            </h5>
+            <span class="staff-stats-badge" id="pending-count-badge">0 Pending</span>
+        </div>
+        <div class="staff-table-container">
+            <table class="table staff-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Barangay</th>
+                        <th>Staffing Management</th>
+                        <th>Registration Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="pending-staff-table">
+                    <tr>
+                        <td colspan="7" class="staff-empty-state">
+                            <i class="fas fa-user-clock"></i>
+                            <p class="mb-0">No pending staff registrations</p>
+                            <small>New staff will appear here automatically</small>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Approved Staff -->
+    <div class="staff-section-card">
+        <div class="staff-section-header">
+            <h5 class="text-success">
+                <i class="fas fa-check-circle"></i>
+                Approved Staff Members
+            </h5>
+            <span class="staff-stats-badge" id="approved-count-badge">0 Active</span>
+        </div>
+        <div class="staff-table-container">
+            <table class="table staff-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Barangay</th>
+                        <th>Staffing Management</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="approved-staff-table">
+                    <tr>
+                        <td colspan="7" class="staff-empty-state">
+                            <i class="fas fa-user-check"></i>
+                            <p class="mb-0">No approved staff members yet</p>
+                            <small>Approve pending staff to see them here</small>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// Premium Notification function
+function showNotification(type, message) {
+    const colors = {
+        success: 'alert-success',
+        error: 'alert-danger',
+        info: 'alert-info',
+        warning: 'alert-warning'
+    };
+    
+    const notification = document.createElement('div');
+    notification.className = `alert ${colors[type]} alert-dismissible fade show staff-notification`;
+    notification.innerHTML = `
+        <strong>${message}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+// Load pending staff on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadPendingStaff();
+    loadApprovedStaff();
+    
+    // Auto-refresh every 5 seconds for real-time updates
+    setInterval(() => {
+        if (document.getElementById('staff-management-section').style.display !== 'none') {
+            console.log('🔄 Auto-refreshing staff lists (5s interval)...');
+            loadPendingStaff();
+            loadApprovedStaff();
+        }
+    }, 5000); // 5 seconds
+});
+
+function loadPendingStaff() {
+    console.log('📋 Loading pending staff...');
+    
+    fetch('/api/admin/pending-staff')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch');
+            return response.json();
+        })
+        .then(data => {
+            console.log('📊 Pending staff data:', data);
+            const tbody = document.getElementById('pending-staff-table');
+            
+            if (data.success && data.pendingStaff && data.pendingStaff.length > 0) {
+                console.log(`✅ Found ${data.pendingStaff.length} pending staff`);
+                
+                tbody.innerHTML = data.pendingStaff.map(staff => `
+                    <tr class="animate-fade-in">
+                        <td><strong>${staff.name}</strong></td>
+                        <td>${staff.email}</td>
+                        <td>${staff.phone || 'N/A'}</td>
+                        <td>${staff.barangay || 'N/A'}</td>
+                        <td><span class="staff-badge badge-info">${staff.staffingManagement || 'N/A'}</span></td>
+                        <td>${new Date(staff.createdAt).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })}</td>
+                        <td>
+                            <button class="staff-action-btn btn-success" onclick="approveStaff('${staff.id}', '${staff.name}')" title="Approve ${staff.name}">
+                                <i class="fas fa-check me-1"></i>Approve
+                            </button>
+                            <button class="staff-action-btn btn-danger ms-1" onclick="rejectStaff('${staff.id}', '${staff.name}')" title="Reject ${staff.name}">
+                                <i class="fas fa-times me-1"></i>Reject
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                // Update badges
+                updateStaffBadge(data.pendingStaff.length);
+                document.getElementById('pending-count-badge').textContent = `${data.pendingStaff.length} Pending`;
+            } else {
+                console.log('ℹ️ No pending staff registrations');
+                tbody.innerHTML = '<tr><td colspan="7" class="staff-empty-state"><i class="fas fa-user-clock"></i><p class="mb-0">No pending staff registrations</p><small>New staff will appear here automatically</small></td></tr>';
+                updateStaffBadge(0);
+                document.getElementById('pending-count-badge').textContent = '0 Pending';
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error loading pending staff:', error);
+            const tbody = document.getElementById('pending-staff-table');
+            tbody.innerHTML = '<tr><td colspan="7" class="staff-empty-state text-danger"><i class="fas fa-exclamation-triangle"></i><p class="mb-0">Error loading data</p><small>Please refresh the page</small></td></tr>';
+        });
+}
+
+function updateStaffBadge(count) {
+    const badge = document.getElementById('sidebar-staff-count');
+    if (badge) {
+        badge.textContent = count;
+        if (count > 0) {
+            badge.classList.add('bg-warning');
+            badge.classList.remove('bg-primary');
+        } else {
+            badge.classList.add('bg-primary');
+            badge.classList.remove('bg-warning');
+        }
+    }
+}
+
+function loadApprovedStaff() {
+    console.log('📋 Loading approved staff...');
+    fetch('/api/admin/all-staff')
+        .then(response => {
+            console.log('📡 Response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('📊 Approved staff data:', data);
+            const tbody = document.getElementById('approved-staff-table');
+            if (data.success && data.staff && data.staff.length > 0) {
+                console.log(`✅ Found ${data.staff.length} approved staff`);
+                tbody.innerHTML = data.staff.map(staff => `
+                    <tr class="animate-fade-in">
+                        <td><strong>${staff.name}</strong></td>
+                        <td>${staff.email}</td>
+                        <td>${staff.phone || 'N/A'}</td>
+                        <td>${staff.barangay || 'N/A'}</td>
+                        <td><span class="staff-badge badge-info">${staff.staffingManagement || 'N/A'}</span></td>
+                        <td><span class="badge bg-success">Active</span></td>
+                        <td>
+                            <button class="staff-action-btn btn-info" onclick="viewStaff('${staff.id}')">
+                                <i class="fas fa-eye me-1"></i>View
+                            </button>
+                            <button class="staff-action-btn btn-warning ms-1" onclick="suspendStaff('${staff.id}')">
+                                <i class="fas fa-ban me-1"></i>Suspend
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                document.getElementById('approved-count-badge').textContent = `${data.staff.length} Active`;
+            } else {
+                console.log('ℹ️ No approved staff members yet');
+                tbody.innerHTML = '<tr><td colspan="7" class="staff-empty-state"><i class="fas fa-user-check"></i><p class="mb-0">No approved staff members yet</p><small>Approve pending staff to see them here</small></td></tr>';
+                document.getElementById('approved-count-badge').textContent = '0 Active';
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error loading approved staff:', error);
+            document.getElementById('approved-staff-table').innerHTML = 
+                '<tr><td colspan="7" class="text-center py-4 text-danger">Error loading data. Please refresh the page.</td></tr>';
+        });
+}
+
+function approveStaff(staffId, staffName) {
+    if (confirm(`Approve ${staffName}?\n\nThey will be able to login and access the system.`)) {
+        fetch('/api/admin/approve-staff/' + staffId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                // Show success message
+                showNotification('success', `✅ ${staffName} approved successfully!`);
+                
+                // Reload both tables
+                loadPendingStaff();
+                loadApprovedStaff();
+            } else {
+                showNotification('error', 'Error: ' + (result.error || 'Failed to approve'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('error', 'Error approving staff member');
+        });
+    }
+}
+
+function rejectStaff(staffId, staffName) {
+    const reason = prompt(`Reject ${staffName}?\n\nPlease enter reason for rejection:`);
+    if (reason && reason.trim()) {
+        fetch('/api/admin/reject-staff/' + staffId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason: reason })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                showNotification('info', `❌ ${staffName}'s registration rejected`);
+                loadPendingStaff();
+            } else {
+                showNotification('error', 'Error: ' + (result.error || 'Failed to reject'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('error', 'Error rejecting staff member');
+        });
+    }
+}
+
+function viewStaff(staffId) {
+    alert('View staff details for: ' + staffId);
+}
+
+function suspendStaff(staffId) {
+    if (confirm('Are you sure you want to suspend this staff member? They will not be able to login.')) {
+        fetch('/api/admin/suspend-staff/' + staffId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Staff member suspended successfully');
+                loadApprovedStaff();
+            } else {
+                alert('Error: ' + (result.error || 'Failed to suspend'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error suspending staff member');
+        });
+    }
+}
+</script>

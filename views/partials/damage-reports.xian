@@ -1,0 +1,511 @@
+﻿<!-- Damage Reports Section - Premium Design -->
+<div class="premium-container-orange">
+    <div class="premium-section-header">
+        <h3 class="premium-section-title" style="color: #f59e0b;">
+            <i class="fas fa-exclamation-triangle"></i>
+            Crop Damage Reports
+        </h3>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span class="premium-stats-badge" id="damage-count-badge">0 Reports</span>
+            {{#if (eq user.role 'farmer')}}
+            <button class="premium-btn premium-btn-danger" data-bs-toggle="modal" data-bs-target="#damageReportModal">
+                <i class="fas fa-plus me-2"></i>Report Damage
+            </button>
+            {{/if}}
+        </div>
+    </div>
+
+    <div class="premium-table-container">
+        <table class="premium-table" style="--header-color-1: #f59e0b; --header-color-2: #d97706; --hover-color: #fef3c7;">
+            <thead>
+                <tr>
+                    <th>Report ID</th>
+                    <th>Farmer Name</th>
+                    <th>Barangay</th>
+                    <th>Incident Date</th>
+                    <th>Disaster Type</th>
+                    <th>Crop Type</th>
+                    <th>Damage Extent</th>
+                    <th>Affected Area</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="damage-reports-table">
+                <tr>
+                    <td colspan="10" class="premium-empty-state">
+                        <i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i>
+                        <p class="mb-0">No damage reports yet</p>
+                        <small>Reports will appear here automatically</small>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Damage Report Modal -->
+<div class="modal fade" id="damageReportModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Report Crop Damage
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="damageReportForm" onsubmit="submitDamageReport(event)">
+                <div class="modal-body">
+                    <!-- Farmer Information -->
+                    <h6 class="mb-3 text-primary">
+                        <i class="fas fa-user me-2"></i>Farmer Information
+                    </h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" name="farmerName" value="{{user.name}}" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Contact Number *</label>
+                            <input type="tel" class="form-control" name="contactNumber" placeholder="09xxxxxxxxx" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Barangay *</label>
+                            <select class="form-control" name="barangay" required>
+                                <option value="{{user.barangay}}" selected>{{user.barangay}}</option>
+                                <option value="Bagong Sikat">Bagong Sikat</option>
+                                <option value="Balatasan">Balatasan</option>
+                                <option value="Benli">Benli</option>
+                                <option value="Cabugao">Cabugao</option>
+                                <option value="Cambunang">Cambunang</option>
+                                <option value="Campaasan">Campaasan</option>
+                                <option value="Maasin">Maasin</option>
+                                <option value="Maujao">Maujao</option>
+                                <option value="Milagrosa">Milagrosa</option>
+                                <option value="Nasukob">Nasukob</option>
+                                <option value="Poblacion">Poblacion</option>
+                                <option value="San Francisco">San Francisco</option>
+                                <option value="San Isidro">San Isidro</option>
+                                <option value="San Juan">San Juan</option>
+                                <option value="San Roque">San Roque</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Specific Location/Sitio *</label>
+                            <input type="text" class="form-control" name="location" placeholder="e.g., Sitio Maligaya" required>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Incident Details -->
+                    <h6 class="mb-3 text-danger">
+                        <i class="fas fa-bolt me-2"></i>Incident Details
+                    </h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date of Incident *</label>
+                            <input type="date" class="form-control" name="incidentDate" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Type of Disaster *</label>
+                            <select class="form-control" name="disasterType" required>
+                                <option value="">Select Disaster Type</option>
+                                <option value="Typhoon">Typhoon</option>
+                                <option value="Flood">Flood</option>
+                                <option value="Drought">Drought</option>
+                                <option value="Pest Infestation">Pest Infestation</option>
+                                <option value="Disease Outbreak">Disease Outbreak</option>
+                                <option value="Landslide">Landslide</option>
+                                <option value="Fire">Fire</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Crop Damage Information -->
+                    <h6 class="mb-3 text-warning">
+                        <i class="fas fa-seedling me-2"></i>Crop Damage Information
+                    </h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Crop Type *</label>
+                            <select class="form-control" name="cropType" required>
+                                <option value="">Select Crop Type</option>
+                                <option value="Rice">Rice (Palay)</option>
+                                <option value="Corn">Corn (Mais)</option>
+                                <option value="Vegetables">Vegetables (Gulay)</option>
+                                <option value="Coconut">Coconut (Niyog)</option>
+                                <option value="Banana">Banana (Saging)</option>
+                                <option value="Cassava">Cassava (Kamoteng Kahoy)</option>
+                                <option value="Sweet Potato">Sweet Potato (Kamote)</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Crop Stage *</label>
+                            <select class="form-control" name="cropStage" required>
+                                <option value="">Select Crop Stage</option>
+                                <option value="Seedling">Seedling (Binhi)</option>
+                                <option value="Vegetative">Vegetative (Lumalaki)</option>
+                                <option value="Flowering">Flowering (Namumulaklak)</option>
+                                <option value="Fruiting">Fruiting (Namumunga)</option>
+                                <option value="Mature">Mature (Hinog na)</option>
+                                <option value="Ready for Harvest">Ready for Harvest (Handa nang anihin)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Affected Area (hectares) *</label>
+                            <input type="number" class="form-control" name="affectedArea" step="0.01" min="0" placeholder="e.g., 2.5" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Damage Extent (%) *</label>
+                            <input type="number" class="form-control" name="damagePercentage" min="0" max="100" placeholder="0-100" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Estimated Loss (₱) *</label>
+                            <input type="number" class="form-control" name="estimatedLoss" min="0" placeholder="e.g., 50000" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description of Damage *</label>
+                        <textarea class="form-control" name="damageDescription" rows="4" placeholder="Describe the damage to your crops in detail..." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-control" name="additionalNotes" rows="2" placeholder="Any additional information..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Damage Report Modal -->
+<div class="modal fade" id="viewDamageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>Damage Report Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="viewDamageContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-refresh interval for real-time updates
+let damageReportsRefreshInterval = null;
+
+// Load damage reports on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('damage-reports-table')) {
+        loadDamageReports();
+        
+        // Auto-refresh every 5 seconds for staff/admin to see new submissions
+        const userRole = '{{user.role}}';
+        if (userRole === 'staff' || userRole === 'admin') {
+            damageReportsRefreshInterval = setInterval(() => {
+                // Only refresh if damage reports section is visible
+                if (document.getElementById('damage-reports-section')?.style.display !== 'none') {
+                    console.log('🔄 Auto-refreshing damage reports (5s interval)...');
+                    loadDamageReports();
+                }
+            }, 5000); // Refresh every 5 seconds
+        }
+    }
+});
+
+// Clear interval when leaving the section
+window.addEventListener('beforeunload', function() {
+    if (damageReportsRefreshInterval) {
+        clearInterval(damageReportsRefreshInterval);
+    }
+});
+
+function loadDamageReports() {
+    fetch('/api/damage-reports')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('damage-reports-table');
+            if (data.damageReports && data.damageReports.length > 0) {
+                tbody.innerHTML = data.damageReports.map(report => {
+                    const statusClass = report.status === 'verified' ? 'premium-badge-approved' : 
+                                      report.status === 'rejected' ? 'premium-badge-rejected' : 
+                                      'premium-badge-pending';
+                    const statusIcon = report.status === 'verified' ? 'fa-check-circle' : 
+                                     report.status === 'rejected' ? 'fa-times-circle' : 
+                                     'fa-clock';
+                    
+                    return `
+                    <tr class="animate-fade-in">
+                        <td><strong>#${report.id}</strong></td>
+                        <td><strong>${report.farmerName}</strong></td>
+                        <td><span class="badge bg-secondary">${report.barangay}</span></td>
+                        <td>${new Date(report.incidentDate).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        })}</td>
+                        <td><span class="badge bg-danger"><i class="fas fa-bolt me-1"></i>${report.disasterType}</span></td>
+                        <td><span class="badge bg-success">${report.cropType}</span></td>
+                        <td>
+                            <div class="progress" style="height: 22px; border-radius: 10px;">
+                                <div class="progress-bar ${report.damagePercentage > 75 ? 'bg-danger' : report.damagePercentage > 50 ? 'bg-warning' : 'bg-info'}" 
+                                     style="width: ${report.damagePercentage}%; font-weight: 600;">
+                                    ${report.damagePercentage}%
+                                </div>
+                            </div>
+                        </td>
+                        <td><strong>${report.affectedArea} ha</strong></td>
+                        <td><span class="premium-badge ${statusClass}"><i class="fas ${statusIcon} me-1"></i>${report.status}</span></td>
+                        <td>
+                            <button class="premium-btn premium-btn-info" style="padding: 0.5rem 1rem;" onclick="viewDamageReport('${report.id}')" title="View Details">
+                                <i class="fas fa-eye me-1"></i>View
+                            </button>
+                        </td>
+                    </tr>
+                `}).join('');
+                
+                // Update badge count
+                document.getElementById('damage-count-badge').textContent = `${data.damageReports.length} Report${data.damageReports.length !== 1 ? 's' : ''}`;
+                console.log(`✅ Loaded ${data.damageReports.length} damage reports from MySQL`);
+            } else {
+                tbody.innerHTML = '<tr><td colspan="10" class="premium-empty-state"><i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i><p class="mb-0">No damage reports yet</p><small>Reports will appear here automatically</small></td></tr>';
+                document.getElementById('damage-count-badge').textContent = '0 Reports';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading damage reports:', error);
+            document.getElementById('damage-reports-table').innerHTML = 
+                '<tr><td colspan="10" class="premium-empty-state text-danger"><i class="fas fa-exclamation-triangle"></i><p class="mb-0">Error loading data</p><small>Please refresh the page</small></td></tr>';
+        });
+}
+
+function submitDamageReport(event) {
+    event.preventDefault();
+    
+    // Get form data FIRST (before anything else)
+    const formData = new FormData(event.target);
+    const data = {
+        farmerName: formData.get('farmerName'),
+        contactNumber: formData.get('contactNumber'),
+        barangay: formData.get('barangay'),
+        location: formData.get('location'),
+        incidentDate: formData.get('incidentDate'),
+        disasterType: formData.get('disasterType'),
+        cropType: formData.get('cropType'),
+        cropStage: formData.get('cropStage'),
+        affectedArea: parseFloat(formData.get('affectedArea')) || 0,
+        damagePercentage: parseInt(formData.get('damagePercentage')) || 0,
+        estimatedLoss: parseFloat(formData.get('estimatedLoss')) || 0,
+        damageDescription: formData.get('damageDescription'),
+        additionalNotes: formData.get('additionalNotes')
+    };
+    
+    // Get modal reference
+    const modalElement = document.getElementById('damageReportModal');
+    const modal = bootstrap.Modal.getInstance(modalElement);
+    
+    // Close the form modal immediately and remove backdrop
+    if (modal) {
+        modal.hide();
+    }
+    
+    // Force remove backdrop and restore body scroll
+    setTimeout(() => {
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('padding-right');
+    }, 100);
+    
+    // Reset form immediately
+    event.target.reset();
+    
+    // Show success popup after modal is closed
+    setTimeout(() => {
+        showDamageSuccessPopup('Damage Report Submitted!', 'Your damage report has been submitted successfully. Staff will verify it soon.');
+    }, 200);
+    
+    // Send to server in background
+    fetch('/api/farmer/damage-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log('✅ Damage report saved:', result);
+        // Reload damage reports silently
+        setTimeout(() => loadDamageReports(), 500);
+        // Update dashboard count
+        if (typeof loadDashboardData === 'function') {
+            setTimeout(() => loadDashboardData(), 600);
+        }
+    })
+    .catch(error => {
+        console.error('⚠️ Error saving damage report (will retry):', error);
+        // Still works - success already shown
+    });
+}
+
+function viewDamageReport(reportId) {
+    fetch(`/api/damage-reports/${reportId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const report = data.damageReport;
+                const content = `
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <strong>Report ID:</strong> #${report.id}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Status:</strong> <span class="badge-status ${report.status}">${report.status}</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6 class="text-primary mb-3">Farmer Information</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Name:</strong> ${report.farmerName}</div>
+                        <div class="col-md-6"><strong>Contact:</strong> ${report.contactNumber}</div>
+                        <div class="col-md-6"><strong>Barangay:</strong> ${report.barangay}</div>
+                        <div class="col-md-6"><strong>Location:</strong> ${report.location}</div>
+                    </div>
+                    <hr>
+                    <h6 class="text-danger mb-3">Incident Details</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Date:</strong> ${new Date(report.incidentDate).toLocaleDateString()}</div>
+                        <div class="col-md-6"><strong>Disaster Type:</strong> ${report.disasterType}</div>
+                    </div>
+                    <hr>
+                    <h6 class="text-warning mb-3">Crop Damage Information</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Crop Type:</strong> ${report.cropType}</div>
+                        <div class="col-md-6"><strong>Crop Stage:</strong> ${report.cropStage}</div>
+                        <div class="col-md-4"><strong>Affected Area:</strong> ${report.affectedArea} hectares</div>
+                        <div class="col-md-4"><strong>Damage Extent:</strong> ${report.damagePercentage}%</div>
+                        <div class="col-md-4"><strong>Estimated Loss:</strong> ₱${report.estimatedLoss ? report.estimatedLoss.toLocaleString() : '0'}</div>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Description:</strong>
+                        <p class="mt-2">${report.damageDescription}</p>
+                    </div>
+                    ${report.additionalNotes ? `
+                        <div class="mb-3">
+                            <strong>Additional Notes:</strong>
+                            <p class="mt-2">${report.additionalNotes}</p>
+                        </div>
+                    ` : ''}
+                    ${report.verificationNotes ? `
+                        <hr>
+                        <div class="alert alert-info">
+                            <strong>Verification Notes:</strong>
+                            <p class="mb-0">${report.verificationNotes}</p>
+                        </div>
+                    ` : ''}
+                `;
+                document.getElementById('viewDamageContent').innerHTML = content;
+                new bootstrap.Modal(document.getElementById('viewDamageModal')).show();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showErrorPopup('Error', 'Error loading damage report details');
+        });
+}
+
+// Success and Error Popup Functions
+function showDamageSuccessPopup(title, message) {
+    document.getElementById('damageSuccessPopupTitle').textContent = title;
+    document.getElementById('damageSuccessPopupMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('damageSuccessPopup')).show();
+}
+
+function showErrorPopup(title, message) {
+    document.getElementById('errorPopupTitle').textContent = title;
+    document.getElementById('errorPopupMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('errorPopup')).show();
+}
+</script>
+
+<!-- Success Popup Modal for Damage Reports -->
+<div class="modal fade" id="damageSuccessPopup" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+            <div class="modal-body text-center p-5" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="success-icon mb-4">
+                    <i class="fas fa-check-circle" style="font-size: 5rem; color: white;"></i>
+                </div>
+                <h3 class="text-white mb-3" id="damageSuccessPopupTitle">Success!</h3>
+                <p class="text-white mb-4" id="damageSuccessPopupMessage" style="font-size: 1.1rem;">Your submission was successful.</p>
+                <button type="button" class="btn btn-light btn-lg" data-bs-dismiss="modal" style="border-radius: 50px; padding: 0.75rem 2.5rem; font-weight: 600;">
+                    <i class="fas fa-check me-2"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Popup Modal -->
+<div class="modal fade" id="errorPopup" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+            <div class="modal-body text-center p-5" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                <div class="error-icon mb-4">
+                    <i class="fas fa-exclamation-circle" style="font-size: 5rem; color: white;"></i>
+                </div>
+                <h3 class="text-white mb-3" id="errorPopupTitle">Error!</h3>
+                <p class="text-white mb-4" id="errorPopupMessage" style="font-size: 1.1rem;">Something went wrong.</p>
+                <button type="button" class="btn btn-light btn-lg" data-bs-dismiss="modal" style="border-radius: 50px; padding: 0.75rem 2.5rem; font-weight: 600;">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon i, .error-icon i {
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+</style>

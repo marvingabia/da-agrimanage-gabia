@@ -1,0 +1,313 @@
+<!-- STAFF DUTY MANAGEMENT (Admin Only) -->
+{{#if (eq user.role 'admin')}}
+<div id="staff-duty-section" class="content-card mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="fas fa-user-clock me-2"></i>Staff Duty Management</h4>
+        <button class="btn btn-outline-primary btn-sm" onclick="loadStaffDuty()">
+            <i class="fas fa-sync me-2"></i>Refresh
+        </button>
+    </div>
+    
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Duty Approval System:</strong> Staff members who login must be approved by admin before they can start their duty.
+    </div>
+    
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-mini-card bg-warning">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <div class="stat-mini-value" id="pendingDutyCount">0</div>
+                    <div class="stat-mini-label">Pending Approval</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-mini-card bg-success">
+                <i class="fas fa-user-check"></i>
+                <div>
+                    <div class="stat-mini-value" id="onDutyCount">0</div>
+                    <div class="stat-mini-label">On Duty Now</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-mini-card bg-danger">
+                <i class="fas fa-user-times"></i>
+                <div>
+                    <div class="stat-mini-value" id="rejectedDutyCount">0</div>
+                    <div class="stat-mini-label">Rejected Today</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-mini-card bg-secondary">
+                <i class="fas fa-history"></i>
+                <div>
+                    <div class="stat-mini-value" id="totalDutyCount">0</div>
+                    <div class="stat-mini-label">Total Sessions</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Staff Name</th>
+                    <th>Email</th>
+                    <th>Login Time</th>
+                    <th>Status</th>
+                    <th>Approved By</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="staffDutyTable">
+                <tr>
+                    <td colspan="7" class="text-center py-4">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No staff duty sessions</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{{/if}}
+
+<style>
+.stat-mini-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid;
+}
+
+.stat-mini-card.bg-warning {
+    border-left-color: #f59e0b;
+}
+
+.stat-mini-card.bg-success {
+    border-left-color: #10b981;
+}
+
+.stat-mini-card.bg-danger {
+    border-left-color: #ef4444;
+}
+
+.stat-mini-card.bg-secondary {
+    border-left-color: #6b7280;
+}
+
+.stat-mini-card i {
+    font-size: 2rem;
+    opacity: 0.7;
+}
+
+.stat-mini-card.bg-warning i {
+    color: #f59e0b;
+}
+
+.stat-mini-card.bg-success i {
+    color: #10b981;
+}
+
+.stat-mini-card.bg-danger i {
+    color: #ef4444;
+}
+
+.stat-mini-card.bg-secondary i {
+    color: #6b7280;
+}
+
+.stat-mini-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.stat-mini-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+</style>
+
+<script>
+// Load staff duty sessions
+async function loadStaffDuty() {
+    console.log('Loading staff duty sessions...');
+    try {
+        const response = await fetch('/api/admin/active-duty');
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Staff duty data:', data);
+        
+        if (data.success) {
+            displayStaffDuty(data.sessions || []);
+            updateDutyStats(data.stats || {});
+        } else {
+            console.error('API returned error:', data.error);
+            displayStaffDuty([]);
+        }
+    } catch (error) {
+        console.error('Error loading staff duty:', error);
+        const container = document.getElementById('staffDutyTable');
+        if (container) {
+            container.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center py-4">
+                        <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
+                        <p class="text-muted">Unable to load staff duty sessions</p>
+                        <small class="text-muted">Please refresh the page</small>
+                    </td>
+                </tr>
+            `;
+        }
+    }
+}
+
+// Display staff duty sessions
+function displayStaffDuty(sessions) {
+    const container = document.getElementById('staffDutyTable');
+    if (!container) return;
+    
+    if (sessions.length === 0) {
+        container.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-4">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No active staff duty sessions</p>
+                    <small class="text-muted">Staff will appear here when they login</small>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    container.innerHTML = sessions.map(session => {
+        const statusBadge = session.dutyStatus === 'pending' ? 
+            '<span class="badge bg-warning">Pending Approval</span>' :
+            session.dutyStatus === 'approved' ?
+            '<span class="badge bg-success">On Duty</span>' :
+            '<span class="badge bg-danger">Rejected</span>';
+            
+        const actions = session.dutyStatus === 'pending' ?
+            `<div class="btn-group btn-group-sm">
+                <button class="btn btn-success" onclick="approveDutySession(${session.id}, '${session.staffName}')" title="Approve Duty">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+                <button class="btn btn-danger" onclick="rejectDutySession(${session.id}, '${session.staffName}')" title="Reject Duty">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+            </div>` :
+            session.dutyStatus === 'approved' ?
+            '<span class="text-success"><i class="fas fa-check-circle"></i> Active</span>' :
+            '<span class="text-danger"><i class="fas fa-times-circle"></i> Rejected</span>';
+            
+        return `
+            <tr>
+                <td><strong>${session.staffName}</strong></td>
+                <td>${session.staffEmail}</td>
+                <td>${new Date(session.loginTime).toLocaleString('en-PH')}</td>
+                <td>${statusBadge}</td>
+                <td>${session.approvedBy || '-'}</td>
+                <td>${session.notes || '-'}</td>
+                <td>${actions}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Update duty statistics
+function updateDutyStats(stats) {
+    document.getElementById('pendingDutyCount').textContent = stats.pending || 0;
+    document.getElementById('onDutyCount').textContent = stats.approved || 0;
+    document.getElementById('rejectedDutyCount').textContent = stats.rejected || 0;
+    document.getElementById('totalDutyCount').textContent = stats.total || 0;
+}
+
+// Approve duty session
+async function approveDutySession(sessionId, staffName) {
+    const notes = prompt(`Approve ${staffName} for duty?\n\nOptional notes:`);
+    if (notes === null) return; // Cancelled
+    
+    try {
+        const response = await fetch('/api/admin/approve-duty', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId, notes })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(`✅ ${staffName} is now on duty!`);
+            loadStaffDuty(); // Reload
+        } else {
+            alert(`❌ Failed to approve: ${result.error}`);
+        }
+    } catch (error) {
+        console.error('Error approving duty:', error);
+        alert('❌ Failed to approve duty');
+    }
+}
+
+// Reject duty session
+async function rejectDutySession(sessionId, staffName) {
+    const reason = prompt(`Reject ${staffName}'s duty request?\n\nReason (required):`);
+    if (!reason) return;
+    
+    try {
+        const response = await fetch('/api/admin/reject-duty', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId, reason })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(`✅ Duty request rejected for ${staffName}`);
+            loadStaffDuty(); // Reload
+        } else {
+            alert(`❌ Failed to reject: ${result.error}`);
+        }
+    } catch (error) {
+        console.error('Error rejecting duty:', error);
+        alert('❌ Failed to reject duty');
+    }
+}
+
+// Auto-load staff duty when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const userRole = '{{user.role}}';
+    
+    if (userRole === 'admin') {
+        setTimeout(function() {
+            if (typeof loadStaffDuty === 'function') {
+                loadStaffDuty();
+            }
+        }, 500);
+        
+        // Auto-refresh every 30 seconds
+        setInterval(function() {
+            if (typeof loadStaffDuty === 'function') {
+                loadStaffDuty();
+            }
+        }, 30000);
+    }
+});
+</script>

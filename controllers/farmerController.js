@@ -3,11 +3,24 @@
     Handles farmer-specific operations
 */
 
-import { User } from "../models/User.js";
-import { Claim } from "../models/Claim.js";
-import { DamageReport } from "../models/DamageReport.js";
-import { Insurance } from "../models/Insurance.js";
-import { Announcement } from "../models/Announcement.js";
+// Import MySQL models
+const mysqlModels = await Promise.all([
+    import("../models/UserMySQL.js"),
+    import("../models/ClaimMySQL.js"),
+    import("../models/DamageReportMySQL.js"),
+    import("../models/InsuranceMySQL.js"),
+    import("../models/AnnouncementMySQL.js"),
+    import("../models/RequestLetterMySQL.js")
+]);
+
+const User = mysqlModels[0].User || mysqlModels[0].default;
+const Claim = mysqlModels[1].Claim || mysqlModels[1].default;
+const DamageReport = mysqlModels[2].DamageReport || mysqlModels[2].default;
+const Insurance = mysqlModels[3].Insurance || mysqlModels[3].default;
+const Announcement = mysqlModels[4].Announcement || mysqlModels[4].default;
+const RequestLetter = mysqlModels[5].RequestLetter || mysqlModels[5].default;
+
+console.log('✅ Using MySQL models for farmer operations');
 
 // Get farmer dashboard data
 export const getFarmerData = async (req, res) => {
@@ -44,11 +57,40 @@ export const submitClaim = async (req, res) => {
     try {
         const { claimType, itemRequested, quantity, unit, reason } = req.body;
         const farmerId = req.session.userId;
+        const farmerEmail = req.session.userEmail;
         
-        const farmer = await User.findById(farmerId);
-        if (!farmer || farmer.role !== 'farmer') {
+        let farmer = await User.findById(farmerId);
+        
+        // If farmer not found in MySQL, save from session
+        if (!farmer) {
+            console.log(`⚠️ Farmer ${farmerId} not found in MySQL, saving from session...`);
+            const { localUsers } = await import('./authController.js');
+            const localFarmer = localUsers.get(farmerEmail);
+            
+            if (localFarmer) {
+                console.log(`📝 Saving farmer to MySQL before claim`);
+                const newUser = new User(localFarmer);
+                await newUser.save();
+                farmer = localFarmer;
+                console.log(`✅ Farmer saved successfully`);
+            } else {
+                return res.status(403).json({ error: 'Farmer account not found. Please re-login.' });
+            }
+        }
+        
+        if (farmer.role !== 'farmer') {
             return res.status(403).json({ error: 'Access denied' });
         }
+
+        console.log('📝 Creating claim with data:', {
+            farmerId,
+            farmerName: farmer.name,
+            claimType,
+            itemRequested,
+            quantity: parseFloat(quantity),
+            unit,
+            barangay: farmer.barangay
+        });
 
         const claim = new Claim({
             farmerId,
@@ -62,8 +104,25 @@ export const submitClaim = async (req, res) => {
             status: 'pending'
         });
 
-        await claim.save();
-        res.json({ success: true, message: 'Claim submitted successfully', claim });
+        const savedClaim = await claim.save();
+        console.log('✅ Claim saved successfully with ID:', savedClaim.id);
+        
+        // 🔔 AUTOMATIC NOTIFICATION TO STAFF
+        console.log(`🔔 NEW CLAIM: ${farmer.name} submitted ${itemRequested}`);
+        if (!global.staffNotifications) {
+            global.staffNotifications = [];
+        }
+        global.staffNotifications.push({
+            type: 'new_claim',
+            claimId: claim.id,
+            farmerName: farmer.name,
+            barangay: farmer.barangay,
+            itemRequested: itemRequested,
+            quantity: quantity,
+            timestamp: new Date().toISOString()
+        });
+        
+        res.json({ success: true, message: 'Claim submitted successfully! Staff will review your request.', claim });
     } catch (error) {
         console.error('Error submitting claim:', error);
         res.status(500).json({ error: 'Failed to submit claim' });
@@ -74,39 +133,119 @@ export const submitClaim = async (req, res) => {
 export const submitDamageReport = async (req, res) => {
     try {
         const { 
-            calamityType, 
-            incidentDate, 
-            affectedCrop, 
-            affectedArea, 
-            damagePercentage, 
-            description 
+            farmerName,
+            contactNumber,
+            barangay,
+            location,
+            incidentDate,
+            disasterType,
+            cropType,
+            cropStage,
+            affectedArea,
+            damagePercentage,
+            estimatedLoss,
+            damageDescription,
+            additionalNotes
         } = req.body;
         
         const farmerId = req.session.userId;
-        const farmer = await User.findById(farmerId);
+        const sessionFarmerName = req.session.userName;
+        const sessionBarangay = req.session.userBarangay;
+        const farmerEmail = req.session.userEmail;
         
-        if (!farmer || farmer.role !== 'farmer') {
-            return res.status(403).json({ error: 'Access denied' });
+        // Validate required fields
+        if (!incidentDate || !disasterType || !cropType || !affectedArea || !damagePercentage) {
+            return res.status(400).json({ 
+                success: false,
+                error: 'Please fill in all required fields' 
+            });
         }
 
-        const damageReport = new DamageReport({
-            farmerId,
-            farmerName: farmer.name,
-            barangay: farmer.barangay,
-            calamityType,
-            incidentDate: new Date(incidentDate),
-            affectedCrop,
+        // Verify user exists in database
+        try {
+            const { User } = await import('../models/UserMySQL.js');
+            let farmer = await User.findById(farmerId);
+            
+            if (!farmer) {
+                console.log(`⚠️ Farmer ${farmerId} not found in MySQL, saving from session...`);
+                const { localUsers } = await import('./authController.js');
+                const localFarmer = localUsers.get(farmerEmail);
+                
+                if (localFarmer) {
+                    console.log(`📝 Saving farmer to MySQL before damage report`);
+                    const newUser = new User(localFarmer);
+                    await newUser.save();
+                    console.log(`✅ Farmer saved successfully`);
+                }
+            }
+        } catch (dbError) {
+            console.error('⚠️ Error verifying farmer:', dbError.message);
+        }
+
+        const damageReportData = {
+            id: 'DMG-' + Date.now(),
+            farmerId: farmerId || 'unknown',
+            farmerName: farmerName || sessionFarmerName || 'Unknown Farmer',
+            contactNumber: contactNumber || '',
+            barangay: barangay || sessionBarangay || 'Not specified',
+            location: location || '',
+            incidentDate: incidentDate,
+            disasterType: disasterType,
+            cropType: cropType,
+            cropStage: cropStage || '',
             affectedArea: parseFloat(affectedArea),
             damagePercentage: parseFloat(damagePercentage),
-            description,
-            status: 'submitted'
-        });
+            estimatedLoss: parseFloat(estimatedLoss) || 0,
+            damageDescription: damageDescription || '',
+            additionalNotes: additionalNotes || '',
+            status: 'pending',
+            verificationNotes: null,
+            verifiedBy: null,
+            verifiedAt: null,
+            createdAt: new Date().toISOString()
+        };
 
-        await damageReport.save();
-        res.json({ success: true, message: 'Damage report submitted successfully', damageReport });
+        // Use MySQL DamageReport model
+        const newReport = new DamageReport(damageReportData);
+        await newReport.save();
+        
+        console.log('✅ Damage report submitted:', {
+            id: newReport.id,
+            farmer: damageReportData.farmerName,
+            disaster: disasterType,
+            crop: cropType,
+            damage: damagePercentage + '%'
+        });
+        
+        // Trigger real-time notification for staff
+        console.log(`🔔 REAL-TIME NOTIFICATION: New damage report from ${damageReportData.farmerName}`);
+        
+        // Store notification for staff dashboard
+        if (!global.staffNotifications) {
+            global.staffNotifications = [];
+        }
+        global.staffNotifications.push({
+            type: 'new_damage_report',
+            reportId: newReport.id,
+            farmerName: damageReportData.farmerName,
+            barangay: damageReportData.barangay,
+            disasterType: disasterType,
+            cropType: cropType,
+            damagePercentage: damagePercentage,
+            timestamp: new Date().toISOString()
+        });
+        
+        res.json({ 
+            success: true, 
+            message: 'Damage report submitted successfully! Staff will verify soon.',
+            damageReport: newReport
+        });
     } catch (error) {
-        console.error('Error submitting damage report:', error);
-        res.status(500).json({ error: 'Failed to submit damage report' });
+        console.error('❌ Error submitting damage report:', error);
+        res.status(500).json({ 
+            success: false,
+            error: 'Failed to submit damage report. Please try again.' 
+        });
     }
 };
 
@@ -118,39 +257,113 @@ export const applyInsurance = async (req, res) => {
             insuredArea, 
             plantingDate, 
             expectedHarvestDate, 
-            insuranceType 
+            insuranceType,
+            cropVariety,
+            totalFarmArea,
+            farmLocation,
+            previousYield,
+            farmingExperience,
+            additionalInfo,
+            contactNumber,
+            emergencyContact,
+            estimatedPremium,
+            estimatedCoverage
         } = req.body;
         
         const farmerId = req.session.userId;
-        const farmer = await User.findById(farmerId);
+        const farmerName = req.session.userName;
+        const farmerBarangay = req.session.userBarangay;
         
-        if (!farmer || farmer.role !== 'farmer') {
-            return res.status(403).json({ error: 'Access denied' });
+        if (!farmerId || !farmerName || !farmerBarangay) {
+            return res.status(403).json({ error: 'Access denied - missing farmer information' });
         }
 
-        // Calculate premium and coverage based on area and crop type
-        const premiumRate = insuranceType === 'comprehensive' ? 0.05 : 0.03;
-        const coverageRate = insuranceType === 'comprehensive' ? 50000 : 30000; // per hectare
-        
-        const premiumAmount = parseFloat(insuredArea) * coverageRate * premiumRate;
-        const coverageAmount = parseFloat(insuredArea) * coverageRate;
+        // Verify user exists in database
+        try {
+            const { User } = await import('../models/UserMySQL.js');
+            let farmer = await User.findById(farmerId);
+            
+            if (!farmer) {
+                console.log(`⚠️ Farmer ${farmerId} not found in MySQL, checking local storage...`);
+                // Try to get from local storage and save to MySQL
+                const { localUsers } = await import('./authController.js');
+                const localFarmer = localUsers.get(req.session.userEmail);
+                
+                if (localFarmer) {
+                    console.log(`📝 Saving farmer to MySQL: ${localFarmer.name} (${localFarmer.email})`);
+                    const newUser = new User(localFarmer);
+                    await newUser.save();
+                    console.log(`✅ Farmer saved to MySQL successfully`);
+                } else {
+                    return res.status(404).json({ error: 'Farmer account not found. Please re-login.' });
+                }
+            }
+        } catch (dbError) {
+            console.error('⚠️ Error verifying farmer:', dbError.message);
+            // Continue anyway - will use local storage fallback
+        }
+
+        // Use user-provided premium and coverage amounts
+        const premiumAmount = parseFloat(estimatedPremium) || 0;
+        const coverageAmount = parseFloat(estimatedCoverage) || 0;
 
         const insurance = new Insurance({
             farmerId,
-            farmerName: farmer.name,
-            barangay: farmer.barangay,
+            farmerName: farmerName,
+            barangay: farmerBarangay,
             cropType,
+            cropVariety,
             insuredArea: parseFloat(insuredArea),
+            totalFarmArea: parseFloat(totalFarmArea) || 0,
             plantingDate: new Date(plantingDate),
             expectedHarvestDate: new Date(expectedHarvestDate),
             insuranceType,
+            farmLocation,
+            previousYield: parseInt(previousYield) || 0,
+            farmingExperience: parseInt(farmingExperience) || 0,
             premiumAmount,
             coverageAmount,
+            additionalInfo,
+            contactNumber,
+            emergencyContact,
             status: 'pending'
         });
 
         await insurance.save();
-        res.json({ success: true, message: 'Insurance application submitted successfully', insurance });
+        
+        console.log('✅ Insurance application saved:', {
+            id: insurance.id,
+            farmerId,
+            farmerName,
+            barangay: farmerBarangay,
+            cropType,
+            insuredArea
+        });
+        
+        // Trigger real-time notification for staff
+        console.log(`🔔 REAL-TIME NOTIFICATION: New insurance application from ${farmerName}`);
+        
+        // Store notification for staff dashboard
+        if (!global.staffNotifications) {
+            global.staffNotifications = [];
+        }
+        global.staffNotifications.push({
+            type: 'new_insurance',
+            insuranceId: insurance.id,
+            farmerName: farmerName,
+            barangay: farmerBarangay,
+            cropType: cropType,
+            insuredArea: insuredArea,
+            timestamp: new Date().toISOString()
+        });
+        
+        res.json({ 
+            success: true, 
+            message: 'Insurance application submitted successfully', 
+            insurance,
+            farmerName,
+            barangay: farmerBarangay
+        });
     } catch (error) {
         console.error('Error applying for insurance:', error);
         res.status(500).json({ error: 'Failed to apply for insurance' });
@@ -208,5 +421,136 @@ export const getFarmerAnnouncements = async (req, res) => {
     } catch (error) {
         console.error('Error getting announcements:', error);
         res.status(500).json({ error: 'Failed to load announcements' });
+    }
+};
+
+
+// Submit request letter (RequestLetter is already imported at the top)
+export const submitRequestLetter = async (req, res) => {
+    try {
+        const farmerId = req.session.userId;
+        const farmerName = req.session.userName;
+        const farmerEmail = req.session.userEmail;
+        const farmerBarangay = req.session.userBarangay || 'Not specified';
+        
+        const {
+            requestType,
+            subject,
+            message,
+            priority,
+            contactNumber
+        } = req.body;
+        
+        // Validate required fields
+        if (!requestType || !subject || !message || !contactNumber) {
+            return res.status(400).json({ 
+                success: false,
+                error: 'Please fill in all required fields (Request Type, Subject, Message, Contact Number)' 
+            });
+        }
+
+        // Verify user exists in database (same fix as insurance)
+        try {
+            const { User } = await import('../models/UserMySQL.js');
+            let farmer = await User.findById(farmerId);
+            
+            if (!farmer) {
+                console.log(`⚠️ Farmer ${farmerId} not found in MySQL, saving from session...`);
+                const { localUsers } = await import('./authController.js');
+                const localFarmer = localUsers.get(farmerEmail);
+                
+                if (localFarmer) {
+                    console.log(`📝 Saving farmer to MySQL: ${localFarmer.name} (${localFarmer.email})`);
+                    const newUser = new User(localFarmer);
+                    await newUser.save();
+                    console.log(`✅ Farmer saved to MySQL successfully`);
+                } else {
+                    return res.status(404).json({ 
+                        success: false,
+                        error: 'Farmer account not found. Please re-login.' 
+                    });
+                }
+            }
+        } catch (dbError) {
+            console.error('⚠️ Error verifying farmer:', dbError.message);
+        }
+        
+        const requestData = {
+            id: 'REQ-' + Date.now(),
+            farmerId: farmerId || 'unknown',
+            farmerName: farmerName || 'Unknown Farmer',
+            farmerEmail: farmerEmail || '',
+            barangay: farmerBarangay,
+            requestType,
+            subject,
+            message,
+            priority: priority || 'normal',
+            contactNumber,
+            status: 'pending',
+            response: null,
+            actionTaken: null,
+            respondedBy: null,
+            respondedAt: null,
+            createdAt: new Date().toISOString()
+        };
+        
+        // Use MySQL RequestLetter model
+        const newRequest = new RequestLetter(requestData);
+        await newRequest.save();
+        
+        console.log('✅ Request letter submitted:', {
+            id: newRequest.id,
+            farmer: farmerName,
+            type: requestType,
+            subject: subject
+        });
+        
+        // Trigger real-time notification for staff
+        console.log(`🔔 REAL-TIME NOTIFICATION: New request letter from ${farmerName}`);
+        
+        // Store notification for staff dashboard
+        if (!global.staffNotifications) {
+            global.staffNotifications = [];
+        }
+        global.staffNotifications.push({
+            type: 'new_request_letter',
+            requestId: newRequest.id,
+            farmerName: farmerName,
+            barangay: farmerBarangay,
+            requestType: requestType,
+            subject: subject,
+            priority: priority || 'normal',
+            timestamp: new Date().toISOString()
+        });
+        
+        res.json({
+            success: true,
+            message: 'Request letter submitted successfully! Staff will respond soon.',
+            request: newRequest
+        });
+    } catch (error) {
+        console.error('❌ Error submitting request letter:', error);
+        res.status(500).json({ 
+            success: false,
+            error: 'Failed to submit request letter. Please try again.' 
+        });
+    }
+};
+
+// Get farmer's request letters
+export const getFarmerRequestLetters = async (req, res) => {
+    try {
+        const farmerId = req.session.userId;
+        
+        // Use MySQL RequestLetter model
+        const requests = await RequestLetter.findByFarmer(farmerId);
+        
+        res.json({
+            success: true,
+            requests: requests || []
+        });
+    } catch (error) {
+        console.error('Error getting request letters:', error);
+        res.status(500).json({ error: 'Failed to load request letters' });
     }
 };

@@ -1,866 +1,971 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}} - Professional Dashboard</title>
+    <title>Dashboard - AgriSystem</title>
+    <!-- Force browser to reload - no cache -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/css/agriculture-dashboard.css" rel="stylesheet">
+    <link href="/css/premium-sections.css" rel="stylesheet">
+    <link href="/css/mobile-enhancements.css" rel="stylesheet">
+    <link href="/css/mobile-responsive.css" rel="stylesheet">
+    <link href="/css/data-analytics.css" rel="stylesheet">
+    <link href="/css/notifications.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: 
-                linear-gradient(rgba(45, 80, 22, 0.1), rgba(45, 80, 22, 0.1)),
-                url('/images/backgrounds/agriculture-bg.jpg'),
-                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%2387CEEB"/><stop offset="30%" style="stop-color:%23B0E0E6"/><stop offset="70%" style="stop-color:%2398FB98"/></linearGradient></defs><rect width="1200" height="800" fill="url(%23sky)"/><ellipse cx="600" cy="500" rx="800" ry="150" fill="%236B8E23" opacity="0.8"/><ellipse cx="300" cy="550" rx="500" ry="100" fill="%23228B22" opacity="0.7"/><ellipse cx="900" cy="580" rx="400" ry="80" fill="%2332CD32" opacity="0.6"/><rect x="0" y="650" width="1200" height="150" fill="%23228B22"/><g opacity="0.8"><circle cx="150" cy="400" r="60" fill="%23006400"/><circle cx="200" cy="420" r="40" fill="%23228B22"/><circle cx="180" cy="380" r="30" fill="%2332CD32"/><circle cx="1000" cy="420" r="70" fill="%23006400"/><circle cx="1050" cy="400" r="50" fill="%23228B22"/><circle cx="950" cy="440" r="35" fill="%2332CD32"/></g><g opacity="0.6"><rect x="80" y="500" width="8" height="60" fill="%23654321"/><rect x="120" y="480" width="6" height="80" fill="%23654321"/><rect x="900" y="490" width="10" height="70" fill="%23654321"/><rect x="950" y="470" width="7" height="90" fill="%23654321"/></g><g opacity="0.4"><path d="M100,600 Q150,580 200,600 T300,600" stroke="%23228B22" stroke-width="3" fill="none"/><path d="M400,620 Q500,600 600,620 T800,620" stroke="%2332CD32" stroke-width="2" fill="none"/><path d="M850,640 Q950,620 1050,640" stroke="%23228B22" stroke-width="2" fill="none"/></g></svg>'),
-                radial-gradient(ellipse at top, #87CEEB 0%, #98FB98 40%, #90EE90 70%, #228B22 100%);
-            background-size: cover, cover, cover, 100% 100%;
-            background-position: center, center, center, center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            color: #2d5016;
-            min-height: 100vh;
-            position: relative;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                /* Rice field rows pattern */
-                repeating-linear-gradient(
-                    45deg,
-                    transparent,
-                    transparent 20px,
-                    rgba(34, 139, 34, 0.1) 20px,
-                    rgba(34, 139, 34, 0.1) 25px
-                ),
-                /* Agricultural landscape */
-                linear-gradient(180deg, 
-                    #87CEEB 0%,           /* Sky blue */
-                    #B0E0E6 20%,          /* Light sky blue */
-                    #98FB98 40%,          /* Pale green */
-                    #90EE90 60%,          /* Light green */
-                    #32CD32 80%,          /* Lime green */
-                    #228B22 100%          /* Forest green */
-                );
-            opacity: 0.6;
-            pointer-events: none;
-            z-index: -2;
-        }
-        
-        body::after {
-            content: '';
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(0deg, rgba(34, 139, 34, 0.6) 0%, transparent 100%);
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #2d5016 0%, #4a7c59 50%, #1a4731 100%);
-            box-shadow: 4px 0 25px rgba(45, 80, 22, 0.3);
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            border-right: 3px solid rgba(106, 155, 71, 0.3);
-        }
-        
-        .sidebar-header {
-            padding: 2rem 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .sidebar-header h3 {
-            color: white;
-            font-weight: 600;
-            font-size: 1.5rem;
-            margin: 0;
-        }
-        
-        .sidebar-header p {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.875rem;
-            margin: 0.5rem 0 0 0;
-        }
-        
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 1rem 1.5rem;
-            margin: 0.25rem 1rem;
-            border-radius: 0.75rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .sidebar .nav-link:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            transform: translateX(5px);
-        }
-        
-        .sidebar .nav-link.active {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-        }
-        
-        .sidebar .nav-link i {
-            width: 20px;
-            margin-right: 0.75rem;
-            font-size: 1.1rem;
-        }
-        
-        .main-content {
-            margin-left: 280px;
-            min-height: 100vh;
-            background: transparent;
-            position: relative;
-        }
-        
-        .main-content::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 280px;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 30% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 30%),
-                radial-gradient(circle at 70% 30%, rgba(50, 205, 50, 0.1) 0%, transparent 30%),
-                linear-gradient(45deg, transparent 40%, rgba(107, 142, 35, 0.05) 50%, transparent 60%);
-            z-index: -1;
-        }
-        
-        .top-navbar {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .page-title {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin: 0;
-            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            margin-left: 1rem;
-        }
-        
-        .btn-logout {
-            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-            border: none;
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
-        }
-        
-        .btn-logout:hover {
-            background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
-            color: white;
-        }
-        
-        .btn-back {
-            background: linear-gradient(135deg, #4a7c59 0%, #2d5016 100%);
-            border: none;
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(74, 124, 89, 0.3);
-        }
-        
-        .btn-back:hover {
-            background: linear-gradient(135deg, #2d5016 0%, #1a4731 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(74, 124, 89, 0.4);
-            color: white;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4a7c59 0%, #2d5016 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(45, 80, 22, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .dashboard-content {
-            padding: 2rem;
-            position: relative;
-            z-index: 5;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-            max-width: 1200px;
-        }
-        
-        .stat-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, rgba(74, 124, 89, 0.6) 0%, rgba(107, 155, 71, 0.6) 50%, rgba(45, 80, 22, 0.6) 100%);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-            border-color: rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .stat-card-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-        }
-        
-        .stat-icon.blue { 
-            background: linear-gradient(135deg, #4a7c59 0%, #2d5016 100%); 
-            box-shadow: 0 4px 15px rgba(74, 124, 89, 0.3);
-        }
-        .stat-icon.green { 
-            background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%); 
-            box-shadow: 0 4px 15px rgba(107, 155, 71, 0.3);
-        }
-        .stat-icon.yellow { 
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-        }
-        .stat-icon.red { 
-            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); 
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
-        }
-        
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin: 0.75rem 0;
-            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
-        }
-        
-        .stat-label {
-            color: #374151;
-            font-size: 0.95rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-        }
-        
-        .stat-change {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.375rem;
-            margin-top: 0.5rem;
-            display: inline-block;
-        }
-        
-        .stat-change.positive {
-            background: linear-gradient(135deg, rgba(107, 155, 71, 0.2) 0%, rgba(74, 124, 89, 0.2) 100%);
-            color: #2d5016;
-            border: 1px solid rgba(107, 155, 71, 0.3);
-            font-weight: 600;
-        }
-        
-        .stat-change.negative {
-            background: #fef2f2;
-            color: #991b1b;
-        }
-        
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .content-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .content-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, rgba(74, 124, 89, 0.6) 0%, rgba(107, 155, 71, 0.6) 50%, rgba(45, 80, 22, 0.6) 100%);
-        }
-        
-        .content-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-            border-color: rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .content-card h4 {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-        }
-        
-        .activity-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        
-        .activity-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            font-size: 0.875rem;
-        }
-        
-        .activity-content {
-            flex: 1;
-        }
-        
-        .activity-title {
-            font-weight: 500;
-            color: #1e293b;
-            font-size: 0.875rem;
-        }
-        
-        .activity-time {
-            color: #64748b;
-            font-size: 0.75rem;
-        }
-        
-        /* Footer Styles */
-        .dashboard-footer {
-            background: linear-gradient(135deg, #2d5016 0%, #4a7c59 50%, #1a4731 100%);
-            color: white;
-            padding: 3rem 2rem;
-            margin-top: 4rem;
-            text-align: center;
-            border-top: 4px solid #6b9b47;
-            box-shadow: 0 -8px 30px rgba(45, 80, 22, 0.2);
-            position: relative;
-        }
-        
-        .dashboard-footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent 0%, #6b9b47 50%, transparent 100%);
-        }
-        
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .footer-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: #6b9b47;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .footer-subtitle {
-            font-size: 1.1rem;
-            margin-bottom: 1.25rem;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 500;
-        }
-        
-        .footer-creator {
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.8);
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 1.25rem;
-            margin-top: 1.25rem;
-            font-weight: 400;
-        }
-        
-        .footer-creator strong {
-            color: #6b9b47;
-            font-weight: 600;
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .top-navbar {
-                padding: 1rem;
-                flex-wrap: wrap;
-                gap: 1rem;
-            }
-            
-            .user-info {
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
-            
-            .action-buttons {
-                margin-left: 0;
-                gap: 0.25rem;
-            }
-            
-            .btn-logout, .btn-back {
-                padding: 0.375rem 0.75rem;
-                font-size: 0.8rem;
-            }
-            
-            .btn-logout span, .btn-back span {
-                display: none;
-            }
+        .badge-pulse {
+            animation: pulse 0.5s ease-in-out 3;
+            background-color: #dc3545 !important;
         }
     </style>
 </head>
-<body>
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <div class="sidebar-header">
-            <h3><i class="fas fa-leaf me-2"></i>AgriSystem</h3>
-            <p>Agricultural Management</p>
+<body data-user-role="{{user.role}}"
+    <!-- Mobile Hamburger Menu -->
+    <button class="hamburger-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar vh-100">
+                <div class="position-sticky pt-3">
+                    <h4 class="text-white px-3 mb-4">
+                        <i class="fas fa-leaf me-2"></i>AgriSystem
+                    </h4>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white active" href="#" onclick="showSection('dashboard')" id="nav-dashboard">
+                                <i class="fas fa-home me-2"></i>Dashboard
+                            </a>
+                        </li>
+         
+               
+                        <!-- Farmer Menu -->
+                        {{#if (eq user.role 'farmer')}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('insurance')" id="nav-insurance">
+                                <i class="fas fa-shield-alt me-2"></i>Insurance
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('damage-reports')" id="nav-damage-reports">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Damage Reports
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('claims')" id="nav-claims">
+                                <i class="fas fa-hand-holding-usd me-2"></i>Claims
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('request-letters')" id="nav-request-letters">
+                                <i class="fas fa-envelope me-2"></i>Request Letters
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('announcements')" id="nav-announcements">
+                                <i class="fas fa-bullhorn me-2"></i>Announcements
+                            </a>
+                        </li>
+                        {{/if}}
+                        
+                        <!-- Staff Menu -->
+                        {{#if (eq user.role 'staff')}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('farmers-list')" id="nav-farmers-list">
+                                <i class="fas fa-users me-2"></i>Farmers
+                                <span class="badge bg-primary rounded-pill float-end" id="sidebar-farmers-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('insurance')" id="nav-insurance">
+                                <i class="fas fa-shield-alt me-2"></i>Insurance
+                                <span class="badge bg-info rounded-pill float-end" id="sidebar-insurance-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('damage-reports')" id="nav-damage-reports">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Damage Reports
+                                <span class="badge bg-warning rounded-pill float-end" id="sidebar-reports-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('claims')" id="nav-claims">
+                                <i class="fas fa-hand-holding-usd me-2"></i>Claims
+                                <span class="badge bg-success rounded-pill float-end" id="sidebar-claims-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('request-letters')" id="nav-request-letters">
+                                <i class="fas fa-envelope me-2"></i>Request Letters
+                                <span class="badge bg-danger rounded-pill float-end" id="sidebar-requests-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('inventory')" id="nav-inventory">
+                                <i class="fas fa-seedling me-2"></i>Crop Management
+                                <span class="badge bg-secondary rounded-pill float-end" id="sidebar-inventory-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('announcements')" id="nav-announcements">
+                                <i class="fas fa-bullhorn me-2"></i>Announcements
+                                <span class="badge bg-light text-dark rounded-pill float-end" id="sidebar-announcements-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('data-analytics')" id="nav-data-analytics">
+                                <i class="fas fa-chart-line me-2"></i>Data Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('send-notifications')" id="nav-send-notifications">
+                                <i class="fas fa-paper-plane me-2"></i>Send Notifications
+                            </a>
+                        </li>
+                        {{/if}}
+                        
+                        <!-- Admin Menu -->
+                        {{#if (eq user.role 'admin')}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('staff-management')" id="nav-staff-management">
+                                <i class="fas fa-user-tie me-2"></i>Staff Management
+                                <span class="badge bg-primary rounded-pill float-end" id="sidebar-staff-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('farmers-list')" id="nav-farmers-list">
+                                <i class="fas fa-users me-2"></i>Farmers
+                                <span class="badge bg-primary rounded-pill float-end" id="sidebar-farmers-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('insurance')" id="nav-insurance">
+                                <i class="fas fa-shield-alt me-2"></i>Insurance
+                                <span class="badge bg-info rounded-pill float-end" id="sidebar-insurance-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('damage-reports')" id="nav-damage-reports">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Damage Reports
+                                <span class="badge bg-warning rounded-pill float-end" id="sidebar-reports-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('claims')" id="nav-claims">
+                                <i class="fas fa-hand-holding-usd me-2"></i>Claims
+                                <span class="badge bg-success rounded-pill float-end" id="sidebar-claims-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('request-letters')" id="nav-request-letters">
+                                <i class="fas fa-envelope me-2"></i>Request Letters
+                                <span class="badge bg-danger rounded-pill float-end" id="sidebar-requests-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('inventory')" id="nav-inventory">
+                                <i class="fas fa-seedling me-2"></i>Crop Management
+                                <span class="badge bg-secondary rounded-pill float-end" id="sidebar-inventory-count">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" onclick="showSection('announcements')" id="nav-announcements">
+                                <i class="fas fa-bullhorn me-2"></i>Announcements
+                                <span class="badge bg-light text-dark rounded-pill float-end" id="sidebar-announcements-count">0</span>
+                            </a>
+                        </li>
+                        {{/if}}
+                        
+                        <!-- Notifications -->
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-white" href="#" onclick="toggleNotifications()" id="nav-notifications">
+                                <i class="fas fa-bell me-2"></i>Notifications
+                                <span class="badge bg-danger rounded-pill float-end pulse" id="notification-count" style="display:none;">0</span>
+                            </a>
+                        </li>
+                        
+                        <!-- Settings & Logout -->
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="/settings">
+                                <i class="fas fa-cog me-2"></i>Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Notification Overlay -->
+            <div id="notification-overlay" class="notification-overlay" onclick="toggleNotifications()"></div>
+            
+            <!-- Notification Panel -->
+            <div id="notification-panel" class="notification-panel">
+                <div class="notification-header">
+                    <h5><i class="fas fa-bell me-2"></i>Notifications</h5>
+                    <button class="btn-close-panel" onclick="toggleNotifications()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="notification-body" id="notification-list">
+                    <div class="notification-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No new notifications</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Welcome, {{user.name}}</h1>
+                    <div class="badge bg-primary text-uppercase">{{user.role}}</div>
+                </div>
+
+                <!-- Dashboard Section -->
+                <div id="dashboard-section">
+                    <div class="row">
+                        {{#if (eq user.role 'farmer')}}
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-shield-alt text-primary"></i> Insurance</h5>
+                                    <p class="card-text display-6" id="insurance-count">0</p>
+                                    <p class="text-muted">Applications</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-file-alt text-success"></i> Damage Reports</h5>
+                                    <p class="card-text display-6" id="reports-count">0</p>
+                                    <p class="text-muted">Submitted</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-envelope text-info"></i> Request Letters</h5>
+                                    <p class="card-text display-6" id="requests-count">0</p>
+                                    <p class="text-muted">Sent</p>
+                                </div>
+                            </div>
+                        </div>
+                        {{/if}}
+                        
+                        {{#if (eq user.role 'staff')}}
+                        <div class="col-md-3 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-users text-primary"></i> Farmers</h5>
+                                    <p class="card-text display-6" id="farmers-count">{{stats.totalFarmers}}</p>
+                                    <p class="text-muted">Registered</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-shield-alt text-success"></i> Insurance</h5>
+                                    <p class="card-text display-6" id="insurance-count">0</p>
+                                    <p class="text-muted">Applications</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-file-alt text-warning"></i> Reports</h5>
+                                    <p class="card-text display-6" id="reports-count">0</p>
+                                    <p class="text-muted">Damage Reports</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-box text-info"></i> Inventory</h5>
+                                    <p class="card-text display-6" id="inventory-count">{{stats.inventoryItems}}</p>
+                                    <p class="text-muted">Items</p>
+                                </div>
+                            </div>
+                        </div>
+                        {{/if}}
+                        
+                        {{#if (eq user.role 'admin')}}
+                        <div class="col-md-3 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-users text-primary"></i> Farmers</h5>
+                                    <p class="card-text display-6" id="farmers-count">{{stats.totalFarmers}}</p>
+                                    <p class="text-muted">Registered</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-user-tie text-success"></i> Staff</h5>
+                                    <p class="card-text display-6" id="staff-count">{{stats.totalStaff}}</p>
+                                    <p class="text-muted">Active Staff</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-clock text-warning"></i> Pending</h5>
+                                    <p class="card-text display-6" id="pending-count">0</p>
+                                    <p class="text-muted">Staff Approvals</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-bullhorn text-info"></i> Announcements</h5>
+                                    <p class="card-text display-6" id="announcements-count">{{stats.activeAnnouncements}}</p>
+                                    <p class="text-muted">Active</p>
+                                </div>
+                            </div>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+
+                <!-- Insurance Section -->
+                <div id="insurance-section" style="display:none;">
+                    {{> insurance}}
+                </div>
+                
+                <!-- Damage Reports Section -->
+                <div id="damage-reports-section" style="display:none;">
+                    {{> damage-reports}}
+                </div>
+                
+                <!-- Claims Section -->
+                <div id="claims-section" style="display:none;">
+                    {{> claims}}
+                </div>
+                
+                <!-- Request Letters Section -->
+                <div id="request-letters-section" style="display:none;">
+                    {{> request-letters}}
+                </div>
+                
+                <!-- Inventory Section -->
+                <div id="inventory-section" style="display:none;">
+                    {{> inventory}}
+                </div>
+                
+                <!-- Data Analytics Section -->
+                <div id="data-analytics-section" style="display:none;">
+                    {{> data-analytics}}
+                </div>
+                
+                <!-- Send Notifications Section -->
+                <div id="send-notifications-section" style="display:none;">
+                    {{> send-notifications}}
+                </div>
+                
+                <!-- Announcements Section -->
+                <div id="announcements-section" style="display:none;">
+                    {{> announcements}}
+                </div>
+                
+                <!-- Farmers List Section -->
+                <div id="farmers-list-section" style="display:none;">
+                    {{> farmers-list}}
+                </div>
+                
+                <!-- Staff Management Section -->
+                <div id="staff-management-section" style="display:none;">
+                    {{> staff-management}}
+                </div>
+            </main>
         </div>
-        <ul class="nav flex-column mt-3">
-            <li class="nav-item">
-                <a class="nav-link active" href="/dashboard">
-                    <i class="fas fa-tachometer-alt"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/farmers">
-                    <i class="fas fa-users"></i>
-                    Farmers
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/inventory">
-                    <i class="fas fa-boxes"></i>
-                    Inventory
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/claims">
-                    <i class="fas fa-file-invoice"></i>
-                    Claims
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/damage-reports">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Damage Reports
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/insurance">
-                    <i class="fas fa-shield-alt"></i>
-                    Insurance
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/announcements">
-                    <i class="fas fa-bullhorn"></i>
-                    Announcements
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/staff">
-                    <i class="fas fa-user-tie"></i>
-                    Staff
-                </a>
-            </li>
-            <li class="nav-item mt-4">
-                <a class="nav-link" href="/settings">
-                    <i class="fas fa-cog"></i>
-                    Settings
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </li>
-        </ul>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Top Navigation -->
-        <div class="top-navbar">
-            <h1 class="page-title">Dashboard Overview</h1>
-            <div class="user-info">
-                <div class="user-avatar">
-                    {{firstChar user.name}}
-                </div>
-                <div>
-                    <div style="font-weight: 600; font-size: 0.875rem;">{{user.name}}</div>
-                    <div style="color: #64748b; font-size: 0.75rem;">{{user.role}}</div>
-                </div>
-                <div class="action-buttons">
-                    <a href="/" class="btn-back" title="Back to Login">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Back</span>
-                    </a>
-                    <a href="/logout" class="btn-logout" title="Logout" onclick="return confirmLogout()">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dashboard Content -->
-        <div class="dashboard-content">
-            <!-- Statistics Cards -->
-            <div class="stats-grid">
-                {{#if (eq user.role 'admin')}}
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">{{default stats.totalFarmers 0}}</div>
-                    <div class="stat-label">Registered Farmers</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i> Active Users
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon green">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">{{default stats.totalStaff 0}}</div>
-                    <div class="stat-label">Registered Staff</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i> Active Staff
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon yellow">
-                            <i class="fas fa-file-invoice"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">{{default stats.totalClaims 0}}</div>
-                    <div class="stat-label">Total Claims</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-chart-line"></i> All Claims
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon red">
-                            <i class="fas fa-boxes"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">{{default stats.inventoryItems 25}}</div>
-                    <div class="stat-label">Inventory Items</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-warehouse"></i> Total Items
-                    </div>
-                </div>
-                {{else}}
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">1</div>
-                    <div class="stat-label">My Profile</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-check"></i> Active
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon green">
-                            <i class="fas fa-file-invoice"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">{{default stats.totalClaims 0}}</div>
-                    <div class="stat-label">My Claims</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i> Submitted
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon yellow">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">{{default stats.pendingReports 0}}</div>
-                    <div class="stat-label">My Reports</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-file-alt"></i> Reports
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <div class="stat-icon red">
-                            <i class="fas fa-bell"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value">{{default stats.activeAnnouncements 0}}</div>
-                    <div class="stat-label">Announcements</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-bullhorn"></i> Active
-                    </div>
-                </div>
-                {{/if}}
-            </div>
-
-            <!-- Content Grid -->
-            <div class="content-grid">
-                <!-- Recent Activity -->
-                <div class="content-card">
-                    <h4><i class="fas fa-clock me-2"></i>Recent Activity</h4>
-                    <div class="activity-list">
-                        <div class="activity-item">
-                            <div class="activity-icon" style="background: #dbeafe; color: #1d4ed8;">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">New farmer registered</div>
-                                <div class="activity-time">2 hours ago</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon" style="background: #dcfce7; color: #166534;">
-                                <i class="fas fa-file-check"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Claim approved</div>
-                                <div class="activity-time">4 hours ago</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon" style="background: #fef3c7; color: #92400e;">
-                                <i class="fas fa-exclamation"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Damage report submitted</div>
-                                <div class="activity-time">6 hours ago</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon" style="background: #fce7f3; color: #be185d;">
-                                <i class="fas fa-bullhorn"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">New announcement posted</div>
-                                <div class="activity-time">1 day ago</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="content-card">
-                    <h4><i class="fas fa-bolt me-2"></i>Quick Actions</h4>
-                    <div class="d-grid gap-2">
-                        <a href="/farmers/new" class="btn btn-primary">
-                            <i class="fas fa-user-plus me-2"></i>Add New Farmer
-                        </a>
-                        <a href="/claims/new" class="btn btn-success">
-                            <i class="fas fa-file-plus me-2"></i>Create Claim
-                        </a>
-                        <a href="/damage-reports/new" class="btn btn-warning">
-                            <i class="fas fa-exclamation-triangle me-2"></i>Report Damage
-                        </a>
-                        <a href="/announcements/new" class="btn btn-info">
-                            <i class="fas fa-bullhorn me-2"></i>New Announcement
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Agricultural Footer -->
-        <footer class="dashboard-footer">
-            <div class="footer-content">
-                <div class="footer-title">
-                    <i class="fas fa-leaf me-2"></i>DA-AgriManagement
-                </div>
-                <div class="footer-subtitle">
-                    Municipality of Bulalacao, Oriental Mindoro
-                </div>
-                <div class="footer-creator">
-                    Created by <strong>Gabia</strong> | Professional Agricultural Management System
-                </div>
-            </div>
-        </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/mobile-menu.js"></script>
+    <script src="/js/auto-refresh-staff.js"></script>
     <script>
-        // Mobile sidebar toggle
+        // Global role check - prevent admin API calls for non-admin users
+        const USER_ROLE = '{{user.role}}';
+        console.log('?? User Role:', USER_ROLE);
+        
+        // Override any admin-only functions if user is not admin
+        if (USER_ROLE !== 'admin') {
+            console.log('?? Non-admin user detected - disabling admin functions');
+            
+            // Disable loadPendingStaff if it exists
+            window.loadPendingStaff = function() {
+                console.log('?? loadPendingStaff blocked - not admin');
+                return Promise.resolve();
+            };
+            
+            // Disable loadApprovedStaff if it exists
+            window.loadApprovedStaff = function() {
+                console.log('?? loadApprovedStaff blocked - not admin');
+                return Promise.resolve();
+            };
+            
+            // Disable loadStaffManagement if it exists
+            window.loadStaffManagement = function() {
+                console.log('?? loadStaffManagement blocked - not admin');
+                return Promise.resolve();
+            };
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+        });
+        
+        // Mobile Sidebar Toggle
         function toggleSidebar() {
-            document.querySelector('.sidebar').classList.toggle('show');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
         }
         
-        // Logout confirmation function
-        function confirmLogout() {
-            return confirm('Are you sure you want to logout?');
+        // Close sidebar when clicking a nav link on mobile
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            const navLink = document.getElementById('nav-' + section);
+            if (navLink) navLink.classList.add('active');
+            
+            // Show dashboard section immediately (no loading needed)
+            if (section === 'dashboard') {
+                document.getElementById('dashboard-section').style.display = 'block';
+                loadDashboardData();
+                return;
+            }
+            
+            // Show section immediately (partials are already loaded)
+            const sectionDiv = document.getElementById(section + '-section');
+            if (sectionDiv) {
+                sectionDiv.style.display = 'block';
+                
+                // Call the appropriate load function for each section
+                setTimeout(() => {
+                    if (section === 'damage-reports' && typeof loadDamageReports === 'function') {
+                        console.log('?? Loading damage reports...');
+                        loadDamageReports();
+                    } else if (section === 'insurance' && typeof loadInsurance === 'function') {
+                        console.log('??? Loading insurance...');
+                        loadInsurance();
+                    } else if (section === 'claims' && typeof loadClaims === 'function') {
+                        console.log('?? Loading claims...');
+                        loadClaims();
+                    } else if (section === 'request-letters' && typeof loadRequestLetters === 'function') {
+                        console.log('?? Loading request letters...');
+                        loadRequestLetters();
+                    } else if (section === 'farmers-list' && typeof loadFarmers === 'function') {
+                        console.log('????? Loading farmers...');
+                        loadFarmers();
+                    } else if (section === 'inventory') {
+                        console.log('?? Loading inventory...');
+                        console.log('?? window.loadInventory exists?', typeof window.loadInventory);
+                        if (typeof window.loadInventory === 'function') {
+                            window.loadInventory();
+                        } else {
+                            console.error('? window.loadInventory is not defined!');
+                            // Try again after a delay
+                            setTimeout(() => {
+                                if (typeof window.loadInventory === 'function') {
+                                    console.log('?? Retry: Loading inventory...');
+                                    window.loadInventory();
+                                } else {
+                                    console.error('? Still not defined after retry');
+                                }
+                            }, 500);
+                        }
+                    } else if (section === 'announcements' && typeof loadAnnouncements === 'function') {
+                        console.log('📢 Loading announcements...');
+                        loadAnnouncements();
+                    } else if (section === 'data-analytics' && typeof loadAnalytics === 'function') {
+                        console.log('📊 Loading data analytics...');
+                        loadAnalytics();
+                    } else if (section === 'send-notifications') {
+                        console.log('📧 Loading send notifications...');
+                        // Load notification history for staff/admin only
+                        const userRole = '{{user.role}}';
+                        if ((userRole === 'staff' || userRole === 'admin') && typeof loadNotificationHistory === 'function') {
+                            loadNotificationHistory();
+                        }
+                    } else if (section === 'staff-management' && typeof loadStaffManagement === 'function') {
+                        console.log('?? Loading staff management...');
+                        loadStaffManagement();
+                    }
+                }, 100);
+            }
         }
         
-        // Add mobile menu button if needed
-        if (window.innerWidth <= 768) {
-            const navbar = document.querySelector('.top-navbar');
-            const menuBtn = document.createElement('button');
-            menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            menuBtn.className = 'btn btn-outline-secondary';
-            menuBtn.onclick = toggleSidebar;
-            navbar.insertBefore(menuBtn, navbar.firstChild);
+        function loadDashboardData() {
+            const userRole = '{{user.role}}';
+            const userId = '{{user.id}}';
+            
+            console.log('?? Loading dashboard data for', userRole, userId);
+            
+            // Load insurance count
+            fetch('/api/insurance')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const insuranceCount = userRole === 'farmer' 
+                            ? data.insurance.filter(i => i.farmerId === userId).length
+                            : data.insurance.length;
+                        const insuranceEl = document.getElementById('insurance-count');
+                        if (insuranceEl) {
+                            insuranceEl.textContent = insuranceCount;
+                            console.log('? Insurance count updated:', insuranceCount);
+                        }
+                    }
+                })
+                .catch(error => console.error('Error loading insurance:', error));
+            
+            // Load damage reports count
+            fetch('/api/damage-reports')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const reportsCount = userRole === 'farmer'
+                            ? data.damageReports.filter(r => r.farmerId === userId).length
+                            : data.damageReports.length;
+                        const reportsEl = document.getElementById('reports-count');
+                        if (reportsEl) {
+                            reportsEl.textContent = reportsCount;
+                            console.log('? Damage reports count updated:', reportsCount);
+                        }
+                    }
+                })
+                .catch(error => console.error('Error loading reports:', error));
+            
+            // Load request letters count (for all roles)
+            const requestEndpoint = userRole === 'farmer' ? '/api/farmer/request-letters' : '/api/staff/request-letters';
+            fetch(requestEndpoint)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success || data.requests) {
+                        const requestsCount = (data.requests || []).length;
+                        const requestsEl = document.getElementById('requests-count');
+                        if (requestsEl) {
+                            requestsEl.textContent = requestsCount;
+                            console.log('? Request letters count updated:', requestsCount);
+                        }
+                    }
+                })
+                .catch(error => console.error('Error loading requests:', error));
+            
+            // Load pending staff count (for admin)
+            if (userRole === 'admin') {
+                fetch('/api/admin/pending-staff')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const pendingEl = document.getElementById('pending-count');
+                            if (pendingEl) {
+                                pendingEl.textContent = data.pendingStaff.length;
+                                console.log('? Pending staff count updated:', data.pendingStaff.length);
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error loading pending staff:', error));
+            }
+            
+            // Load inventory count
+            fetch('/api/inventory')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const inventoryEl = document.getElementById('inventory-count');
+                        if (inventoryEl) {
+                            inventoryEl.textContent = data.inventory.length;
+                            console.log('? Inventory count updated:', data.inventory.length);
+                        }
+                    }
+                })
+                .catch(error => console.error('Error loading inventory:', error));
         }
+        
+        // Update sidebar counts from MySQL database
+        function updateSidebarCounts() {
+            const userRole = '{{user.role}}';
+            
+            console.log('?? Updating sidebar counts for role:', userRole);
+            
+            // Load farmers count
+            if (userRole === 'staff' || userRole === 'admin') {
+                fetch('/api/farmers')
+                    .then(response => response.json())
+                    .then(data => {
+                        const count = data.farmers ? data.farmers.length : 0;
+                        const el = document.getElementById('sidebar-farmers-count');
+                        if (el) el.textContent = count;
+                    })
+                    .catch(error => console.error('Error loading farmers count:', error));
+            }
+            
+            // Load staff count (admin only)
+            if (userRole === 'admin') {
+                console.log('?? Loading staff count (admin only)');
+                fetch('/api/admin/all-staff')
+                    .then(response => response.json())
+                    .then(data => {
+                        const count = data.staff ? data.staff.length : 0;
+                        const el = document.getElementById('sidebar-staff-count');
+                        if (el) el.textContent = count;
+                    })
+                    .catch(error => console.error('Error loading staff count:', error));
+            } else {
+                console.log('?? Skipping staff count (not admin)');
+            }
+            
+            // Load insurance count
+            fetch('/api/insurance')
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.insurance ? data.insurance.length : 0;
+                    const el = document.getElementById('sidebar-insurance-count');
+                    if (el) el.textContent = count;
+                })
+                .catch(error => console.error('Error loading insurance count:', error));
+            
+            // Load damage reports count
+            fetch('/api/damage-reports')
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.damageReports ? data.damageReports.length : 0;
+                    const el = document.getElementById('sidebar-reports-count');
+                    if (el) el.textContent = count;
+                })
+                .catch(error => console.error('Error loading reports count:', error));
+            
+            // Load claims count
+            fetch('/api/claims')
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.claims ? data.claims.length : 0;
+                    const el = document.getElementById('sidebar-claims-count');
+                    if (el) el.textContent = count;
+                })
+                .catch(error => console.error('Error loading claims count:', error));
+            
+            // Load request letters count
+            const requestEndpoint = userRole === 'farmer' ? '/api/farmer/request-letters' : '/api/staff/request-letters';
+            fetch(requestEndpoint)
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.requests ? data.requests.length : 0;
+                    const el = document.getElementById('sidebar-requests-count');
+                    if (el) el.textContent = count;
+                })
+                .catch(error => console.error('Error loading requests count:', error));
+            
+            // Load inventory count
+            fetch('/api/inventory')
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.inventory ? data.inventory.length : 0;
+                    const el = document.getElementById('sidebar-inventory-count');
+                    if (el) el.textContent = count;
+                })
+                .catch(error => console.error('Error loading inventory count:', error));
+            
+            // Load announcements count
+            fetch('/api/announcements')
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.announcements ? data.announcements.length : 0;
+                    const el = document.getElementById('sidebar-announcements-count');
+                    if (el) el.textContent = count;
+                })
+                .catch(error => console.error('Error loading announcements count:', error));
+        }
+        
+        // Update sidebar counts on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSidebarCounts();
+        });
+        
+        // Auto-refresh dashboard counts every 30 seconds
+        setInterval(function() {
+            if (document.getElementById('dashboard-section').style.display !== 'none') {
+                console.log('?? Auto-refreshing dashboard counts...');
+                loadDashboardData();
+            }
+            // Also update sidebar counts
+            updateSidebarCounts();
+        }, 30000);
+        
+        // Notification System
+        let notifications = [];
+        let unreadCount = 0;
+        
+        function toggleNotifications() {
+            const panel = document.getElementById('notification-panel');
+            const overlay = document.getElementById('notification-overlay');
+            
+            panel.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            if (panel.classList.contains('active')) {
+                loadNotifications();
+            }
+        }
+        
+        async function loadNotifications() {
+            console.log('🔔 Loading notifications...');
+            const userRole = '{{user.role}}';
+            
+            try {
+                let response;
+                
+                // Load notifications based on user role
+                if (userRole === 'farmer') {
+                    response = await fetch('/api/farmer/notifications?limit=20');
+                } else if (userRole === 'staff' || userRole === 'admin') {
+                    response = await fetch('/api/notifications/history?limit=20');
+                } else {
+                    // Fallback to sample notifications
+                    showSampleNotifications();
+                    return;
+                }
+                
+                if (!response.ok) {
+                    console.error('Failed to load notifications:', response.status);
+                    showSampleNotifications();
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.notifications && data.notifications.length > 0) {
+                    // Convert database notifications to display format
+                    notifications = data.notifications.map(notif => ({
+                        id: notif.id,
+                        type: notif.notificationType || 'info',
+                        title: notif.subject,
+                        message: notif.message,
+                        read: false, // TODO: Track read status per user
+                        createdAt: new Date(notif.createdAt)
+                    }));
+                    
+                    console.log(`✅ Loaded ${notifications.length} real notifications`);
+                    console.log('📋 Notifications data:', notifications);
+                    displayNotifications();
+                    updateNotificationBadge();
+                } else {
+                    console.log('ℹ️ No notifications found');
+                    console.log('📦 Response data:', data);
+                    notifications = [];
+                    displayNotifications();
+                    updateNotificationBadge();
+                }
+            } catch (error) {
+                console.error('❌ Error loading notifications:', error);
+                showSampleNotifications();
+            }
+        }
+        
+        function displayNotifications() {
+            const container = document.getElementById('notification-list');
+            
+            console.log('🎨 Displaying notifications, count:', notifications.length);
+            console.log('📍 Container element:', container);
+            
+            if (!container) {
+                console.error('❌ Notification container not found!');
+                return;
+            }
+            
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="notification-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No new notifications</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const html = notifications.map(notif => `
+                <div class="notification-item ${notif.read ? '' : 'unread'} type-${notif.type}" onclick="markAsRead('${notif.id}')">
+                    <div class="notification-meta">
+                        <div class="notification-type">
+                            <i class="fas ${getNotificationIcon(notif.type)}"></i>
+                            ${notif.type.charAt(0).toUpperCase() + notif.type.slice(1)}
+                        </div>
+                        <div class="notification-time">${formatTime(notif.createdAt)}</div>
+                    </div>
+                    <div class="notification-title">${notif.title}</div>
+                    <div class="notification-message">${notif.message}</div>
+                </div>
+            `).join('');
+            
+            console.log('✅ Setting notification HTML, length:', html.length);
+            container.innerHTML = html;
+        }
+        
+        function showSampleNotifications() {
+            notifications = [
+                {
+                    id: '1',
+                    type: 'announcement',
+                    title: 'New Agricultural Program',
+                    message: 'A new seed distribution program is now available for registered farmers.',
+                    read: false,
+                    createdAt: new Date(Date.now() - 1000 * 60 * 30)
+                },
+                {
+                    id: '2',
+                    type: 'alert',
+                    title: 'Weather Alert',
+                    message: 'Heavy rainfall expected in the next 48 hours. Secure your crops.',
+                    read: false,
+                    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2)
+                },
+                {
+                    id: '3',
+                    type: 'info',
+                    title: 'System Update',
+                    message: 'The system has been updated with new features.',
+                    read: true,
+                    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24)
+                }
+            ];
+            displayNotifications();
+            updateNotificationBadge();
+        }
+        
+        function getNotificationIcon(type) {
+            const icons = {
+                announcement: 'fa-bullhorn',
+                alert: 'fa-exclamation-triangle',
+                urgent: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
+            return icons[type] || 'fa-bell';
+        }
+        
+        function formatTime(date) {
+            const now = new Date();
+            const diff = now - new Date(date);
+            const minutes = Math.floor(diff / (1000 * 60));
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
+        }
+        
+        function markAsRead(notificationId) {
+            const notif = notifications.find(n => n.id === notificationId);
+            if (notif && !notif.read) {
+                notif.read = true;
+                displayNotifications();
+                updateNotificationBadge();
+            }
+        }
+        
+        function updateNotificationBadge() {
+            unreadCount = notifications.filter(n => !n.read).length;
+            const badge = document.getElementById('notification-count');
+            
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        // Load notification count on page load (without opening panel)
+        async function checkNotificationCount() {
+            const userRole = '{{user.role}}';
+            
+            try {
+                let response;
+                
+                if (userRole === 'farmer') {
+                    response = await fetch('/api/farmer/notifications?limit=20');
+                } else if (userRole === 'staff' || userRole === 'admin') {
+                    response = await fetch('/api/notifications/history?limit=20');
+                } else {
+                    return;
+                }
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.notifications) {
+                        // Update badge count
+                        const count = data.notifications.length;
+                        const badge = document.getElementById('notification-count');
+                        if (count > 0) {
+                            badge.textContent = count;
+                            badge.style.display = 'inline-block';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking notification count:', error);
+            }
+        }
+        
+        // Check notification count on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkNotificationCount();
+        });
+        
+        // Auto-refresh notification count every 60 seconds
+        setInterval(checkNotificationCount, 60000);
+
+        // Make functions globally accessible
+        window.loadDashboardData = loadDashboardData;
+        window.updateSidebarCounts = updateSidebarCounts;
+        window.toggleNotifications = toggleNotifications;
+        window.checkNotificationCount = checkNotificationCount;
     </script>
 </body>
 </html>
-           

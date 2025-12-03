@@ -31,12 +31,23 @@ import fs from 'fs';
 import hbs from "hbs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { initDatabase } from "./config/database.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Initialize MySQL Database Connection (with fallback)
+try {
+    await initDatabase();
+    console.log('✅ MySQL database initialized successfully');
+} catch (error) {
+    console.log('⚠️  MySQL not available, running in fallback mode');
+    console.log('💡 Start Laragon and run: npm run migrate');
+    console.log('📝 System will use local storage for now');
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -82,6 +93,15 @@ hbs.registerHelper('firstChar', function(str) {
 hbs.registerHelper('default', function(value, defaultValue) {
   return value || defaultValue;
 });
+
+hbs.registerHelper('or', function() {
+  return Array.prototype.slice.call(arguments, 0, -1).some(Boolean);
+});
+
+hbs.registerHelper('substring', function(str, start, end) {
+  if (!str) return '';
+  return str.substring(start, end);
+});
 const partialsDir = path.join(__dirname, "views/partials");
 fs.readdir(partialsDir, (err, files) => {
   if (err) {
@@ -106,10 +126,16 @@ fs.readdir(partialsDir, (err, files) => {
     });
 });
 
+// Import your route files
+import adminRoutes from './routes/adminRoutes.js'; // Assuming you have this
+import crudRoutes from './routes/crudRoutes.js';   // The new routes for staff
+
 app.use("/", router);
+app.use('/api/admin', adminRoutes); // All admin routes are prefixed with /api/admin
+app.use('/api/staff', crudRoutes);  // All staff CRUD routes are prefixed with /api/staff
 
 export default app;
 
 if (!process.env.ELECTRON) {
-  app.listen(PORT, () => console.log(`🔥 XianFire running at http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log('XianFire running at http://localhost:' + PORT));
 }

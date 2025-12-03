@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(252, 163, 17, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(139, 92, 246, 0.3) 0%, transparent 50%);
+            animation: backgroundShift 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .settings-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .settings-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .settings-header h2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 2.5rem;
+        }
+        
+        .settings-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 1.75rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .settings-card:nth-child(1) { animation-delay: 0.1s; }
+        .settings-card:nth-child(2) { animation-delay: 0.2s; }
+        .settings-card:nth-child(3) { animation-delay: 0.3s; }
+        .settings-card:nth-child(4) { animation-delay: 0.4s; }
+        .settings-card:nth-child(5) { animation-delay: 0.5s; }
+        
+        .settings-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .settings-card h5 {
+            color: #1e293b;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid transparent;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background-size: 100% 3px;
+            background-repeat: no-repeat;
+            background-position: bottom;
+            font-size: 1.25rem;
+        }
+
+        .settings-card h5 i {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            animation: avatarPulse 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .profile-avatar::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0.3;
+            animation: avatarRing 2s ease-out infinite;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes avatarRing {
+            0% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            transition: all 0.3s ease;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-item:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            transform: translateX(5px);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-label i {
+            color: #667eea;
+        }
+        
+        .info-value {
+            color: #1e293b;
+            font-weight: 500;
+        }
+        
+        .role-badge {
+            padding: 0.6rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: badgeFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes badgeFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .role-admin {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .role-staff {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .role-farmer {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .btn-action {
+            padding: 0.875rem 2rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-action:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-action:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .btn-outline-info {
+            border: 2px solid #06b6d4;
+            color: #06b6d4;
+            background: transparent;
+        }
+
+        .btn-outline-info:hover {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .btn-outline-danger {
+            border: 2px solid #ef4444;
+            color: #ef4444;
+            background: transparent;
+        }
+
+        .btn-outline-danger:hover {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .notification-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            transition: all 0.3s ease;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-item:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .form-switch .form-check-input {
+            width: 3.5rem;
+            height: 1.75rem;
+            cursor: pointer;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .form-switch .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .form-switch .form-check-input:checked {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+        }
+
+        .modal-content {
+            border-radius: 1.5rem;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1.5rem 1.5rem 0 0;
+            padding: 1.5rem 2rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.75rem;
+            border: 2px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .settings-header {
+                padding: 1.5rem;
+                border-radius: 1.5rem;
+            }
+
+            .settings-header h2 {
+                font-size: 1.75rem;
+            }
+
+            .settings-card {
+                padding: 1.5rem;
+                border-radius: 1.25rem;
+            }
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+
+            .info-item, .notification-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+                padding: 1rem;
+            }
+
+            .btn-action {
+                width: 100%;
+                padding: 0.75rem 1.5rem;
+            }
+
+            .d-grid {
+                gap: 0.75rem !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .settings-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .settings-card h5 {
+                font-size: 1.1rem;
+            }
+
+            .role-badge {
+                font-size: 0.75rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .badge {
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        }
+
+        .badge.bg-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-container">
+        <!-- Header -->
+        <div class="settings-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1"><i class="fas fa-cog me-2"></i>Settings</h2>
+                    <p class="text-muted mb-0">Manage your account settings and preferences</p>
+                </div>
+                <a href="/dashboard" class="btn btn-secondary btn-action">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-4">
+                <!-- Profile Card -->
+                <div class="settings-card">
+                    <div class="text-center">
+                        <div class="profile-avatar">
+                            {{firstChar user.name}}
+                        </div>
+                        <h4 class="mb-1">{{user.name}}</h4>
+                        <span class="role-badge role-{{user.role}}">{{user.role}}</span>
+                        <p class="text-muted mt-2 mb-0">{{user.email}}</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="settings-card">
+                    <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="openChangePasswordModal()">
+                            <i class="fas fa-key me-2"></i>Change Password
+                        </button>
+                        <button class="btn btn-outline-info" onclick="openEditProfileModal()">
+                            <i class="fas fa-user-edit me-2"></i>Edit Profile
+                        </button>
+                        <a href="/logout" class="btn btn-outline-danger">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-8">
+                <!-- Account Information -->
+                <div class="settings-card">
+                    <h5><i class="fas fa-user me-2"></i>Account Information</h5>
+                    <div class="info-item">
+                        <span class="info-label">Full Name</span>
+                        <span class="info-value">{{user.name}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email Address</span>
+                        <span class="info-value">{{user.email}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Role</span>
+                        <span class="info-value text-capitalize">{{user.role}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Barangay</span>
+                        <span class="info-value">{{user.barangay}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Account Status</span>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                </div>
+
+                <!-- Notification Preferences -->
+                <div class="settings-card">
+                    <h5><i class="fas fa-bell me-2"></i>Notification Preferences</h5>
+                    <div class="notification-item">
+                        <div>
+                            <strong>Email Notifications</strong>
+                            <p class="text-muted mb-0 small">Receive updates via email</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="emailNotif" checked>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div>
+                            <strong>Claim Updates</strong>
+                            <p class="text-muted mb-0 small">Get notified about claim status changes</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="claimNotif" checked>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div>
+                            <strong>Announcements</strong>
+                            <p class="text-muted mb-0 small">Receive new announcements</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="announcementNotif" checked>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div>
+                            <strong>System Updates</strong>
+                            <p class="text-muted mb-0 small">Important system notifications</p>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="systemNotif" checked>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="settings-card">
+                    <h5><i class="fas fa-shield-alt me-2"></i>Security Settings</h5>
+                    <div class="info-item">
+                        <div>
+                            <strong>Password</strong>
+                            <p class="text-muted mb-0 small">Last changed: Never</p>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="openChangePasswordModal()">
+                            Change
+                        </button>
+                    </div>
+                    <div class="info-item">
+                        <div>
+                            <strong>Two-Factor Authentication</strong>
+                            <p class="text-muted mb-0 small">Add extra security to your account</p>
+                        </div>
+                        <span class="badge bg-secondary">Coming Soon</span>
+                    </div>
+                    <div class="info-item">
+                        <div>
+                            <strong>Login History</strong>
+                            <p class="text-muted mb-0 small">View your recent login activity</p>
+                        </div>
+                        <button class="btn btn-sm btn-outline-info" onclick="alert('Feature coming soon!')">
+                            View
+                        </button>
+                    </div>
+                </div>
+
+                <!-- System Preferences -->
+                <div class="settings-card">
+                    <h5><i class="fas fa-sliders-h me-2"></i>System Preferences</h5>
+                    <div class="notification-item">
+                        <div>
+                            <strong>Language</strong>
+                            <p class="text-muted mb-0 small">Choose your preferred language</p>
+                        </div>
+                        <select class="form-select form-select-sm" style="width: auto;">
+                            <option selected>English</option>
+                            <option>Tagalog</option>
+                        </select>
+                    </div>
+                    <div class="notification-item">
+                        <div>
+                            <strong>Date Format</strong>
+                            <p class="text-muted mb-0 small">How dates are displayed</p>
+                        </div>
+                        <select class="form-select form-select-sm" style="width: auto;">
+                            <option selected>MM/DD/YYYY</option>
+                            <option>DD/MM/YYYY</option>
+                            <option>YYYY-MM-DD</option>
+                        </select>
+                    </div>
+                    <div class="notification-item">
+                        <div>
+                            <strong>Time Zone</strong>
+                            <p class="text-muted mb-0 small">Your local time zone</p>
+                        </div>
+                        <select class="form-select form-select-sm" style="width: auto;">
+                            <option selected>Asia/Manila (GMT+8)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-key me-2"></i>Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form onsubmit="changePassword(event)">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control" required minlength="6">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" required minlength="6">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i>Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form onsubmit="updateProfile(event)">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" value="{{user.name}}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" value="{{user.email}}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contact Number</label>
+                            <input type="tel" class="form-control" placeholder="09xxxxxxxxx">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Barangay</label>
+                            <select class="form-select">
+                                <option>{{user.barangay}}</option>
+                                <option>Bagong Sikat</option>
+                                <option>Balatasan</option>
+                                <option>Benli</option>
+                                <option>Cabugao</option>
+                                <option>Cambunang</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openChangePasswordModal() {
+            const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+            modal.show();
+        }
+
+        function openEditProfileModal() {
+            const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+            modal.show();
+        }
+
+        function changePassword(event) {
+            event.preventDefault();
+            alert('Password change functionality will be implemented soon!');
+            bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+        }
+
+        function updateProfile(event) {
+            event.preventDefault();
+            alert('Profile update functionality will be implemented soon!');
+            bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).hide();
+        }
+
+        // Save notification preferences
+        document.querySelectorAll('.form-check-input').forEach(input => {
+            input.addEventListener('change', function() {
+                console.log(`${this.id} is now ${this.checked ? 'enabled' : 'disabled'}`);
+                // Here you can add AJAX call to save preferences
+            });
+        });
+    </script>
+</body>
+</html>

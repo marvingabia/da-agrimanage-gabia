@@ -1,0 +1,904 @@
+<div class="content-section">
+    <div class="section-header">
+        <h3 class="section-title">
+            <i class="fas fa-cog"></i>
+            Settings & Preferences
+        </h3>
+    </div>
+    
+    <div class="row">
+        <!-- Profile Settings -->
+        <div class="col-lg-4 mb-4">
+            <div class="settings-profile-card">
+                <div class="settings-avatar">
+                    {{#if user.name}}
+                        {{substring user.name 0 1}}
+                    {{else}}
+                        U
+                    {{/if}}
+                </div>
+                <h4 class="settings-name">{{user.name}}</h4>
+                <span class="settings-role-badge role-{{user.role}}">
+                    <i class="fas fa-user-shield"></i> {{user.role}}
+                </span>
+                <p class="settings-email">{{user.email}}</p>
+                
+                <div class="settings-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">{{user.barangay}}</div>
+                        <div class="stat-label">Barangay</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">Active</div>
+                        <div class="stat-label">Status</div>
+                    </div>
+                </div>
+                
+                <button class="btn-settings-action" onclick="openEditProfileModal()">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </button>
+            </div>
+        </div>
+        
+        <!-- Settings Tabs -->
+        <div class="col-lg-8">
+            <div class="settings-tabs-container">
+                <!-- Tab Navigation -->
+                <ul class="settings-tabs" role="tablist">
+                    <li class="settings-tab active" data-tab="account">
+                        <i class="fas fa-user"></i> Account
+                    </li>
+                    <li class="settings-tab" data-tab="security">
+                        <i class="fas fa-shield-alt"></i> Security
+                    </li>
+                    <li class="settings-tab" data-tab="notifications">
+                        <i class="fas fa-bell"></i> Notifications
+                    </li>
+                    <li class="settings-tab" data-tab="preferences">
+                        <i class="fas fa-sliders-h"></i> Preferences
+                    </li>
+                </ul>
+                
+                <!-- Tab Content -->
+                <div class="settings-tab-content">
+                    <!-- Account Tab -->
+                    <div class="tab-pane active" id="account-tab">
+                        <h5 class="tab-title">Account Information</h5>
+                        <div class="settings-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control-settings" value="{{user.name}}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control-settings" value="{{user.email}}" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Role</label>
+                                    <input type="text" class="form-control-settings" value="{{user.role}}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Barangay</label>
+                                    <input type="text" class="form-control-settings" value="{{user.barangay}}" readonly>
+                                </div>
+                            </div>
+                            
+                            {{#if (eq user.role 'farmer')}}
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Land Area (hectares)</label>
+                                    <input type="text" class="form-control-settings" value="{{user.landArea}}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Land Type</label>
+                                    <input type="text" class="form-control-settings" value="{{user.landType}}" readonly>
+                                </div>
+                            </div>
+                            {{/if}}
+                            
+                            <div class="form-actions">
+                                <button class="btn-primary-custom" onclick="openEditProfileModal()">
+                                    <i class="fas fa-edit"></i> Edit Profile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Security Tab -->
+                    <div class="tab-pane" id="security-tab" style="display:none;">
+                        <h5 class="tab-title">Security Settings</h5>
+                        <div class="settings-list">
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <i class="fas fa-key settings-item-icon"></i>
+                                    <div>
+                                        <h6>Password</h6>
+                                        <p>Change your account password</p>
+                                    </div>
+                                </div>
+                                <button class="btn-settings-secondary" onclick="openChangePasswordModal()">
+                                    Change
+                                </button>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <i class="fas fa-mobile-alt settings-item-icon"></i>
+                                    <div>
+                                        <h6>Two-Factor Authentication</h6>
+                                        <p>Add an extra layer of security</p>
+                                    </div>
+                                </div>
+                                <span class="badge-status pending">Coming Soon</span>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <i class="fas fa-history settings-item-icon"></i>
+                                    <div>
+                                        <h6>Login History</h6>
+                                        <p>View your recent login activity</p>
+                                    </div>
+                                </div>
+                                <button class="btn-settings-secondary" onclick="viewLoginHistory()">
+                                    View
+                                </button>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <i class="fas fa-shield-alt settings-item-icon"></i>
+                                    <div>
+                                        <h6>Active Sessions</h6>
+                                        <p>Manage your active sessions</p>
+                                    </div>
+                                </div>
+                                <button class="btn-settings-secondary" onclick="manageSessions()">
+                                    Manage
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notifications Tab -->
+                    <div class="tab-pane" id="notifications-tab" style="display:none;">
+                        <h5 class="tab-title">Notification Preferences</h5>
+                        <div class="settings-list">
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <i class="fas fa-envelope settings-item-icon"></i>
+                                    <div>
+                                        <h6>Email Notifications</h6>
+                                        <p>Receive updates via email</p>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked onchange="saveNotificationPref('email', this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <i class="fas fa-file-invoice settings-item-icon"></i>
+                                    <div>
+                                        <h6>Claim Updates</h6>
+                                        <p>Get notified about claim status changes</p>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked onchange="saveNotificationPref('claims', this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <i class="fas fa-shield-alt settings-item-icon"></i>
+                                    <div>
+                                        <h6>Insurance Updates</h6>
+                                        <p>Notifications about insurance applications</p>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked onchange="saveNotificationPref('insurance', this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <i class="fas fa-bullhorn settings-item-icon"></i>
+                                    <div>
+                                        <h6>Announcements</h6>
+                                        <p>Receive new announcements and updates</p>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked onchange="saveNotificationPref('announcements', this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <i class="fas fa-exclamation-triangle settings-item-icon"></i>
+                                    <div>
+                                        <h6>Damage Reports</h6>
+                                        <p>Alerts for damage report submissions</p>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked onchange="saveNotificationPref('damage', this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <i class="fas fa-cog settings-item-icon"></i>
+                                    <div>
+                                        <h6>System Updates</h6>
+                                        <p>Important system notifications</p>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked onchange="saveNotificationPref('system', this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preferences Tab -->
+                    <div class="tab-pane" id="preferences-tab" style="display:none;">
+                        <h5 class="tab-title">System Preferences</h5>
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label class="form-label">Language</label>
+                                <select class="form-control-settings" onchange="changeLanguage(this.value)">
+                                    <option value="en" selected>English</option>
+                                    <option value="tl">Tagalog</option>
+                                </select>
+                                <small class="form-text">Choose your preferred language</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Date Format</label>
+                                <select class="form-control-settings" onchange="changeDateFormat(this.value)">
+                                    <option value="MM/DD/YYYY" selected>MM/DD/YYYY</option>
+                                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                </select>
+                                <small class="form-text">How dates are displayed</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Time Zone</label>
+                                <select class="form-control-settings">
+                                    <option value="Asia/Manila" selected>Asia/Manila (GMT+8)</option>
+                                </select>
+                                <small class="form-text">Your local time zone</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Items Per Page</label>
+                                <select class="form-control-settings" onchange="changeItemsPerPage(this.value)">
+                                    <option value="10">10</option>
+                                    <option value="25" selected>25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                                <small class="form-text">Number of items to display in tables</small>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button class="btn-primary-custom" onclick="savePreferences()">
+                                    <i class="fas fa-save"></i> Save Preferences
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-edit me-2"></i>Edit Profile
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editProfileForm" onsubmit="updateProfile(event)">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" name="name" value="{{user.name}}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email Address *</label>
+                            <input type="email" class="form-control" name="email" value="{{user.email}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Contact Number</label>
+                            <input type="tel" class="form-control" name="phone" value="{{user.phone}}" placeholder="09xxxxxxxxx">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Barangay *</label>
+                            <select class="form-control" name="barangay" required>
+                                <option value="{{user.barangay}}" selected>{{user.barangay}}</option>
+                                <option value="Bagong Sikat">Bagong Sikat</option>
+                                <option value="Balatasan">Balatasan</option>
+                                <option value="Benli">Benli</option>
+                                <option value="Cabugao">Cabugao</option>
+                                <option value="Cambunang">Cambunang</option>
+                                <option value="Campaasan">Campaasan</option>
+                                <option value="Maasin">Maasin</option>
+                                <option value="Maujao">Maujao</option>
+                                <option value="Milagrosa">Milagrosa</option>
+                                <option value="Nasukob">Nasukob</option>
+                                <option value="Poblacion">Poblacion</option>
+                                <option value="San Francisco">San Francisco</option>
+                                <option value="San Isidro">San Isidro</option>
+                                <option value="San Juan">San Juan</option>
+                                <option value="San Roque">San Roque</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    {{#if (eq user.role 'farmer')}}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Land Area (hectares)</label>
+                            <input type="number" class="form-control" name="landArea" value="{{user.landArea}}" step="0.1" min="0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Land Type</label>
+                            <select class="form-control" name="landType">
+                                <option value="{{user.landType}}" selected>{{user.landType}}</option>
+                                <option value="Rice Field">Rice Field</option>
+                                <option value="Corn Field">Corn Field</option>
+                                <option value="Vegetable Farm">Vegetable Farm</option>
+                                <option value="Fruit Orchard">Fruit Orchard</option>
+                                <option value="Mixed Farming">Mixed Farming</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">
+                    <i class="fas fa-key me-2"></i>Change Password
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="changePasswordForm" onsubmit="changePassword(event)">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Current Password *</label>
+                        <input type="password" class="form-control" name="currentPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New Password *</label>
+                        <input type="password" class="form-control" name="newPassword" required minlength="6">
+                        <small class="form-text text-muted">Minimum 6 characters</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm New Password *</label>
+                        <input type="password" class="form-control" name="confirmPassword" required minlength="6">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-check me-2"></i>Change Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Settings Specific Styles */
+.settings-profile-card {
+    background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    color: white;
+    box-shadow: 0 8px 30px rgba(107, 155, 71, 0.3);
+}
+
+.settings-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 auto 1rem;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.settings-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.settings-role-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.settings-email {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+}
+
+.settings-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.settings-stats .stat-item {
+    text-align: center;
+}
+
+.settings-stats .stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.settings-stats .stat-label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-settings-action {
+    width: 100%;
+    background: white;
+    color: #4a7c59;
+    border: none;
+    padding: 0.875rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-settings-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.settings-tabs-container {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.settings-tabs {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.settings-tab {
+    padding: 0.875rem 1.5rem;
+    border-radius: 50px 50px 0 0;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.settings-tab:hover {
+    background: #f8faf9;
+    color: #2d5016;
+}
+
+.settings-tab.active {
+    background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+    color: white;
+}
+
+.tab-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.settings-form {
+    padding: 1rem 0;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-control-settings {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8faf9;
+}
+
+.form-control-settings:focus {
+    outline: none;
+    border-color: #6b9b47;
+    background: white;
+}
+
+.form-control-settings:read-only {
+    background: #f1f5f9;
+    cursor: not-allowed;
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.5rem;
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.form-actions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #f1f5f9;
+}
+
+.settings-list {
+    padding: 1rem 0;
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-radius: 15px;
+    background: #f8faf9;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.settings-item:hover {
+    background: #e8f5e9;
+    transform: translateX(5px);
+}
+
+.settings-item-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.settings-item-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.settings-item h6 {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+}
+
+.settings-item p {
+    color: #64748b;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.btn-settings-secondary {
+    padding: 0.5rem 1.25rem;
+    border-radius: 50px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    color: #4a7c59;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-settings-secondary:hover {
+    background: #6b9b47;
+    color: white;
+    border-color: #6b9b47;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: 0.4s;
+    border-radius: 30px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: #6b9b47;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(30px);
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .settings-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .settings-tab {
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+    }
+    
+    .settings-item {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .settings-item-info {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+// Tab Switching
+document.querySelectorAll('.settings-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        // Remove active class from all tabs
+        document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+        
+        // Add active class to clicked tab
+        this.classList.add('active');
+        const tabId = this.getAttribute('data-tab') + '-tab';
+        document.getElementById(tabId).style.display = 'block';
+    });
+});
+
+// Modal Functions
+function openEditProfileModal() {
+    const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+    modal.show();
+}
+
+function openChangePasswordModal() {
+    const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+    modal.show();
+}
+
+// Update Profile
+function updateProfile(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    
+    fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            alert('Profile updated successfully!');
+            bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).hide();
+            location.reload();
+        } else {
+            alert('Error: ' + (result.error || 'Failed to update profile'));
+        }
+    })
+    .catch(error => {
+        alert('Error updating profile');
+        console.error(error);
+    });
+}
+
+// Change Password
+function changePassword(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    
+    if (data.newPassword !== data.confirmPassword) {
+        alert('New passwords do not match!');
+        return;
+    }
+    
+    fetch('/api/user/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            currentPassword: data.currentPassword,
+            newPassword: data.newPassword
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            alert('Password changed successfully!');
+            bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+            event.target.reset();
+        } else {
+            alert('Error: ' + (result.error || 'Failed to change password'));
+        }
+    })
+    .catch(error => {
+        alert('Error changing password');
+        console.error(error);
+    });
+}
+
+// Save Notification Preferences
+function saveNotificationPref(type, enabled) {
+    console.log(`Notification ${type}: ${enabled ? 'enabled' : 'disabled'}`);
+    
+    fetch('/api/user/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, enabled })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            console.log('Notification preference saved');
+        }
+    })
+    .catch(error => console.error('Error saving notification preference:', error));
+}
+
+// Change Language
+function changeLanguage(lang) {
+    console.log('Language changed to:', lang);
+    // Implement language change logic
+}
+
+// Change Date Format
+function changeDateFormat(format) {
+    console.log('Date format changed to:', format);
+    // Implement date format change logic
+}
+
+// Change Items Per Page
+function changeItemsPerPage(items) {
+    console.log('Items per page changed to:', items);
+    // Implement items per page change logic
+}
+
+// Save Preferences
+function savePreferences() {
+    alert('Preferences saved successfully!');
+}
+
+// View Login History
+function viewLoginHistory() {
+    alert('Login history feature coming soon!');
+}
+
+// Manage Sessions
+function manageSessions() {
+    alert('Session management feature coming soon!');
+}
+</script>

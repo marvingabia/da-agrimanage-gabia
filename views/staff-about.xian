@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tungkol sa Staff Portal - Municipal Agriculture Office</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .navbar-brand i {
+            font-size: 2rem;
+            color: #60a5fa;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white !important;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.3);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4);
+            color: white;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(59, 130, 246, 0.95) 100%);
+            padding: 5rem 0 3rem 0;
+            color: white;
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .about-section {
+            padding: 5rem 0;
+        }
+        
+        .about-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 1.5rem;
+        }
+        
+        .about-section p {
+            font-size: 1.1rem;
+            color: #64748b;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-custom {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            border: 2px solid rgba(59, 130, 246, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-custom i {
+            font-size: 3rem;
+            color: #3b82f6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-custom h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            padding: 3rem 0 1.5rem 0;
+        }
+        
+        .footer h5 {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #60a5fa;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/staff">
+                <i class="fas fa-user-tie"></i>
+                Staff Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="background: rgba(255,255,255,0.2); border: none;">
+                <i class="fas fa-bars" style="color: white;"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/staff">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/staff/about">Tungkol</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/staff/contact">Makipag-ugnayan</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="/staff/login" class="btn btn-login">
+                            <i class="fas fa-sign-in-alt me-2"></i>Staff Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Tungkol sa Staff Portal</h1>
+            <p>Alamin ang tungkol sa aming sistema ng pamamahala para sa mga kawani</p>
+        </div>
+    </section>
+
+    <!-- About Content -->
+    <section class="about-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2>Ano ang Staff Portal?</h2>
+                    <p>Ang Staff Portal ay isang komprehensibong sistema ng pamamahala para sa mga kawani ng Municipal Agriculture Office ng Bulalacao, Oriental Mindoro.</p>
+                    <p>Dito, ang mga staff ay may kakayahang mag-manage ng inventory, mag-post ng announcements, mag-proseso ng mga request mula sa farmers, at mag-monitor ng kanilang duty schedules.</p>
+                    <p>Ang sistemang ito ay dinisenyo upang gawing mas epektibo at organisado ang trabaho ng bawat kawani sa tanggapan.</p>
+                </div>
+                <div class="col-lg-6">
+                    <div style="background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); border-radius: 1.5rem; padding: 3rem; color: white; box-shadow: 0 15px 40px rgba(0,0,0,0.1);">
+                        <h3 style="font-size: 2rem; margin-bottom: 1.5rem;"><i class="fas fa-quote-left me-2"></i>Aming Pangako</h3>
+                        <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 0;">"Kami ay nakatuon sa pagbibigay ng de-kalidad na serbisyo sa mga magsasaka at sa pagpapabuti ng aming mga proseso sa pamamagitan ng modernong teknolohiya."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="about-section" style="background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Mga Pangunahing Gawain</h2>
+                <p style="font-size: 1.1rem; color: #64748b;">Ang mga responsibilidad ng staff sa sistema</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <i class="fas fa-boxes"></i>
+                        <h3>Inventory Management</h3>
+                        <p>Pamahalaan ang mga binhi, pataba, at kagamitan. Mag-update ng stock levels at mag-track ng distribution sa iba't ibang barangay.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <i class="fas fa-bullhorn"></i>
+                        <h3>Announcements</h3>
+                        <p>Mag-post ng mga paalala, schedule ng distribution, training programs, at iba pang mahalagang impormasyon para sa mga magsasaka.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Request Processing</h3>
+                        <p>Mag-review at mag-proseso ng mga request letters mula sa mga magsasaka. Mag-approve o mag-reject base sa requirements.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <i class="fas fa-clipboard-check"></i>
+                        <h3>Duty Management</h3>
+                        <p>Mag-submit ng duty schedules, mag-track ng field assignments, at mag-monitor ng inyong mga aktibidad.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5><i class="fas fa-user-tie me-2"></i>Staff Portal</h5>
+                    <p style="color: rgba(255,255,255,0.8);">Municipal Agriculture Office Staff Management System - Bulalacao, Oriental Mindoro</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="/staff"><i class="fas fa-home me-2"></i>Home</a></li>
+                        <li><a href="/staff/about"><i class="fas fa-info-circle me-2"></i>Tungkol</a></li>
+                        <li><a href="/staff/contact"><i class="fas fa-envelope me-2"></i>Makipag-ugnayan</a></li>
+                        <li><a href="/staff/login"><i class="fas fa-sign-in-alt me-2"></i>Staff Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Info</h5>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>Poblacion, Bulalacao, Oriental Mindoro</li>
+                        <li><i class="fas fa-phone me-2"></i>+63 123 456 7890</li>
+                        <li><i class="fas fa-envelope me-2"></i>staff@bulalacao-agri.gov.ph</li>
+                        <li><i class="fas fa-clock me-2"></i>Mon-Fri: 8:00 AM - 5:00 PM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Municipal Agriculture Office - Staff Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

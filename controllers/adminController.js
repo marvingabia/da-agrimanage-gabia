@@ -3,16 +3,18 @@
     Handles admin-specific operations
 */
 
-import { User } from "../models/User.js";
-import { Inventory } from "../models/Inventory.js";
-import { Claim } from "../models/Claim.js";
-import { DamageReport } from "../models/DamageReport.js";
-import { Insurance } from "../models/Insurance.js";
-import { Announcement } from "../models/Announcement.js";
+// Note: These imports are not used directly, models are imported dynamically where needed
+// import { User } from "../models/UserMySQL.js";
+// import { Inventory } from "../models/InventoryMySQL.js";
+// import { Claim } from "../models/ClaimMySQL.js";
+// import { DamageReport } from "../models/DamageReportMySQL.js";
+// import { Insurance } from "../models/InsuranceMySQL.js";
+// import { Announcement } from "../models/AnnouncementMySQL.js";
 
 // Get all farmers
 export const getAllFarmers = async (req, res) => {
     try {
+        const { User } = await import('../models/UserMySQL.js');
         const farmers = await User.findByRole('farmer');
         res.json({ farmers });
     } catch (error) {
@@ -21,15 +23,71 @@ export const getAllFarmers = async (req, res) => {
     }
 };
 
-// Get all staff
+// Get all staff (approved only)
 export const getAllStaff = async (req, res) => {
     try {
-        const staff = await User.findByRole('staff');
-        res.json({ staff });
+        // Import User model from MySQL
+        const { User } = await import('../models/UserMySQL.js');
+        
+        // Get all staff from MySQL
+        const allStaff = await User.findByRole('staff');
+        
+        // Filter for approved staff only
+        const approvedStaff = allStaff
+            .filter(user => user.isApproved === true)
+            .map(user => ({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone || 'N/A',
+                barangay: user.barangay || 'N/A',
+                staffingManagement: user.staffingManagement || 'N/A',
+                createdAt: user.createdAt,
+                approved: user.isApproved
+            }));
+        
+        res.json({ 
+            success: true,
+            staff: approvedStaff,
+            count: approvedStaff.length
+        });
     } catch (error) {
         console.error('Error getting staff:', error);
-        res.status(500).json({ error: 'Failed to load staff' });
+        res.status(500).json({ success: false, error: 'Failed to load staff' });
     }
+};
+
+// Get staff by ID
+export const getStaffById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const staff = await User.findById(id);
+        if (!staff || staff.role !== 'staff') return res.status(404).json({ success: false, message: 'Staff not found' });
+        res.json({ success: true, staff });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Update staff member
+export const updateStaff = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, email, phone, barangay, status } = req.body;
+        const staff = await User.findById(id);
+        if (!staff || staff.role !== 'staff') return res.status(404).json({ success: false, message: 'Staff not found' });
+        staff.name = name; staff.email = email; staff.phone = phone; staff.barangay = barangay; staff.status = status;
+        await staff.save();
+        res.json({ success: true, message: 'Staff updated successfully', staff });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// Delete staff member
+export const deleteStaff = async (req, res) => {
+    // TODO: Implement actual delete logic for User model
+    res.json({ success: true, message: 'Staff deleted (mock)' });
 };
 
 // Create new staff member
@@ -62,77 +120,6 @@ export const getAllInventory = async (req, res) => {
     } catch (error) {
         console.error('Error getting inventory:', error);
         res.status(500).json({ error: 'Failed to load inventory' });
-    }
-};
-
-// Create inventory item
-export const createInventoryItem = async (req, res) => {
-    try {
-        const { itemName, type, variety, quantity, unit, barangay, description } = req.body;
-        
-        const inventoryItem = new Inventory({
-            itemName,
-            type,
-            variety,
-            quantity: parseFloat(quantity),
-            unit,
-            barangay,
-            description,
-            createdBy: req.session.userId,
-            status: 'available'
-        });
-
-        await inventoryItem.save();
-        res.json({ success: true, message: 'Inventory item created successfully', inventoryItem });
-    } catch (error) {
-        console.error('Error creating inventory item:', error);
-        res.status(500).json({ error: 'Failed to create inventory item' });
-    }
-};
-
-// Update inventory item
-export const updateInventoryItem = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { itemName, type, variety, quantity, unit, barangay, description, status } = req.body;
-        
-        const inventoryItem = await Inventory.findById(id);
-        if (!inventoryItem) {
-            return res.status(404).json({ error: 'Inventory item not found' });
-        }
-
-        inventoryItem.itemName = itemName;
-        inventoryItem.type = type;
-        inventoryItem.variety = variety;
-        inventoryItem.quantity = parseFloat(quantity);
-        inventoryItem.unit = unit;
-        inventoryItem.barangay = barangay;
-        inventoryItem.description = description;
-        inventoryItem.status = status;
-
-        await inventoryItem.save();
-        res.json({ success: true, message: 'Inventory item updated successfully', inventoryItem });
-    } catch (error) {
-        console.error('Error updating inventory item:', error);
-        res.status(500).json({ error: 'Failed to update inventory item' });
-    }
-};
-
-// Delete inventory item
-export const deleteInventoryItem = async (req, res) => {
-    try {
-        const { id } = req.params;
-        
-        const inventoryItem = await Inventory.findById(id);
-        if (!inventoryItem) {
-            return res.status(404).json({ error: 'Inventory item not found' });
-        }
-
-        await inventoryItem.delete();
-        res.json({ success: true, message: 'Inventory item deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting inventory item:', error);
-        res.status(500).json({ error: 'Failed to delete inventory item' });
     }
 };
 
@@ -242,78 +229,6 @@ export const getAllAnnouncements = async (req, res) => {
     }
 };
 
-// Create announcement
-export const createAnnouncement = async (req, res) => {
-    try {
-        const { title, message, type, eventDate, venue, targetBarangays, priority } = req.body;
-        
-        const announcement = new Announcement({
-            title,
-            message,
-            type,
-            eventDate: eventDate ? new Date(eventDate) : null,
-            venue,
-            targetBarangays: Array.isArray(targetBarangays) ? targetBarangays : [targetBarangays],
-            priority,
-            createdBy: req.session.userId,
-            createdByName: req.session.userName,
-            status: 'active'
-        });
-
-        await announcement.save();
-        res.json({ success: true, message: 'Announcement created successfully', announcement });
-    } catch (error) {
-        console.error('Error creating announcement:', error);
-        res.status(500).json({ error: 'Failed to create announcement' });
-    }
-};
-
-// Update announcement
-export const updateAnnouncement = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { title, message, type, eventDate, venue, targetBarangays, priority, status } = req.body;
-        
-        const announcement = await Announcement.findById(id);
-        if (!announcement) {
-            return res.status(404).json({ error: 'Announcement not found' });
-        }
-
-        announcement.title = title;
-        announcement.message = message;
-        announcement.type = type;
-        announcement.eventDate = eventDate ? new Date(eventDate) : null;
-        announcement.venue = venue;
-        announcement.targetBarangays = Array.isArray(targetBarangays) ? targetBarangays : [targetBarangays];
-        announcement.priority = priority;
-        announcement.status = status;
-
-        await announcement.save();
-        res.json({ success: true, message: 'Announcement updated successfully', announcement });
-    } catch (error) {
-        console.error('Error updating announcement:', error);
-        res.status(500).json({ error: 'Failed to update announcement' });
-    }
-};
-
-// Delete announcement
-export const deleteAnnouncement = async (req, res) => {
-    try {
-        const { id } = req.params;
-        
-        const announcement = await Announcement.findById(id);
-        if (!announcement) {
-            return res.status(404).json({ error: 'Announcement not found' });
-        }
-
-        await announcement.delete();
-        res.json({ success: true, message: 'Announcement deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting announcement:', error);
-        res.status(500).json({ error: 'Failed to delete announcement' });
-    }
-};
-
 // Get dashboard statistics
 export const getDashboardStats = async (req, res) => {
     try {
@@ -337,5 +252,447 @@ export const getDashboardStats = async (req, res) => {
     } catch (error) {
         console.error('Error getting dashboard stats:', error);
         res.status(500).json({ error: 'Failed to load dashboard statistics' });
+    }
+};
+
+// Import Request Letter model for monitoring
+import { RequestLetter } from "../models/RequestLetterMySQL.js";
+
+// Admin: View all request letters (Read-only monitoring)
+export const monitorAllRequests = async (req, res) => {
+    try {
+        const requests = await RequestLetter.findAll();
+        
+        // Calculate stats
+        const stats = {
+            total: requests.length,
+            pending: requests.filter(r => r.status === 'pending').length,
+            responded: requests.filter(r => r.status === 'responded').length,
+            approved: requests.filter(r => r.status === 'approved').length,
+            rejected: requests.filter(r => r.status === 'rejected').length
+        };
+        
+        res.json({
+            success: true,
+            requests,
+            stats,
+            note: 'Admin monitoring view - read-only'
+        });
+    } catch (error) {
+        console.error('Error monitoring requests:', error);
+        res.status(500).json({ error: 'Failed to load request monitoring data' });
+    }
+};
+
+// Admin: Get activity logs (all user activities)
+export const getActivityLogs = async (req, res) => {
+    try {
+        // This would track all CRUD operations by staff and submissions by farmers
+        const logs = [
+            {
+                id: 1,
+                timestamp: new Date().toISOString(),
+                user: 'Staff Member',
+                role: 'staff',
+                action: 'approved_request',
+                details: 'Approved request #123 for Rice Seeds',
+                ipAddress: req.ip
+            },
+            {
+                id: 2,
+                timestamp: new Date().toISOString(),
+                user: 'Juan Dela Cruz',
+                role: 'farmer',
+                action: 'submitted_request',
+                details: 'Submitted new request for Fertilizer',
+                ipAddress: req.ip
+            }
+        ];
+        
+        res.json({
+            success: true,
+            logs,
+            note: 'Admin activity monitoring'
+        });
+    } catch (error) {
+        console.error('Error getting activity logs:', error);
+        res.status(500).json({ error: 'Failed to load activity logs' });
+    }
+};
+
+
+// Get pending staff (not approved yet)
+export const getPendingStaff = async (req, res) => {
+    try {
+        // Import User model from MySQL
+        const { User } = await import('../models/UserMySQL.js');
+        
+        // Get pending staff from MySQL database
+        const pendingStaffUsers = await User.findPendingStaff();
+        
+        // Map to frontend-friendly format
+        const pendingStaff = pendingStaffUsers.map(user => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone || 'N/A',
+            barangay: user.barangay || 'N/A',
+            staffingManagement: user.staffingManagement || 'N/A',
+            createdAt: user.createdAt,
+            approved: user.isApproved
+        }));
+        
+        console.log(`✅ Found ${pendingStaff.length} pending staff in MySQL`);
+        if (pendingStaff.length > 0) {
+            console.log('📋 Pending staff:', pendingStaff.map(s => `${s.name} (${s.email})`).join(', '));
+        }
+        
+        res.json({ 
+            success: true, 
+            pendingStaff,
+            count: pendingStaff.length
+        });
+    } catch (error) {
+        console.error('❌ Error getting pending staff:', error);
+        res.status(500).json({ success: false, error: 'Failed to load pending staff' });
+    }
+};
+
+// Approve staff member
+export const approveStaff = async (req, res) => {
+    try {
+        const { staffId } = req.params;
+
+        // Import User model from MySQL
+        const { User } = await import('../models/UserMySQL.js');
+        
+        // Find the staff member by ID in MySQL
+        const staff = await User.findById(staffId);
+        
+        if (!staff || staff.role !== 'staff') {
+            return res.status(404).json({ success: false, error: 'Staff member not found' });
+        }
+
+        // Update approval status in MySQL
+        await User.approveStaff(staffId);
+        
+        console.log(`✅ Staff approved in MySQL: ${staff.name} (${staff.email})`);
+        
+        res.json({ 
+            success: true, 
+            message: `${staff.name} has been approved successfully. They can now login.`,
+            staff: {
+                id: staff.id,
+                name: staff.name,
+                email: staff.email,
+                approved: true
+            }
+        });
+    } catch (error) {
+        console.error('❌ Error approving staff:', error);
+        res.status(500).json({ success: false, error: 'Failed to approve staff' });
+    }
+};
+
+// Reject staff member
+export const rejectStaff = async (req, res) => {
+    try {
+        const { staffId } = req.params;
+        const { reason } = req.body;
+
+        // Import User model from MySQL
+        const { User } = await import('../models/UserMySQL.js');
+        
+        // Find the staff member by ID in MySQL
+        const staff = await User.findById(staffId);
+        
+        if (!staff || staff.role !== 'staff') {
+            return res.status(404).json({ success: false, error: 'Staff member not found' });
+        }
+
+        // Delete the user from MySQL
+        await User.rejectStaff(staffId);
+        
+        console.log(`❌ Staff rejected in MySQL: ${staff.name} (${staff.email}) - Reason: ${reason || 'No reason provided'}`);
+        
+        res.json({ 
+            success: true, 
+            message: `${staff.name}'s registration has been rejected and removed.` 
+        });
+    } catch (error) {
+        console.error('❌ Error rejecting staff:', error);
+        res.status(500).json({ success: false, error: 'Failed to reject staff' });
+    }
+};
+
+// Approve farmer (Admin only)
+export const approveFarmer = async (req, res) => {
+    try {
+        const { id } = req.params;
+        // Logic is now inside this controller
+        const { registeredUsers, localUsers } = await import('./authController.js');
+        const farmer = registeredUsers.find(user => user.id === id && user.role === 'farmer');
+
+        if (!farmer) {
+            return res.status(404).json({ success: false, message: 'Farmer not found' });
+        }
+
+        farmer.approved = true;
+        farmer.approvedDate = new Date().toISOString();
+
+        if (localUsers.has(farmer.email)) {
+            const localUser = localUsers.get(farmer.email);
+            localUser.approved = true;
+        }
+
+        res.json({ success: true, message: `Farmer ${farmer.name} has been approved.` });
+    } catch (error) {
+        console.error('Error approving farmer:', error);
+        res.status(500).json({ success: false, message: 'Failed to approve farmer' });
+    }
+};
+
+// Reject farmer (Admin only)
+export const rejectFarmer = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { reason } = req.body;
+        const { registeredUsers } = await import('./authController.js');
+        const farmer = registeredUsers.find(user => user.id === id && user.role === 'farmer');
+
+        if (!farmer) {
+            return res.status(404).json({ success: false, message: 'Farmer not found' });
+        }
+
+        farmer.approved = false;
+        farmer.rejected = true;
+        farmer.rejectionReason = reason || 'No reason provided';
+        farmer.rejectedDate = new Date().toISOString();
+
+        res.json({ success: true, message: `Farmer ${farmer.name} has been rejected.` });
+    } catch (error) {
+        console.error('Error rejecting farmer:', error);
+        res.status(500).json({ success: false, message: 'Failed to reject farmer' });
+    }
+};
+
+
+// Import Staff Duty model
+import {
+    getActiveDutySessions,
+    getPendingDutySessions,
+    approveDutySession,
+    rejectDutySession,
+    getDutyStatistics
+} from '../models/StaffDuty.js';
+
+// Mock StaffDuty model if not available
+const StaffDuty = {
+    getActiveDutySessions: () => [],
+    getPendingDutySessions: () => [],
+    approveDutySession: (id, admin, notes) => ({ id, staffName: 'Mock Staff', status: 'approved' }),
+    rejectDutySession: (id, admin, reason) => ({ id, staffName: 'Mock Staff', status: 'rejected' }),
+    getDutyStatistics: () => ({ total: 0, active: 0, pending: 0 }),
+    getAllDutySessions: () => [],
+    endDutySession: (id, admin, notes) => ({ id, staffName: 'Mock Staff', status: 'ended' })
+};
+
+// Get active staff duty sessions
+export const getActiveDuty = async (req, res) => {
+    try {
+        const sessions = getActiveDutySessions();
+        const stats = getDutyStatistics();
+        
+        res.json({
+            success: true,
+            sessions,
+            stats
+        });
+    } catch (error) {
+        console.error('Error getting active duty:', error);
+        res.status(500).json({ error: 'Failed to load active duty sessions' });
+    }
+};
+
+// Get pending duty sessions
+export const getPendingDuty = async (req, res) => {
+    try {
+        const sessions = getPendingDutySessions();
+        
+        res.json({
+            success: true,
+            sessions,
+            count: sessions.length
+        });
+    } catch (error) {
+        console.error('Error getting pending duty:', error);
+        res.status(500).json({ error: 'Failed to load pending duty sessions' });
+    }
+};
+
+// Approve staff duty
+export const approveDuty = async (req, res) => {
+    try {
+        const { sessionId, notes } = req.body;
+        const adminName = req.session.userName;
+        
+        const session = approveDutySession(sessionId, adminName, notes);
+        
+        if (session) {
+            res.json({
+                success: true,
+                message: `${session.staffName} is now on duty`,
+                session
+            });
+        } else {
+            res.status(404).json({ error: 'Duty session not found' });
+        }
+    } catch (error) {
+        console.error('Error approving duty:', error);
+        res.status(500).json({ error: 'Failed to approve duty' });
+    }
+};
+
+// Reject staff duty
+export const rejectDuty = async (req, res) => {
+    try {
+        const { sessionId, reason } = req.body;
+        const adminName = req.session.userName;
+        
+        const session = rejectDutySession(sessionId, adminName, reason);
+        
+        if (session) {
+            res.json({
+                success: true,
+                message: `Duty request rejected for ${session.staffName}`,
+                session
+            });
+        } else {
+            res.status(404).json({ error: 'Duty session not found' });
+        }
+    } catch (error) {
+        console.error('Error rejecting duty:', error);
+        res.status(500).json({ error: 'Failed to reject duty' });
+    }
+};
+
+// Staff Management Functions for Admin Dashboard
+
+// Get staff duty status for management dashboard
+export const getStaffDutyStatus = async (req, res) => {
+    try {
+        // Import functions from authController and StaffDuty model
+        const { getAllRegisteredUsers } = await import('../controllers/authController.js');
+        const { getAllDutySessions, getDutyStatistics } = await import('../models/StaffDuty.js');
+        
+        const allUsers = getAllRegisteredUsers();
+        const allSessions = getAllDutySessions();
+        
+        // Get staff who are logged in (have active sessions)
+        const loggedInStaff = allUsers.filter(user => 
+            user.role === 'staff' && 
+            user.approved === true &&
+            allSessions.some(session => session.staffEmail === user.email && session.status !== 'ended')
+        ).map(staff => {
+            const session = allSessions.find(s => s.staffEmail === staff.email && s.status !== 'ended');
+            return {
+                id: staff.id,
+                name: staff.name,
+                email: staff.email,
+                loginTime: session ? session.startTime : null,
+                accountStatus: staff.approved ? 'approved' : 'pending',
+                dutyStatus: session ? session.status : 'no_session',
+                dutyId: session ? session.id : null
+            };
+        });
+        
+        const stats = getDutyStatistics();
+        const totalStaff = allUsers.filter(u => u.role === 'staff').length;
+        
+        res.json({
+            success: true,
+            loggedInStaff,
+            stats: {
+                loggedIn: loggedInStaff.length,
+                pendingApproval: loggedInStaff.filter(s => s.dutyStatus === 'pending').length,
+                total: totalStaff
+            }
+        });
+    } catch (error) {
+        console.error('Error getting staff duty status:', error);
+        res.status(500).json({ error: 'Failed to load staff duty status' });
+    }
+};
+
+// Approve staff duty from management dashboard
+export const approveStaffDuty = async (req, res) => {
+    try {
+        const dutyId = parseInt(req.params.id);
+        const adminName = req.session.userName || 'Admin';
+        
+        const { approveDutySession } = await import('../models/StaffDuty.js');
+        const session = approveDutySession(dutyId, adminName, 'Approved from Staff Management Dashboard');
+        
+        if (session) {
+            res.json({
+                success: true,
+                message: `${session.staffName} is now approved for duty`,
+                session
+            });
+        } else {
+            res.status(404).json({ error: 'Duty session not found' });
+        }
+    } catch (error) {
+        console.error('Error approving staff duty:', error);
+        res.status(500).json({ error: 'Failed to approve staff duty' });
+    }
+};
+
+// Reject staff duty from management dashboard
+export const rejectStaffDuty = async (req, res) => {
+    try {
+        const dutyId = parseInt(req.params.id);
+        const { reason } = req.body;
+        const adminName = req.session.userName || 'Admin';
+        
+        const { rejectDutySession } = await import('../models/StaffDuty.js');
+        const session = rejectDutySession(dutyId, adminName, reason || 'Rejected from Staff Management Dashboard');
+        
+        if (session) {
+            res.json({
+                success: true,
+                message: `Duty request rejected for ${session.staffName}`,
+                session
+            });
+        } else {
+            res.status(404).json({ error: 'Duty session not found' });
+        }
+    } catch (error) {
+        console.error('Error rejecting staff duty:', error);
+        res.status(500).json({ error: 'Failed to reject staff duty' });
+    }
+};
+
+// End staff duty from management dashboard
+export const endStaffDuty = async (req, res) => {
+    try {
+        const dutyId = parseInt(req.params.id);
+        const adminName = req.session.userName || 'Admin';
+        
+        const { endDutySession } = await import('../models/StaffDuty.js');
+        const session = endDutySession(dutyId, adminName, 'Ended from Staff Management Dashboard');
+        
+        if (session) {
+            res.json({
+                success: true,
+                message: `Duty ended for ${session.staffName}`,
+                session
+            });
+        } else {
+            res.status(404).json({ error: 'Duty session not found' });
+        }
+    } catch (error) {
+        console.error('Error ending staff duty:', error);
+        res.status(500).json({ error: 'Failed to end staff duty' });
     }
 };

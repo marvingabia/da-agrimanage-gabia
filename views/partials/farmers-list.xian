@@ -1,0 +1,488 @@
+<!-- Farmers List Section (For Staff) -->
+<div class="content-section">
+    <div class="section-header">
+        <h3 class="section-title">
+            <i class="fas fa-users"></i>
+            Registered Farmers
+        </h3>
+        <div class="header-actions">
+            <input type="text" id="searchFarmers" class="search-input" placeholder="Search farmers...">
+            <select id="filterBarangay" class="filter-select">
+                <option value="">All Barangays</option>
+                <option value="Bagong Sikat">Bagong Sikat</option>
+                <option value="Balatasan">Balatasan</option>
+                <option value="Benli">Benli</option>
+                <option value="Cabugao">Cabugao</option>
+                <option value="Cambunang">Cambunang</option>
+                <option value="Campaasan">Campaasan</option>
+                <option value="Maasin">Maasin</option>
+                <option value="Maujao">Maujao</option>
+                <option value="Milagrosa">Milagrosa</option>
+                <option value="Nasukob">Nasukob</option>
+                <option value="Poblacion">Poblacion</option>
+                <option value="San Francisco">San Francisco</option>
+                <option value="San Isidro">San Isidro</option>
+                <option value="San Juan">San Juan</option>
+                <option value="San Roque">San Roque</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card bg-primary">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-details">
+                    <h3 id="totalFarmersCount">0</h3>
+                    <p>Total Farmers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-success">
+                <div class="stat-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="stat-details">
+                    <h3 id="activeFarmersCount">0</h3>
+                    <p>Active Farmers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-info">
+                <div class="stat-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="stat-details">
+                    <h3 id="barangaysCount">0</h3>
+                    <p>Barangays</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-warning">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="stat-details">
+                    <h3 id="newFarmersCount">0</h3>
+                    <p>New This Month</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Farmers Table -->
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Farmer ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Barangay</th>
+                    <th>Auth Provider</th>
+                    <th>Registration Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="farmers-table">
+                <tr>
+                    <td colspan="8" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 text-muted">Loading farmers...</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- View Farmer Details Modal -->
+<div class="modal fade" id="viewFarmerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-user me-2"></i>Farmer Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="viewFarmerContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-input {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 50px;
+    width: 250px;
+    font-size: 0.9rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #6b9b47;
+}
+
+.filter-select {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #6b9b47;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card.bg-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
+.stat-card.bg-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.stat-card.bg-info {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    color: white;
+}
+
+.stat-card.bg-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.stat-details h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.stat-details p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+</style>
+
+<script>
+let allFarmers = [];
+let filteredFarmers = [];
+let lastFarmerCount = 0;
+let isInitialLoad = true;
+
+// Load farmers on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🌾 Farmers List: DOMContentLoaded fired');
+    const farmersTable = document.getElementById('farmers-table');
+    console.log('🌾 Farmers table element:', farmersTable);
+    
+    if (farmersTable) {
+        console.log('🌾 Loading farmers...');
+        loadFarmers();
+        
+        // Search functionality
+        document.getElementById('searchFarmers')?.addEventListener('input', filterFarmers);
+        document.getElementById('filterBarangay')?.addEventListener('change', filterFarmers);
+        
+        // Check for new farmers every 5 seconds (only reload if new farmer registered)
+        setInterval(() => {
+            if (document.getElementById('farmers-list-section')?.style.display !== 'none') {
+                checkForNewFarmers();
+            }
+        }, 5000); // 5 seconds
+    } else {
+        console.error('❌ Farmers table element not found!');
+    }
+});
+
+async function loadFarmers() {
+    console.log('📡 Fetching farmers from /api/farmers/list...');
+    try {
+        const response = await fetch('/api/farmers/list');
+        console.log('📡 Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('📊 Farmers data received:', data);
+        
+        if (data.farmers) {
+            allFarmers = data.farmers;
+            filteredFarmers = allFarmers;
+            lastFarmerCount = allFarmers.length;
+            console.log(`✅ Loaded ${allFarmers.length} farmers`);
+            updateStatistics();
+            displayFarmers(filteredFarmers);
+            
+            // Show notification if new farmer registered (not on initial load)
+            if (!isInitialLoad && allFarmers.length > lastFarmerCount) {
+                const newCount = allFarmers.length - lastFarmerCount;
+                showNewFarmerNotification(newCount);
+            }
+            isInitialLoad = false;
+        } else {
+            console.warn('⚠️ No farmers in response');
+            showError('No farmers found');
+        }
+    } catch (error) {
+        console.error('❌ Error loading farmers:', error);
+        showError('Error loading farmers: ' + error.message);
+    }
+}
+
+// Check for new farmers without reloading the entire list
+async function checkForNewFarmers() {
+    try {
+        const response = await fetch('/api/farmers/list');
+        if (!response.ok) return;
+        
+        const data = await response.json();
+        if (data.farmers && data.farmers.length > lastFarmerCount) {
+            console.log(`🆕 New farmer(s) detected! Reloading... (${data.farmers.length} vs ${lastFarmerCount})`);
+            loadFarmers(); // Only reload if there are new farmers
+        } else {
+            console.log('✅ No new farmers, skipping reload');
+        }
+    } catch (error) {
+        console.error('❌ Error checking for new farmers:', error);
+    }
+}
+
+function showNewFarmerNotification(count) {
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        <strong>🎉 New Farmer${count > 1 ? 's' : ''} Registered!</strong><br>
+        ${count} new farmer${count > 1 ? 's have' : ' has'} joined the system
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.remove(), 5000);
+}
+
+function updateStatistics() {
+    const totalFarmers = allFarmers.length;
+    const activeFarmers = allFarmers.filter(f => f.isApproved !== false).length;
+    const barangays = new Set(allFarmers.map(f => f.barangay)).size;
+    
+    // Count farmers registered this month
+    const now = new Date();
+    const thisMonth = allFarmers.filter(f => {
+        const createdDate = new Date(f.createdAt);
+        return createdDate.getMonth() === now.getMonth() && 
+               createdDate.getFullYear() === now.getFullYear();
+    }).length;
+    
+    document.getElementById('totalFarmersCount').textContent = totalFarmers;
+    document.getElementById('activeFarmersCount').textContent = activeFarmers;
+    document.getElementById('barangaysCount').textContent = barangays;
+    document.getElementById('newFarmersCount').textContent = thisMonth;
+}
+
+function displayFarmers(farmers) {
+    const tbody = document.getElementById('farmers-table');
+    const userRole = '{{user.role}}';
+    
+    if (farmers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="farmers-empty-state"><i class="fas fa-users"></i><p class="mb-0">No farmers found</p><small>Try adjusting your search or filter</small></td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = farmers.map(farmer => `
+        <tr class="animate-fade-in">
+            <td><strong>${farmer.id}</strong></td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-2">
+                        ${farmer.name.charAt(0).toUpperCase()}
+                    </div>
+                    <strong>${farmer.name}</strong>
+                </div>
+            </td>
+            <td>${farmer.email}</td>
+            <td><span class="badge bg-secondary">${farmer.barangay || 'N/A'}</span></td>
+            <td>
+                ${farmer.authProvider === 'google' 
+                    ? '<span class="badge bg-danger"><i class="fab fa-google me-1"></i>Google</span>'
+                    : '<span class="badge bg-primary"><i class="fas fa-envelope me-1"></i>Email</span>'}
+            </td>
+            <td>${new Date(farmer.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            })}</td>
+            <td>
+                ${farmer.isApproved !== false 
+                    ? '<span class="badge-status approved"><i class="fas fa-check-circle me-1"></i>Active</span>'
+                    : '<span class="badge-status pending"><i class="fas fa-clock me-1"></i>Pending</span>'}
+            </td>
+            <td>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button class="btn-action view" onclick="viewFarmer('${farmer.id}')" title="View ${farmer.name}">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function filterFarmers() {
+    const searchTerm = document.getElementById('searchFarmers').value.toLowerCase();
+    const barangayFilter = document.getElementById('filterBarangay').value;
+    
+    filteredFarmers = allFarmers.filter(farmer => {
+        const matchesSearch = farmer.name.toLowerCase().includes(searchTerm) ||
+                            farmer.email.toLowerCase().includes(searchTerm) ||
+                            farmer.id.toLowerCase().includes(searchTerm);
+        
+        const matchesBarangay = !barangayFilter || farmer.barangay === barangayFilter;
+        
+        return matchesSearch && matchesBarangay;
+    });
+    
+    displayFarmers(filteredFarmers);
+}
+
+async function viewFarmer(farmerId) {
+    const farmer = allFarmers.find(f => f.id === farmerId);
+    if (!farmer) return;
+    
+    // Get farmer's submissions
+    try {
+        const [insurance, damageReports, claims, requests] = await Promise.all([
+            fetch(`/api/insurance?farmerId=${farmerId}`).then(r => r.json()).catch(() => ({insurance: []})),
+            fetch(`/api/damage-reports?farmerId=${farmerId}`).then(r => r.json()).catch(() => ({damageReports: []})),
+            fetch(`/api/claims?farmerId=${farmerId}`).then(r => r.json()).catch(() => ({claims: []})),
+            fetch(`/api/request-letters?farmerId=${farmerId}`).then(r => r.json()).catch(() => ({requests: []}))
+        ]);
+        
+        const content = `
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Farmer ID:</strong> ${farmer.id}
+                </div>
+                <div class="col-md-6">
+                    <strong>Status:</strong> 
+                    ${farmer.isApproved !== false 
+                        ? '<span class="badge-status approved">Active</span>'
+                        : '<span class="badge-status pending">Pending</span>'}
+                </div>
+            </div>
+            <hr>
+            <h6 class="text-primary mb-3">Personal Information</h6>
+            <div class="row mb-3">
+                <div class="col-md-6"><strong>Name:</strong> ${farmer.name}</div>
+                <div class="col-md-6"><strong>Email:</strong> ${farmer.email}</div>
+                <div class="col-md-6"><strong>Barangay:</strong> ${farmer.barangay || 'N/A'}</div>
+                <div class="col-md-6"><strong>Auth Provider:</strong> ${farmer.authProvider}</div>
+                <div class="col-md-6"><strong>Registration Date:</strong> ${new Date(farmer.createdAt).toLocaleDateString()}</div>
+            </div>
+            <hr>
+            <h6 class="text-success mb-3">Activity Summary</h6>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="text-center p-3 bg-light rounded">
+                        <h4 class="text-primary">${insurance.insurance?.length || 0}</h4>
+                        <small>Insurance Applications</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center p-3 bg-light rounded">
+                        <h4 class="text-danger">${damageReports.damageReports?.length || 0}</h4>
+                        <small>Damage Reports</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center p-3 bg-light rounded">
+                        <h4 class="text-warning">${claims.claims?.length || 0}</h4>
+                        <small>Claims</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center p-3 bg-light rounded">
+                        <h4 class="text-info">${requests.requests?.length || 0}</h4>
+                        <small>Requests</small>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('viewFarmerContent').innerHTML = content;
+        new bootstrap.Modal(document.getElementById('viewFarmerModal')).show();
+    } catch (error) {
+        console.error('Error loading farmer details:', error);
+    }
+}
+
+function showError(message) {
+    document.getElementById('farmers-table').innerHTML = 
+        `<tr><td colspan="8" class="text-center py-4 text-danger">${message}</td></tr>`;
+}
+</script>
+
+<style>
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+}
+</style>
+
+<!-- Edit/Delete functionality removed -->

@@ -1,0 +1,233 @@
+﻿<!-- Farmers Management Section (Admin Only) -->
+<div class="content-section">
+    <div class="section-header">
+        <h4 class="section-title">
+            <i class="fas fa-users me-2"></i>Farmers Management
+        </h4>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h6>Total Farmers</h6>
+                    <h3>156</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h6>Active Farmers</h6>
+                    <h3>142</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h6>Google Registered</h6>
+                    <h3>45</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h6>Email Registered</h6>
+                    <h3>111</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Farmers List -->
+    <div class="mb-4">
+        <h5 class="text-primary mb-3">
+            <i class="fas fa-list me-2"></i>Registered Farmers
+        </h5>
+        
+        <!-- Search and Filter -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Search farmers..." id="searchFarmers">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="filterBarangay">
+                    <option value="">All Barangays</option>
+                    <option value="Poblacion">Poblacion</option>
+                    <option value="Campasaan">Campasaan</option>
+                    <option value="Benli">Benli</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="filterStatus">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Barangay</th>
+                        <th>Land Area (ha)</th>
+                        <th>Land Type</th>
+                        <th>Registration Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="farmers-table">
+                    <tr>
+                        <td>Juan Dela Cruz</td>
+                        <td>juan.farmer@gmail.com</td>
+                        <td>09123456789</td>
+                        <td>Poblacion</td>
+                        <td>2.5</td>
+                        <td>Rice Field</td>
+                        <td>2024-01-10</td>
+                        <td><span class="badge bg-success">Active</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewFarmer('+"'farmer1'"+')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Maria Santos</td>
+                        <td>maria.farmer@gmail.com</td>
+                        <td>09234567890</td>
+                        <td>Campasaan</td>
+                        <td>3.0</td>
+                        <td>Corn Field</td>
+                        <td>2024-01-12</td>
+                        <td><span class="badge bg-success">Active</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewFarmer('+"'farmer2'"+')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Pedro Garcia</td>
+                        <td>pedro.farmer@gmail.com</td>
+                        <td>09345678901</td>
+                        <td>Benli</td>
+                        <td>1.8</td>
+                        <td>Vegetable Farm</td>
+                        <td>2024-01-14</td>
+                        <td><span class="badge bg-success">Active</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewFarmer('+"'farmer3'"+')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Ana Reyes</td>
+                        <td>ana.farmer@gmail.com</td>
+                        <td>09456789012</td>
+                        <td>Poblacion</td>
+                        <td>4.2</td>
+                        <td>Mixed Farming</td>
+                        <td>2024-01-15</td>
+                        <td><span class="badge bg-success">Active</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewFarmer('+"'farmer4'"+')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- View Farmer Modal -->
+<div class="modal fade" id="viewFarmerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-user me-2"></i>Farmer Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Full Name</label>
+                        <p id="farmerName">-</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Email</label>
+                        <p id="farmerEmail">-</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Phone</label>
+                        <p id="farmerPhone">-</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Barangay</label>
+                        <p id="farmerBarangay">-</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Land Area</label>
+                        <p id="farmerLandArea">-</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Land Type</label>
+                        <p id="farmerLandType">-</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewFarmer(farmerId) {
+    // Sample data - in real app, fetch from API
+    const farmerData = {
+        name: 'Juan Dela Cruz',
+        email: 'juan.farmer@gmail.com',
+        phone: '09123456789',
+        barangay: 'Poblacion',
+        landArea: '2.5 hectares',
+        landType: 'Rice Field'
+    };
+    
+    document.getElementById('farmerName').textContent = farmerData.name;
+    document.getElementById('farmerEmail').textContent = farmerData.email;
+    document.getElementById('farmerPhone').textContent = farmerData.phone;
+    document.getElementById('farmerBarangay').textContent = farmerData.barangay;
+    document.getElementById('farmerLandArea').textContent = farmerData.landArea;
+    document.getElementById('farmerLandType').textContent = farmerData.landType;
+    
+    const modal = new bootstrap.Modal(document.getElementById('viewFarmerModal'));
+    modal.show();
+}
+
+// Search functionality
+document.getElementById('searchFarmers')?.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#farmers-table tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+</script>

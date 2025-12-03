@@ -1,0 +1,469 @@
+<!-- Data Analytics Section - Premium Professional Design -->
+<div class="analytics-container">
+    <!-- Header with Glassmorphism Effect -->
+    <div class="analytics-header">
+        <div class="header-content">
+            <div class="header-title">
+                <div class="icon-wrapper">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                    <h2>Data Analytics Dashboard</h2>
+                    <p>Real-time agricultural insights and statistics</p>
+                </div>
+            </div>
+            <div class="header-controls">
+                <select id="analytics-period" class="premium-select" onchange="loadAnalytics()">
+                    <option value="7">Last 7 Days</option>
+                    <option value="30" selected>Last 30 Days</option>
+                    <option value="90">Last 90 Days</option>
+                    <option value="365">Last Year</option>
+                    <option value="all">All Time</option>
+                </select>
+                <button class="btn-export" onclick="exportAnalytics()">
+                    <i class="fas fa-download"></i>
+                    <span>Export Report</span>
+                </button>
+                <button class="btn-refresh" onclick="loadAnalytics()" title="Refresh Data">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Premium Metrics Cards -->
+    <div class="metrics-grid">
+        <div class="metric-card metric-purple">
+            <div class="metric-icon-bg">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="metric-content">
+                <div class="metric-label">Total Farmers</div>
+                <div class="metric-value" id="total-farmers-metric">
+                    <span class="counter">0</span>
+                </div>
+                <div class="metric-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span id="farmers-trend">0%</span>
+                    <span class="trend-label">vs last period</span>
+                </div>
+            </div>
+            <div class="metric-sparkline" id="farmers-sparkline"></div>
+        </div>
+
+        <div class="metric-card metric-pink">
+            <div class="metric-icon-bg">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <div class="metric-content">
+                <div class="metric-label">Crop Items</div>
+                <div class="metric-value" id="total-crops-metric">
+                    <span class="counter">0</span>
+                </div>
+                <div class="metric-trend trend-up">
+                    <i class="fas fa-arrow-up"></i>
+                    <span id="crops-trend">0%</span>
+                    <span class="trend-label">growth rate</span>
+                </div>
+            </div>
+            <div class="metric-sparkline" id="crops-sparkline"></div>
+        </div>
+
+        <div class="metric-card metric-blue">
+            <div class="metric-icon-bg">
+                <i class="fas fa-hand-holding-usd"></i>
+            </div>
+            <div class="metric-content">
+                <div class="metric-label">Benefits Distributed</div>
+                <div class="metric-value" id="total-benefits-metric">
+                    <span class="counter">0</span>
+                </div>
+                <div class="metric-trend trend-neutral">
+                    <i class="fas fa-minus"></i>
+                    <span id="benefits-trend">0%</span>
+                    <span class="trend-label">change</span>
+                </div>
+            </div>
+            <div class="metric-sparkline" id="benefits-sparkline"></div>
+        </div>
+
+        <div class="metric-card metric-green">
+            <div class="metric-icon-bg">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="metric-content">
+                <div class="metric-label">Damage Reports</div>
+                <div class="metric-value" id="total-reports-metric">
+                    <span class="counter">0</span>
+                </div>
+                <div class="metric-trend trend-down">
+                    <i class="fas fa-arrow-down"></i>
+                    <span id="reports-trend">0%</span>
+                    <span class="trend-label">decrease</span>
+                </div>
+            </div>
+            <div class="metric-sparkline" id="reports-sparkline"></div>
+        </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="row mb-4">
+        <div class="col-md-8 mb-3">
+            <div class="premium-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-area me-2"></i>Farmers Registration Trend</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="farmersChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="premium-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-pie me-2"></i>Farmers by Barangay</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="barangayChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="premium-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar me-2"></i>Crop Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="cropChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="premium-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line me-2"></i>Benefits Distribution Over Time</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="benefitsChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 3 -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="premium-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-doughnut me-2"></i>Insurance Status</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="insuranceChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 mb-3">
+            <div class="premium-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar me-2"></i>Damage Reports by Type</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="damageChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Table -->
+    <div class="premium-card">
+        <div class="card-header">
+            <h5><i class="fas fa-table me-2"></i>Detailed Statistics</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Current Period</th>
+                            <th>Previous Period</th>
+                            <th>Change</th>
+                            <th>Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statistics-table">
+                        <tr>
+                            <td colspan="5" class="text-center">Loading statistics...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.premium-container-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.analytics-card {
+    border-radius: 15px;
+    padding: 1.5rem;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.analytics-card:hover {
+    transform: translateY(-5px);
+}
+
+.analytics-icon {
+    font-size: 2.5rem;
+    opacity: 0.3;
+    float: right;
+}
+
+.analytics-content h3 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.analytics-content p {
+    margin: 0.5rem 0;
+    opacity: 0.9;
+}
+
+.analytics-content small {
+    font-size: 0.85rem;
+}
+
+.trend-up { color: #4ade80; }
+.trend-down { color: #f87171; }
+.trend-neutral { color: #fbbf24; }
+
+.premium-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.premium-card .card-header {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1rem 1.5rem;
+    border-bottom: none;
+}
+
+.premium-card .card-header h5 {
+    margin: 0;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.premium-card .card-body {
+    padding: 1.5rem;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+let charts = {};
+
+// Load analytics on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('farmersChart')) {
+        console.log('📊 Loading Data Analytics...');
+        loadAnalytics();
+    }
+});
+
+async function loadAnalytics() {
+    const period = document.getElementById('analytics-period').value;
+    console.log(`📊 Loading analytics for ${period} days...`);
+    
+    try {
+        // Fetch analytics data
+        const response = await fetch(`/api/analytics?period=${period}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            updateMetrics(data.metrics);
+            createCharts(data.charts);
+            updateStatisticsTable(data.statistics);
+        }
+    } catch (error) {
+        console.error('❌ Error loading analytics:', error);
+    }
+}
+
+function updateMetrics(metrics) {
+    document.getElementById('total-farmers-metric').textContent = metrics.totalFarmers || 0;
+    document.getElementById('total-crops-metric').textContent = metrics.totalCrops || 0;
+    document.getElementById('total-benefits-metric').textContent = metrics.totalBenefits || 0;
+    document.getElementById('total-reports-metric').textContent = metrics.totalReports || 0;
+    
+    document.getElementById('farmers-trend').textContent = `${metrics.farmersTrend || 0}%`;
+    document.getElementById('crops-trend').textContent = `${metrics.cropsTrend || 0}%`;
+    document.getElementById('benefits-trend').textContent = `${metrics.benefitsTrend || 0}%`;
+    document.getElementById('reports-trend').textContent = `${metrics.reportsTrend || 0}%`;
+}
+
+function createCharts(data) {
+    // Destroy existing charts
+    Object.values(charts).forEach(chart => chart.destroy());
+    charts = {};
+    
+    // Farmers Registration Trend
+    charts.farmers = new Chart(document.getElementById('farmersChart'), {
+        type: 'line',
+        data: {
+            labels: data.farmersLabels || [],
+            datasets: [{
+                label: 'New Farmers',
+                data: data.farmersData || [],
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: true }
+            }
+        }
+    });
+    
+    // Barangay Distribution
+    charts.barangay = new Chart(document.getElementById('barangayChart'), {
+        type: 'doughnut',
+        data: {
+            labels: data.barangayLabels || [],
+            datasets: [{
+                data: data.barangayData || [],
+                backgroundColor: [
+                    '#667eea', '#764ba2', '#f093fb', '#f5576c',
+                    '#4facfe', '#00f2fe', '#43e97b', '#38f9d7'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true
+        }
+    });
+    
+    // Crop Distribution
+    charts.crop = new Chart(document.getElementById('cropChart'), {
+        type: 'bar',
+        data: {
+            labels: data.cropLabels || ['Seeds', 'Fertilizer', 'Equipment', 'Pesticide'],
+            datasets: [{
+                label: 'Quantity',
+                data: data.cropData || [0, 0, 0, 0],
+                backgroundColor: ['#43e97b', '#f5576c', '#4facfe', '#fbbf24']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true
+        }
+    });
+    
+    // Benefits Over Time
+    charts.benefits = new Chart(document.getElementById('benefitsChart'), {
+        type: 'line',
+        data: {
+            labels: data.benefitsLabels || [],
+            datasets: [{
+                label: 'Benefits Distributed',
+                data: data.benefitsData || [],
+                borderColor: '#f5576c',
+                backgroundColor: 'rgba(245, 87, 108, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true
+        }
+    });
+    
+    // Insurance Status
+    charts.insurance = new Chart(document.getElementById('insuranceChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Approved', 'Pending', 'Rejected'],
+            datasets: [{
+                data: data.insuranceData || [0, 0, 0],
+                backgroundColor: ['#43e97b', '#fbbf24', '#f87171']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true
+        }
+    });
+    
+    // Damage Reports
+    charts.damage = new Chart(document.getElementById('damageChart'), {
+        type: 'bar',
+        data: {
+            labels: data.damageLabels || ['Typhoon', 'Flood', 'Drought', 'Pest'],
+            datasets: [{
+                label: 'Reports',
+                data: data.damageData || [0, 0, 0, 0],
+                backgroundColor: '#f87171'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            indexAxis: 'y'
+        }
+    });
+}
+
+function updateStatisticsTable(statistics) {
+    const tbody = document.getElementById('statistics-table');
+    
+    if (!statistics || statistics.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No statistics available</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = statistics.map(stat => `
+        <tr>
+            <td><strong>${stat.metric}</strong></td>
+            <td>${stat.current}</td>
+            <td>${stat.previous}</td>
+            <td>${stat.change}</td>
+            <td>
+                ${stat.trend > 0 ? 
+                    `<span class="badge bg-success"><i class="fas fa-arrow-up"></i> ${stat.trend}%</span>` :
+                    stat.trend < 0 ?
+                    `<span class="badge bg-danger"><i class="fas fa-arrow-down"></i> ${Math.abs(stat.trend)}%</span>` :
+                    `<span class="badge bg-secondary"><i class="fas fa-minus"></i> 0%</span>`
+                }
+            </td>
+        </tr>
+    `).join('');
+}
+
+function exportAnalytics() {
+    alert('📊 Exporting analytics report...\nFeature coming soon!');
+}
+</script>

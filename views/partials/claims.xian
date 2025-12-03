@@ -1,0 +1,505 @@
+﻿<!-- Claims/DA Benefits Section - Premium Design -->
+<div class="premium-container-orange">
+    <div class="premium-section-header">
+        <h3 class="premium-section-title" style="color: #f59e0b;">
+            <i class="fas fa-hand-holding-usd"></i>
+            DA Benefits & Claims
+        </h3>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span class="premium-stats-badge" id="benefits-count-badge">0 Benefits</span>
+            {{#if (eq user.role 'staff')}}
+            <button class="premium-btn premium-btn-success" data-bs-toggle="modal" data-bs-target="#benefitModal">
+                <i class="fas fa-plus me-2"></i>Distribute Benefit
+            </button>
+            {{/if}}
+        </div>
+    </div>
+
+    <div class="premium-table-container">
+        <table class="premium-table" style="--header-color-1: #f59e0b; --header-color-2: #d97706; --hover-color: #fef3c7;">
+            <thead>
+                <tr>
+                    <th>Farmer Name</th>
+                    <th>Barangay</th>
+                    <th>Benefit Type</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Value</th>
+                    <th>Distribution Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="benefits-table">
+                <tr>
+                    <td colspan="9" class="premium-empty-state">
+                        <i class="fas fa-hand-holding-usd" style="color: #f59e0b;"></i>
+                        <p class="mb-0">No benefits distributed yet</p>
+                        <small>Benefits will appear here automatically</small>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Distribute Benefit Modal (Staff Only) -->
+{{#if (eq user.role 'staff')}}
+<div class="modal fade" id="benefitModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-hand-holding-usd me-2"></i>Distribute DA Benefit
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="benefitForm" onsubmit="submitBenefit(event)">
+                <div class="modal-body">
+                    <!-- Select Farmer -->
+                    <h6 class="mb-3 text-primary">
+                        <i class="fas fa-users me-2"></i>Select Farmer
+                    </h6>
+                    <div class="mb-3">
+                        <label class="form-label">Farmer *</label>
+                        <select class="form-control" name="farmerId" id="farmerSelect" onchange="updateFarmerInfo()" required>
+                            <option value="">Select Farmer...</option>
+                            <option value="loading">Loading farmers...</option>
+                        </select>
+                        <small class="form-text text-muted">All registered farmers are listed</small>
+                    </div>
+
+                    <!-- Farmer Info Display -->
+                    <div id="farmerInfoDisplay" style="display:none;">
+                        <div class="alert alert-info">
+                            <strong>Selected Farmer:</strong> <span id="selectedFarmerName"></span><br>
+                            <strong>Barangay:</strong> <span id="selectedFarmerBarangay"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Benefit Details -->
+                    <h6 class="mb-3 text-success">
+                        <i class="fas fa-gift me-2"></i>Benefit Details
+                    </h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Benefit Type *</label>
+                            <select class="form-control" name="benefitType" required>
+                                <option value="">Select Type</option>
+                                <option value="seeds">Seeds (Replacement/Recovery)</option>
+                                <option value="fertilizer">Fertilizer (Recovery Support)</option>
+                                <option value="cash_assistance">Cash Assistance (Relief Fund)</option>
+                                <option value="equipment">Equipment (Replacement)</option>
+                                <option value="pesticide">Pesticide/Fungicide</option>
+                                <option value="training">Technical Training</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Item Name *</label>
+                            <input type="text" class="form-control" name="itemName" placeholder="e.g., Rice Seeds NSIC Rc222" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Quantity *</label>
+                            <input type="number" class="form-control" name="quantity" step="0.01" min="0" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Unit *</label>
+                            <select class="form-control" name="unit" required>
+                                <option value="">Select Unit</option>
+                                <option value="kg">Kilograms (kg)</option>
+                                <option value="bags">Bags</option>
+                                <option value="liters">Liters</option>
+                                <option value="pieces">Pieces</option>
+                                <option value="cash">Cash (₱)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Monetary Value (₱) *</label>
+                            <input type="number" class="form-control" name="value" step="0.01" min="0" placeholder="e.g., 5000" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="2" placeholder="Additional details about the benefit..."></textarea>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Distribution Schedule -->
+                    <h6 class="mb-3 text-warning">
+                        <i class="fas fa-calendar-alt me-2"></i>Distribution Schedule
+                    </h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Distribution Date *</label>
+                            <input type="date" class="form-control" name="distributionDate" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Distribution Location *</label>
+                            <input type="text" class="form-control" name="distributionLocation" placeholder="e.g., Municipal Agriculture Office" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="2" placeholder="Any additional notes..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-2"></i>Distribute Benefit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{/if}}
+
+<script>
+// Load benefits on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('benefits-table')) {
+        console.log('🎁 Claims: Loading benefits...');
+        loadBenefits();
+        
+        // Auto-refresh every 5 seconds
+        setInterval(() => {
+            if (document.getElementById('claims-section')?.style.display !== 'none') {
+                console.log('🔄 Auto-refreshing benefits (5s interval)...');
+                loadBenefits();
+            }
+        }, 5000);
+    }
+    
+    // Setup modal event listener to load farmers when modal opens
+    const benefitModal = document.getElementById('benefitModal');
+    if (benefitModal) {
+        benefitModal.addEventListener('show.bs.modal', function() {
+            console.log('📋 Modal opening, loading farmers NOW...');
+            setTimeout(() => loadEligibleFarmers(), 100);
+        });
+        
+        benefitModal.addEventListener('shown.bs.modal', function() {
+            console.log('📋 Modal fully shown');
+            // Double check if farmers loaded
+            const select = document.getElementById('farmerSelect');
+            if (select && select.options.length <= 1) {
+                console.log('⚠️ Farmers not loaded, trying again...');
+                loadEligibleFarmers();
+            }
+        });
+    }
+    
+    // Also try loading on page load for testing
+    console.log('🧪 Pre-loading farmers for testing...');
+    setTimeout(() => loadEligibleFarmers(), 2000);
+});
+
+// Alias for dashboard compatibility
+function loadClaims() {
+    console.log('🎁 loadClaims() called');
+    loadBenefits();
+}
+
+function loadBenefits() {
+    console.log('📡 Fetching benefits from /api/benefits... [VERSION 2.0 - FIXED]');
+    
+    fetch('/api/benefits')
+        .then(response => {
+            console.log('📡 Response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('📦 Benefits data received:', data);
+            const tbody = document.getElementById('benefits-table');
+            
+            if (!tbody) {
+                console.error('❌ benefits-table element not found!');
+                return;
+            }
+            
+            if (data.success && data.benefits && data.benefits.length > 0) {
+                console.log(`✅ Processing ${data.benefits.length} benefits...`);
+                
+                try {
+                    tbody.innerHTML = data.benefits.map(benefit => {
+                    const statusClass = benefit.status === 'claimed' ? 'premium-badge-approved' : 
+                                      benefit.status === 'expired' ? 'premium-badge-rejected' : 
+                                      'premium-badge-pending';
+                    const statusIcon = benefit.status === 'claimed' ? 'fa-check-circle' : 
+                                     benefit.status === 'expired' ? 'fa-times-circle' : 
+                                     'fa-clock';
+                    
+                    return `
+                    <tr class="animate-fade-in">
+                        <td><strong>${benefit.farmerName}</strong></td>
+                        <td><span class="badge bg-secondary">${benefit.barangay}</span></td>
+                        <td><span class="badge bg-info"><i class="fas fa-gift me-1"></i>${benefit.benefitType}</span></td>
+                        <td><strong>${benefit.itemName}</strong></td>
+                        <td><span class="badge bg-success">${benefit.quantity} ${benefit.unit}</span></td>
+                        <td><strong style="color: #10b981;">-</strong></td>
+                        <td>${benefit.createdAt ? new Date(benefit.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        }) : 'N/A'}</td>
+                        <td><span class="premium-badge ${statusClass}"><i class="fas ${statusIcon} me-1"></i>${benefit.status.replace('_', ' ')}</span></td>
+                        <td>
+                            <button class="premium-btn premium-btn-info" style="padding: 0.5rem 1rem;" onclick="viewBenefit('${benefit.id}')" title="View Details">
+                                <i class="fas fa-eye me-1"></i>View
+                            </button>
+                        </td>
+                    </tr>
+                `}).join('');
+                    
+                    console.log('✅ Benefits table updated successfully');
+                    
+                    // Update badge count
+                    const badge = document.getElementById('benefits-count-badge');
+                    if (badge) {
+                        badge.textContent = `${data.benefits.length} Benefit${data.benefits.length !== 1 ? 's' : ''}`;
+                    }
+                } catch (error) {
+                    console.error('❌ Error rendering benefits:', error);
+                    console.error('   Error details:', error.message);
+                    console.error('   Problem benefit:', data.benefits.find((b, i) => {
+                        try {
+                            // Try to render each benefit to find which one fails
+                            const test = `${b.farmerName} ${b.barangay}`;
+                            return false;
+                        } catch (e) {
+                            return true;
+                        }
+                    }));
+                    throw error;
+                }
+            } else {
+                tbody.innerHTML = '<tr><td colspan="9" class="premium-empty-state"><i class="fas fa-hand-holding-usd" style="color: #f59e0b;"></i><p class="mb-0">No benefits distributed yet</p><small>Benefits will appear here automatically</small></td></tr>';
+                document.getElementById('benefits-count-badge').textContent = '0 Benefits';
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error loading benefits:', error);
+            console.error('   Error type:', error.name);
+            console.error('   Error message:', error.message);
+            console.error('   Error stack:', error.stack);
+            
+            const tbody = document.getElementById('benefits-table');
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="9" class="premium-empty-state text-danger"><i class="fas fa-exclamation-triangle"></i><p class="mb-0">Error loading data</p><small>' + error.message + '</small></td></tr>';
+            }
+        });
+}
+
+async function loadEligibleFarmers() {
+    const farmerSelect = document.getElementById('farmerSelect');
+    if (!farmerSelect) {
+        // Silently skip if not on claims page - this is normal
+        return;
+    }
+    
+    console.log('📋 Loading all registered farmers...');
+    farmerSelect.innerHTML = '<option value="">Loading farmers...</option>';
+    
+    try {
+        // Load ALL registered farmers using the same endpoint as farmers-list
+        const response = await fetch('/api/farmers/list');
+        console.log('📡 Response status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('👥 Farmers data received:', data);
+        console.log('👥 Number of farmers:', data.farmers ? data.farmers.length : 0);
+        
+        if (data.farmers && data.farmers.length > 0) {
+            // Build dropdown options
+            const options = ['<option value="">Select Farmer...</option>'];
+            
+            data.farmers.forEach(farmer => {
+                console.log(`   - ${farmer.name} (${farmer.id}) from ${farmer.barangay || 'N/A'}`);
+                options.push(
+                    `<option value="${farmer.id}" data-name="${farmer.name}" data-barangay="${farmer.barangay || 'N/A'}">
+                        ${farmer.name} - ${farmer.barangay || 'N/A'}
+                    </option>`
+                );
+            });
+            
+            farmerSelect.innerHTML = options.join('');
+            console.log(`✅ Successfully loaded ${data.farmers.length} farmers to dropdown`);
+        } else {
+            farmerSelect.innerHTML = '<option value="">No farmers registered yet</option>';
+            console.warn('⚠️ No farmers found in database');
+            console.warn('💡 Register farmers at /register first');
+        }
+    } catch (error) {
+        console.error('❌ Error loading farmers:', error);
+        console.error('❌ Error details:', error.message);
+        farmerSelect.innerHTML = '<option value="">Error loading farmers - Check console</option>';
+    }
+}
+
+function updateFarmerInfo() {
+    const select = document.getElementById('farmerSelect');
+    const selectedOption = select.options[select.selectedIndex];
+    
+    if (!selectedOption.value || selectedOption.value === 'loading') {
+        document.getElementById('farmerInfoDisplay').style.display = 'none';
+        return;
+    }
+    
+    const farmerName = selectedOption.getAttribute('data-name');
+    const farmerBarangay = selectedOption.getAttribute('data-barangay');
+    
+    document.getElementById('selectedFarmerName').textContent = farmerName;
+    document.getElementById('selectedFarmerBarangay').textContent = farmerBarangay;
+    document.getElementById('farmerInfoDisplay').style.display = 'block';
+    
+    console.log(`✅ Selected farmer: ${farmerName} from ${farmerBarangay}`);
+}
+
+function submitBenefit(event) {
+    event.preventDefault();
+    
+    console.log('📝 Submitting benefit distribution...');
+    
+    // Get form data
+    const formData = new FormData(event.target);
+    const select = document.getElementById('farmerSelect');
+    const selectedOption = select.options[select.selectedIndex];
+    
+    const data = {
+        farmerId: formData.get('farmerId'),
+        farmerName: selectedOption.getAttribute('data-name'),
+        barangay: selectedOption.getAttribute('data-barangay'),
+        benefitType: formData.get('benefitType'),
+        itemName: formData.get('itemName'),
+        quantity: parseFloat(formData.get('quantity')) || 0,
+        unit: formData.get('unit'),
+        value: parseFloat(formData.get('value')) || 0,
+        description: formData.get('description'),
+        distributionDate: formData.get('distributionDate'),
+        distributionLocation: formData.get('distributionLocation'),
+        notes: formData.get('notes'),
+        status: 'pending'
+    };
+    
+    console.log('📦 Benefit data:', data);
+    
+    // Validate
+    if (!data.farmerId || !data.benefitType || !data.itemName) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    // Send to server
+    fetch('/api/staff/benefits/distribute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        console.log('📡 Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(result => {
+        console.log('✅ Server response:', result);
+        
+        if (result.success) {
+            // Close modal
+            const modalElement = document.getElementById('benefitModal');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+            
+            // Force remove backdrop
+            setTimeout(() => {
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('padding-right');
+            }, 100);
+            
+            // Reset form
+            event.target.reset();
+            document.getElementById('farmerInfoDisplay').style.display = 'none';
+            
+            // Show success
+            alert(`✅ Success! Benefit distributed to ${data.farmerName}`);
+            
+            // Reload benefits immediately
+            console.log('🔄 Reloading benefits...');
+            loadBenefits();
+        } else {
+            alert('❌ Failed to distribute benefit: ' + (result.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error distributing benefit:', error);
+        alert('❌ Error: ' + error.message);
+    });
+}
+
+function viewBenefit(benefitId) {
+    alert('View benefit details: ' + benefitId);
+}
+
+// Success popup function
+function showSuccessPopup(title, message) {
+    document.getElementById('successPopupTitle').textContent = title;
+    document.getElementById('successPopupMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('successPopup')).show();
+}
+</script>
+
+<!-- Success Popup Modal -->
+<div class="modal fade" id="successPopup" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+            <div class="modal-body text-center p-5" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="success-icon mb-4">
+                    <i class="fas fa-check-circle" style="font-size: 5rem; color: white;"></i>
+                </div>
+                <h3 class="text-white mb-3" id="successPopupTitle">Success!</h3>
+                <p class="text-white mb-4" id="successPopupMessage" style="font-size: 1.1rem;">Your submission was successful.</p>
+                <button type="button" class="btn btn-light btn-lg" data-bs-dismiss="modal" style="border-radius: 50px; padding: 0.75rem 2.5rem; font-weight: 600;">
+                    <i class="fas fa-check me-2"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon i {
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+</style>

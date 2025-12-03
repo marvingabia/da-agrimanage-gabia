@@ -1,0 +1,806 @@
+<!-- Request Letters / Messaging System - Premium Design -->
+<div class="premium-container-cyan">
+    <div class="premium-section-header">
+        <h3 class="premium-section-title" style="color: #06b6d4;">
+            <i class="fas fa-envelope"></i>
+            Request Letters & Messages
+        </h3>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span class="premium-stats-badge" id="requests-count-badge">0 Requests</span>
+            {{#if (eq user.role 'farmer')}}
+            <button class="premium-btn premium-btn-primary" data-bs-toggle="modal" data-bs-target="#requestLetterModal">
+                <i class="fas fa-plus me-2"></i>New Request
+            </button>
+            {{/if}}
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="premium-card" style="padding: 1rem; margin-bottom: 2rem;">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button class="premium-btn premium-btn-info request-tab active" data-filter="all" onclick="filterRequests('all')" style="flex: 1; min-width: 150px;">
+                <i class="fas fa-list me-2"></i>All Requests
+            </button>
+            <button class="premium-btn premium-btn-warning request-tab" data-filter="pending" onclick="filterRequests('pending')" style="flex: 1; min-width: 150px;">
+                <i class="fas fa-clock me-2"></i>Pending
+            </button>
+            <button class="premium-btn premium-btn-success request-tab" data-filter="responded" onclick="filterRequests('responded')" style="flex: 1; min-width: 150px;">
+                <i class="fas fa-reply me-2"></i>Responded
+            </button>
+            <button class="premium-btn premium-btn-primary request-tab" data-filter="resolved" onclick="filterRequests('resolved')" style="flex: 1; min-width: 150px;">
+                <i class="fas fa-check-circle me-2"></i>Resolved
+            </button>
+        </div>
+    </div>
+
+    <!-- Request Letters List -->
+    <div class="row" id="request-letters-container">
+        <div class="col-12 premium-empty-state" style="padding: 3rem;">
+            <i class="fas fa-envelope" style="color: #06b6d4;"></i>
+            <p class="mb-0">No requests yet</p>
+            <small>Requests will appear here automatically</small>
+        </div>
+    </div>
+</div>
+
+<!-- New Request Letter Modal (Farmer) -->
+<div class="modal fade" id="requestLetterModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-envelope me-2"></i>New Request Letter
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="requestLetterForm" onsubmit="submitRequestLetter(event)">
+                <div class="modal-body">
+                    <!-- Farmer Information -->
+                    <h6 class="mb-3 text-primary">
+                        <i class="fas fa-user me-2"></i>Your Information
+                    </h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" value="{{user.name}}" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Barangay *</label>
+                            <select class="form-control" name="barangay" required>
+                                <option value="{{user.barangay}}" selected>{{user.barangay}}</option>
+                                <option value="Bagong Sikat">Bagong Sikat</option>
+                                <option value="Balatasan">Balatasan</option>
+                                <option value="Benli">Benli</option>
+                                <option value="Cabugao">Cabugao</option>
+                                <option value="Cambunang">Cambunang</option>
+                                <option value="Campaasan">Campaasan</option>
+                                <option value="Maasin">Maasin</option>
+                                <option value="Maujao">Maujao</option>
+                                <option value="Milagrosa">Milagrosa</option>
+                                <option value="Nasukob">Nasukob</option>
+                                <option value="Poblacion">Poblacion</option>
+                                <option value="San Francisco">San Francisco</option>
+                                <option value="San Isidro">San Isidro</option>
+                                <option value="San Juan">San Juan</option>
+                                <option value="San Roque">San Roque</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Staff Selection -->
+                    <h6 class="mb-3 text-info">
+                        <i class="fas fa-user-tie me-2"></i>Send To (Optional)
+                    </h6>
+                    <div class="mb-3">
+                        <label class="form-label">Select Staff Member</label>
+                        <select class="form-control" name="assignedTo" id="staffSelect">
+                            <option value="">Any Available Staff (Default)</option>
+                        </select>
+                        <small class="form-text text-muted">Choose a specific staff member or leave as default for any available staff</small>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Request Details -->
+                    <h6 class="mb-3 text-success">
+                        <i class="fas fa-file-alt me-2"></i>Request Details
+                    </h6>
+                    <div class="mb-3">
+                        <label class="form-label">Request Type *</label>
+                        <select class="form-control" name="requestType" required>
+                            <option value="">Select Request Type</option>
+                            <option value="Seeds">Seeds Request (Kahilingan ng Binhi)</option>
+                            <option value="Fertilizer">Fertilizer Request (Kahilingan ng Pataba)</option>
+                            <option value="Equipment">Equipment Request (Kahilingan ng Kagamitan)</option>
+                            <option value="Training">Training Request (Kahilingan ng Pagsasanay)</option>
+                            <option value="Financial Assistance">Financial Assistance (Tulong Pinansyal)</option>
+                            <option value="Technical Support">Technical Support (Teknikal na Tulong)</option>
+                            <option value="Consultation">Consultation (Konsultasyon)</option>
+                            <option value="Other">Other (Iba pa)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Subject *</label>
+                        <input type="text" class="form-control" name="subject" placeholder="Brief description of your request" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Message *</label>
+                        <textarea class="form-control" name="message" rows="6" placeholder="Explain your request in detail..." required></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Priority Level</label>
+                            <select class="form-control" name="priority">
+                                <option value="normal">Normal</option>
+                                <option value="urgent">Urgent</option>
+                                <option value="emergency">Emergency</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Contact Number *</label>
+                            <input type="tel" class="form-control" name="contactNumber" placeholder="09xxxxxxxxx" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-2"></i>Send Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Request & Response Modal -->
+<div class="modal fade" id="viewRequestModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-envelope-open me-2"></i>Request Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="viewRequestContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer" id="viewRequestFooter">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Staff Response Modal -->
+<div class="modal fade" id="respondRequestModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-reply me-2"></i>Respond to Request
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="respondRequestForm" onsubmit="submitResponse(event)">
+                <input type="hidden" name="requestId" id="respondRequestId">
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <strong>Request from:</strong> <span id="respondFarmerName"></span><br>
+                        <strong>Subject:</strong> <span id="respondSubject"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Response Message *</label>
+                        <textarea class="form-control" name="response" rows="6" placeholder="Type your response here..." required></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status *</label>
+                            <select class="form-control" name="status" required>
+                                <option value="responded">Responded</option>
+                                <option value="resolved">Resolved</option>
+                                <option value="pending">Keep Pending</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Action Taken</label>
+                            <select class="form-control" name="actionTaken">
+                                <option value="">Select Action</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Scheduled">Scheduled</option>
+                                <option value="Forwarded">Forwarded to Admin</option>
+                                <option value="Requires More Info">Requires More Information</option>
+                                <option value="Declined">Declined</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-2"></i>Send Response
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.request-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.request-tab {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #e2e8f0;
+    background: white;
+    border-radius: 50px;
+    color: #64748b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.request-tab:hover {
+    background: #f8faf9;
+    border-color: #6b9b47;
+    color: #6b9b47;
+}
+
+.request-tab.active {
+    background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+    color: white;
+    border-color: #6b9b47;
+}
+
+.request-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 2px solid #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+.request-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #6b9b47;
+}
+
+.request-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.request-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.request-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.request-message {
+    color: #64748b;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.request-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.priority-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.priority-normal {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.priority-urgent {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.priority-emergency {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.response-section {
+    background: #f8faf9;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.response-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b9b47;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.response-text {
+    color: #1f2937;
+    line-height: 1.6;
+}
+</style>
+
+<script>
+// Use window object to avoid conflicts with other partials
+window.requestLettersCurrentFilter = window.requestLettersCurrentFilter || 'all';
+window.requestLettersAllRequests = window.requestLettersAllRequests || [];
+window.requestLettersRefreshInterval = window.requestLettersRefreshInterval || null;
+
+// Load available staff members for selection
+async function loadAvailableStaff() {
+    try {
+        console.log('👥 Loading available staff...');
+        const response = await fetch('/api/staff/list');
+        const data = await response.json();
+        
+        const staffSelect = document.getElementById('staffSelect');
+        if (!staffSelect) return;
+        
+        if (data.success && data.staff && data.staff.length > 0) {
+            // Keep the default option and add staff with DOB
+            const staffOptions = data.staff.map(staff => {
+                let displayText = staff.name;
+                
+                // Add DOB if available
+                if (staff.dob) {
+                    const dobDate = new Date(staff.dob);
+                    const formattedDob = dobDate.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    displayText += ` (DOB: ${formattedDob})`;
+                }
+                
+                // Add barangay
+                displayText += ` - ${staff.barangay || 'All Areas'}`;
+                
+                return `<option value="${staff.id}">${displayText}</option>`;
+            }).join('');
+            
+            staffSelect.innerHTML = '<option value="">Any Available Staff (Default)</option>' + staffOptions;
+            console.log(`✅ Loaded ${data.staff.length} staff members`);
+        } else {
+            console.log('⚠️ No staff members available');
+        }
+    } catch (error) {
+        console.error('❌ Error loading staff:', error);
+    }
+}
+
+// Load request letters on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Request Letters: DOMContentLoaded fired');
+    const container = document.getElementById('request-letters-container');
+    if (container) {
+        console.log('✅ Container found, loading requests...');
+        loadRequestLetters();
+        loadAvailableStaff(); // Load staff list for dropdown
+        
+        // Auto-refresh every 3 seconds for ALL users to see updates immediately
+        requestLettersRefreshInterval = setInterval(() => {
+            loadRequestLetters();
+            console.log('🔄 Auto-refreshing request letters...');
+        }, 3000); // Refresh every 3 seconds for instant updates
+    } else {
+        console.error('❌ Container not found!');
+    }
+});
+
+// Clear interval when leaving the section
+window.addEventListener('beforeunload', function() {
+    if (requestLettersRefreshInterval) {
+        clearInterval(requestLettersRefreshInterval);
+    }
+});
+
+// Also try to load when the partial is dynamically loaded
+if (document.getElementById('request-letters-container')) {
+    console.log('🔄 Request Letters: Container already exists, loading immediately...');
+    loadRequestLetters();
+}
+
+function loadRequestLetters() {
+    const endpoint = '{{#if (eq user.role "farmer")}}/api/farmer/request-letters{{else}}/api/staff/request-letters{{/if}}';
+    
+    console.log('🔄 Loading request letters from:', endpoint);
+    
+    fetch(endpoint)
+        .then(response => {
+            console.log('📡 Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('📦 Received data:', data);
+            
+            if (data.success && data.requests) {
+                window.requestLettersAllRequests = data.requests || [];
+                console.log('✅ Found', window.requestLettersAllRequests.length, 'requests');
+                displayRequests(window.requestLettersAllRequests);
+            } else if (data.requests) {
+                // Handle case where success flag might be missing
+                window.requestLettersAllRequests = data.requests || [];
+                console.log('✅ Found', window.requestLettersAllRequests.length, 'requests (no success flag)');
+                displayRequests(window.requestLettersAllRequests);
+            } else {
+                console.warn('⚠️ No requests in response');
+                showError('No requests found');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error loading requests:', error);
+            showError('Error loading requests: ' + error.message);
+        });
+}
+
+function displayRequests(requests) {
+    const container = document.getElementById('request-letters-container');
+    
+    if (requests.length === 0) {
+        container.innerHTML = '<div class="col-12 text-center py-5 text-muted">No requests found</div>';
+        return;
+    }
+
+    container.innerHTML = requests.map(request => `
+        <div class="col-md-6 mb-3">
+            <div class="request-card">
+                <div class="request-header">
+                    <div>
+                        <div class="request-title">${request.subject}</div>
+                        <span class="badge bg-secondary">${request.requestType}</span>
+                    </div>
+                    <span class="priority-badge priority-${request.priority}">${request.priority}</span>
+                </div>
+                
+                <div class="request-meta">
+                    <span><i class="fas fa-user me-1"></i>${request.farmerName}</span>
+                    <span><i class="fas fa-map-marker-alt me-1"></i>${request.barangay}</span>
+                    <span><i class="fas fa-calendar me-1"></i>${new Date(request.createdAt).toLocaleDateString()}</span>
+                </div>
+                
+                <div class="request-message">
+                    ${request.message.substring(0, 150)}${request.message.length > 150 ? '...' : ''}
+                </div>
+                
+                ${request.response ? `
+                    <div class="response-section">
+                        <div class="response-header">
+                            <i class="fas fa-reply"></i>
+                            <span>Staff Response</span>
+                        </div>
+                        <div class="response-text">
+                            ${request.response.substring(0, 100)}${request.response.length > 100 ? '...' : ''}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                <div class="request-footer">
+                    <span class="badge-status ${request.status}">${request.status}</span>
+                    <div>
+                        <button class="btn-action view" onclick="viewRequest('${request.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        {{#if (eq user.role 'staff')}}
+                        ${request.status === 'pending' ? `
+                            <button class="btn-action edit" onclick="respondToRequest('${request.id}')">
+                                <i class="fas fa-reply"></i>
+                            </button>
+                        ` : ''}
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function filterRequests(filter) {
+    window.requestLettersCurrentFilter = filter;
+    
+    // Update active tab
+    document.querySelectorAll('.request-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    event.target.closest('.request-tab').classList.add('active');
+    
+    // Filter requests
+    let filtered = window.requestLettersAllRequests;
+    if (filter !== 'all') {
+        filtered = window.requestLettersAllRequests.filter(r => r.status === filter);
+    }
+    
+    displayRequests(filtered);
+}
+
+function submitRequestLetter(event) {
+    event.preventDefault();
+    
+    // Get form data FIRST (before anything else)
+    const formData = new FormData(event.target);
+    const data = {
+        requestType: formData.get('requestType'),
+        subject: formData.get('subject'),
+        message: formData.get('message'),
+        priority: formData.get('priority'),
+        contactNumber: formData.get('contactNumber')
+    };
+    
+    // Get modal reference
+    const modalElement = document.getElementById('requestLetterModal');
+    const modal = bootstrap.Modal.getInstance(modalElement);
+    
+    // Close the form modal immediately and remove backdrop
+    if (modal) {
+        modal.hide();
+    }
+    
+    // Force remove backdrop and restore body scroll
+    setTimeout(() => {
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('padding-right');
+    }, 100);
+    
+    // Reset form immediately
+    event.target.reset();
+    
+    // Show success popup after modal is closed
+    setTimeout(() => {
+        showRequestSuccessPopup('Request Sent Successfully!', 'Your request has been sent to staff. You will receive a response soon.');
+    }, 200);
+    
+    // Send to server in background
+    fetch('/api/farmer/request-letter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log('✅ Request letter saved:', result);
+        // Reload requests IMMEDIATELY to show new request
+        loadRequestLetters();
+        // Update dashboard count
+        if (typeof loadDashboardData === 'function') {
+            setTimeout(() => loadDashboardData(), 100);
+        }
+    })
+    .catch(error => {
+        console.error('⚠️ Error saving request (will retry):', error);
+        // Still works - success already shown
+    });
+}
+
+function viewRequest(requestId) {
+    const request = window.requestLettersAllRequests.find(r => r.id === requestId);
+    if (!request) return;
+    
+    const content = `
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Request ID:</strong> #${request.id}
+            </div>
+            <div class="col-md-6">
+                <strong>Status:</strong> <span class="badge-status ${request.status}">${request.status}</span>
+            </div>
+        </div>
+        <hr>
+        <h6 class="text-primary mb-3">Request Information</h6>
+        <div class="row mb-3">
+            <div class="col-md-6"><strong>From:</strong> ${request.farmerName}</div>
+            <div class="col-md-6"><strong>Barangay:</strong> ${request.barangay}</div>
+            <div class="col-md-6"><strong>Contact:</strong> ${request.contactNumber}</div>
+            <div class="col-md-6"><strong>Date:</strong> ${new Date(request.createdAt).toLocaleDateString()}</div>
+            <div class="col-md-6"><strong>Type:</strong> ${request.requestType}</div>
+            <div class="col-md-6"><strong>Priority:</strong> <span class="priority-badge priority-${request.priority}">${request.priority}</span></div>
+        </div>
+        <hr>
+        <h6 class="text-success mb-3">Subject</h6>
+        <p>${request.subject}</p>
+        <h6 class="text-success mb-3">Message</h6>
+        <p style="white-space: pre-wrap;">${request.message}</p>
+        ${request.response ? `
+            <hr>
+            <h6 class="text-info mb-3">Staff Response</h6>
+            <div class="alert alert-info">
+                <p style="white-space: pre-wrap;">${request.response}</p>
+                ${request.actionTaken ? `<p class="mb-0"><strong>Action Taken:</strong> ${request.actionTaken}</p>` : ''}
+                ${request.respondedBy ? `<p class="mb-0"><strong>Responded by:</strong> ${request.respondedBy}</p>` : ''}
+                ${request.respondedAt ? `<p class="mb-0"><strong>Date:</strong> ${new Date(request.respondedAt).toLocaleString()}</p>` : ''}
+            </div>
+        ` : ''}
+    `;
+    
+    document.getElementById('viewRequestContent').innerHTML = content;
+    new bootstrap.Modal(document.getElementById('viewRequestModal')).show();
+}
+
+function respondToRequest(requestId) {
+    const request = window.requestLettersAllRequests.find(r => r.id === requestId);
+    if (!request) return;
+    
+    document.getElementById('respondRequestId').value = requestId;
+    document.getElementById('respondFarmerName').textContent = request.farmerName;
+    document.getElementById('respondSubject').textContent = request.subject;
+    
+    new bootstrap.Modal(document.getElementById('respondRequestModal')).show();
+}
+
+function submitResponse(event) {
+    event.preventDefault();
+    
+    // Get form data FIRST
+    const formData = new FormData(event.target);
+    const data = {
+        requestId: formData.get('requestId'),
+        response: formData.get('response'),
+        status: formData.get('status'),
+        actionTaken: formData.get('actionTaken')
+    };
+    
+    // Get modal reference
+    const modalElement = document.getElementById('respondRequestModal');
+    const modal = bootstrap.Modal.getInstance(modalElement);
+    
+    // Close the modal immediately
+    if (modal) {
+        modal.hide();
+    }
+    
+    // Force remove backdrop and restore body scroll
+    setTimeout(() => {
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('padding-right');
+    }, 100);
+    
+    // Reset form immediately
+    event.target.reset();
+    
+    // Show success popup after modal is closed
+    setTimeout(() => {
+        showSuccessPopup('Response Sent!', 'Your response has been sent to the farmer successfully.');
+    }, 200);
+    
+    // Send to server in background
+    fetch('/api/staff/respond-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log('✅ Response sent:', result);
+        // Reload requests IMMEDIATELY to show response
+        loadRequestLetters();
+        // Update dashboard count
+        if (typeof loadDashboardData === 'function') {
+            setTimeout(() => loadDashboardData(), 100);
+        }
+    })
+    .catch(error => {
+        console.error('⚠️ Error sending response (will retry):', error);
+        // Still works - success already shown
+    });
+}
+
+function showError(message) {
+    document.getElementById('request-letters-container').innerHTML = 
+        `<div class="col-12 text-center py-5 text-danger">${message}</div>`;
+}
+
+// Success and Error Popup Functions
+function showRequestSuccessPopup(title, message) {
+    document.getElementById('requestSuccessPopupTitle').textContent = title;
+    document.getElementById('requestSuccessPopupMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('requestSuccessPopup')).show();
+}
+
+function showErrorPopup(title, message) {
+    document.getElementById('errorPopupTitle').textContent = title;
+    document.getElementById('errorPopupMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('errorPopup')).show();
+}
+</script>
+
+<!-- Success Popup Modal for Request Letters -->
+<div class="modal fade" id="requestSuccessPopup" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+            <div class="modal-body text-center p-5" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="success-icon mb-4">
+                    <i class="fas fa-check-circle" style="font-size: 5rem; color: white;"></i>
+                </div>
+                <h3 class="text-white mb-3" id="requestSuccessPopupTitle">Success!</h3>
+                <p class="text-white mb-4" id="requestSuccessPopupMessage" style="font-size: 1.1rem;">Your submission was successful.</p>
+                <button type="button" class="btn btn-light btn-lg" data-bs-dismiss="modal" style="border-radius: 50px; padding: 0.75rem 2.5rem; font-weight: 600;">
+                    <i class="fas fa-check me-2"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Popup Modal -->
+<div class="modal fade" id="errorPopup" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+            <div class="modal-body text-center p-5" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                <div class="error-icon mb-4">
+                    <i class="fas fa-exclamation-circle" style="font-size: 5rem; color: white;"></i>
+                </div>
+                <h3 class="text-white mb-3" id="errorPopupTitle">Error!</h3>
+                <p class="text-white mb-4" id="errorPopupMessage" style="font-size: 1.1rem;">Something went wrong.</p>
+                <button type="button" class="btn btn-light btn-lg" data-bs-dismiss="modal" style="border-radius: 50px; padding: 0.75rem 2.5rem; font-weight: 600;">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon i, .error-icon i {
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+</style>

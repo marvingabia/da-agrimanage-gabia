@@ -1,8 +1,684 @@
-{{> head }}
-<body class="bg-gray-50">
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-center mt-10">Welcome to XianFire 🔥</h1>
-    <p class="text-center mt-4">Home Page</p>
-    <p class="text-center text-green-600 mt-2">Electron Desktop App Ready!</p>
-  </div>
-{{> footer }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Municipal Agriculture Office - Bulalacao, Oriental Mindoro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .navbar-brand i {
+            font-size: 2rem;
+            color: #6b9b47;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white !important;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(107, 155, 71, 0.3);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 155, 71, 0.4);
+            color: white;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(45, 80, 22, 0.95) 0%, rgba(74, 124, 89, 0.95) 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%2387CEEB" width="1200" height="800"/><ellipse cx="600" cy="500" rx="800" ry="150" fill="%236B8E23" opacity="0.8"/></svg>');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 8rem 0 6rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 20px,
+                rgba(255, 255, 255, 0.03) 20px,
+                rgba(255, 255, 255, 0.03) 25px
+            );
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.95);
+            max-width: 600px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-hero {
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-hero-primary {
+            background: white;
+            color: #2d5016;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(255, 255, 255, 0.4);
+            color: #2d5016;
+        }
+        
+        .btn-hero-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid white;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-hero-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            color: white;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 6rem 0;
+            background: linear-gradient(180deg, #f8faf9 0%, #ffffff 100%);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d5016;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: 1px solid rgba(107, 155, 71, 0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            border-color: rgba(107, 155, 71, 0.3);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(107, 155, 71, 0.3);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card p {
+            color: #64748b;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+        
+        /* Stats Section */
+        .stats {
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+            padding: 5rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 30px,
+                rgba(255, 255, 255, 0.03) 30px,
+                rgba(255, 255, 255, 0.03) 35px
+            );
+        }
+        
+        .stat-item {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #6b9b47;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+        
+        /* Services Section */
+        .services {
+            padding: 6rem 0;
+            background: white;
+        }
+        
+        .service-card {
+            background: linear-gradient(135deg, #f8faf9 0%, #ffffff 100%);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            border: 2px solid rgba(107, 155, 71, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .service-card:hover {
+            border-color: rgba(107, 155, 71, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .service-card i {
+            font-size: 2.5rem;
+            color: #4a7c59;
+            margin-bottom: 1rem;
+        }
+        
+        .service-card h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+        }
+        
+        .service-card p {
+            color: #64748b;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+        
+        /* CTA Section */
+        .cta {
+            background: linear-gradient(135deg, rgba(107, 155, 71, 0.95) 0%, rgba(74, 124, 89, 0.95) 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect fill="%2387CEEB" width="1200" height="400"/><ellipse cx="600" cy="300" rx="600" ry="100" fill="%236B8E23" opacity="0.8"/></svg>');
+            background-size: cover;
+            background-position: center;
+            padding: 5rem 0;
+            color: white;
+            text-align: center;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #1a4731 0%, #2d5016 100%);
+            color: white;
+            padding: 3rem 0 1.5rem 0;
+        }
+        
+        .footer h5 {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #6b9b47;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-hero {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+            
+            .features, .services, .stats {
+                padding: 3rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-leaf"></i>
+                AgriSystem
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="background: rgba(255,255,255,0.2); border: none;">
+                <i class="fas fa-bars" style="color: white;"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="/login" class="btn btn-login">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8 hero-content">
+                    <h1>Empowering Farmers,<br>Growing Communities</h1>
+                    <p>Municipal Agriculture Office of Bulalacao, Oriental Mindoro - Your partner in sustainable farming and agricultural development.</p>
+                    <div class="hero-buttons">
+                        <a href="/login" class="btn btn-hero btn-hero-primary">
+                            <i class="fas fa-user-circle"></i>
+                            Get Started
+                        </a>
+                        <a href="/about" class="btn btn-hero btn-hero-secondary">
+                            <i class="fas fa-info-circle"></i>
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Key Features</h2>
+                <p>Comprehensive agricultural management system designed for farmers, staff, and administrators</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Farmer Management</h3>
+                        <p>Complete farmer registration and profile management system with land area tracking and crop monitoring.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <h3>Inventory System</h3>
+                        <p>Track seeds, fertilizers, equipment, and agricultural supplies across all barangays efficiently.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <h3>Claims Processing</h3>
+                        <p>Streamlined claim submission and approval process for agricultural assistance and support.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Crop Insurance</h3>
+                        <p>Manage crop insurance applications and protect farmers from agricultural risks and calamities.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3>Damage Reports</h3>
+                        <p>Quick reporting and verification system for crop damage due to natural disasters and pests.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <h3>Announcements</h3>
+                        <p>Real-time announcements and notifications for distribution schedules, meetings, and training.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-6 mb-4 mb-md-0">
+                    <div class="stat-item">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Barangays Served</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4 mb-md-0">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Registered Farmers</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-label">Hectares Covered</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">System Access</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Services</h2>
+                <p>Comprehensive agricultural support for the farming community of Bulalacao</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <i class="fas fa-seedling"></i>
+                        <h4>Seed Distribution</h4>
+                        <p>Free and subsidized quality seeds for rice, corn, and vegetables.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <i class="fas fa-flask"></i>
+                        <h4>Fertilizer Support</h4>
+                        <p>Organic and inorganic fertilizer assistance programs.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <i class="fas fa-tractor"></i>
+                        <h4>Equipment Rental</h4>
+                        <p>Access to farm machinery and equipment at affordable rates.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <h4>Training Programs</h4>
+                        <p>Regular workshops on modern farming techniques and practices.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <h4>Financial Assistance</h4>
+                        <p>Support programs and allowances for qualified farmers.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <i class="fas fa-bug"></i>
+                        <h4>Pest Control</h4>
+                        <p>Pest management and disease prevention programs.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Market Linkage</h4>
+                        <p>Connect farmers to buyers and market opportunities.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-card">
+                        <i class="fas fa-clipboard-check"></i>
+                        <h4>Farm Monitoring</h4>
+                        <p>Regular field visits and crop assessment services.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Get Started?</h2>
+            <p>Join our agricultural community and access all the benefits and services we offer</p>
+            <a href="/login" class="btn btn-hero btn-hero-primary">
+                <i class="fas fa-user-plus"></i>
+                Register Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5><i class="fas fa-leaf me-2"></i>AgriSystem</h5>
+                    <p style="color: rgba(255,255,255,0.8);">Municipal Agriculture Office of Bulalacao, Oriental Mindoro. Empowering farmers through technology and sustainable practices.</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="/"><i class="fas fa-home me-2"></i>Home</a></li>
+                        <li><a href="/about"><i class="fas fa-info-circle me-2"></i>About Us</a></li>
+                        <li><a href="/contact"><i class="fas fa-envelope me-2"></i>Contact</a></li>
+                        <li><a href="/login"><i class="fas fa-sign-in-alt me-2"></i>Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Info</h5>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>Poblacion, Bulalacao, Oriental Mindoro</li>
+                        <li><i class="fas fa-phone me-2"></i>+63 123 456 7890</li>
+                        <li><i class="fas fa-envelope me-2"></i>agri.bulalacao@gmail.com</li>
+                        <li><i class="fas fa-clock me-2"></i>Mon-Fri: 8:00 AM - 5:00 PM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Municipal Agriculture Office - Bulalacao, Oriental Mindoro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

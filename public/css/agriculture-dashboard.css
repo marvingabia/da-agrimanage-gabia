@@ -1,0 +1,444 @@
+/* ===================================
+   RESPONSIVE AGRICULTURE DASHBOARD
+   Mobile-First Design with Oval Shapes
+   =================================== */
+
+/* Agriculture Color Variables */
+:root {
+    --forest-green: #2d5016;
+    --leaf-green: #4a7c2c;
+    --earth-brown: #8b4513;
+    --golden-harvest: #daa520;
+    --sky-blue: #4a90e2;
+    --emerald: #10b981;
+    --warning-orange: #f97316;
+    --purple: #8b5cf6;
+    --teal: #14b8a6;
+    --lime: #84cc16;
+    --indigo: #6366f1;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    overflow-x: hidden;
+}
+
+/* ===================================
+   SIDEBAR - Responsive & Agricultural
+   =================================== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    background: linear-gradient(180deg, var(--forest-green) 0%, var(--leaf-green) 100%);
+    width: 280px;
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+}
+
+/* Mobile: Hide sidebar by default */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    /* Overlay when sidebar is open */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        display: none;
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+}
+
+/* Hamburger Menu Button (Mobile Only) */
+.hamburger-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: var(--forest-green);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .hamburger-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Navigation Links - Oval Shape */
+.nav-link {
+    color: rgba(255,255,255,0.85);
+    padding: 12px 20px;
+    margin: 8px 15px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: #fff;
+    background-color: rgba(255,255,255,0.15);
+    transform: translateX(5px);
+}
+
+.nav-link.active {
+    color: #fff;
+    background-color: rgba(255,255,255,0.25);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.nav-link i {
+    width: 24px;
+    text-align: center;
+}
+
+/* ===================================
+   MAIN CONTENT - Responsive
+   =================================== */
+main {
+    margin-left: 280px;
+    padding: 20px;
+    min-height: 100vh;
+    width: calc(100% - 280px);
+}
+
+@media (max-width: 768px) {
+    main {
+        margin-left: 0;
+        padding: 70px 15px 15px;
+        width: 100%;
+    }
+}
+
+/* Fix for container-fluid */
+.container-fluid {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.container-fluid .row {
+    margin: 0;
+    width: 100%;
+}
+
+/* Dashboard Cards - Oval Shape */
+.card {
+    border-radius: 25px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.display-6 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+}
+
+/* Responsive Card Grid */
+@media (max-width: 576px) {
+    .col-md-3, .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .col-md-3, .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* ===================================
+   CONTENT SECTIONS - Oval & Colorful
+   =================================== */
+.content-section {
+    background: white;
+    border-radius: 30px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .content-section {
+        padding: 1.5rem;
+        border-radius: 20px;
+    }
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #e5e7eb;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+@media (max-width: 576px) {
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--forest-green);
+    margin: 0;
+}
+
+@media (max-width: 576px) {
+    .section-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* ===================================
+   BUTTONS - Oval & Touch-Friendly
+   =================================== */
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--forest-green) 0%, var(--leaf-green) 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 44px;
+    box-shadow: 0 4px 12px rgba(45, 80, 22, 0.3);
+}
+
+.btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(45, 80, 22, 0.4);
+}
+
+.btn-action {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    margin: 0 4px;
+    transition: all 0.3s ease;
+    min-height: 44px;
+    min-width: 44px;
+}
+
+.btn-action.view {
+    background: linear-gradient(135deg, var(--sky-blue) 0%, #3b82f6 100%);
+    color: white;
+}
+
+.btn-action.edit {
+    background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
+    color: white;
+}
+
+.btn-action.delete {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* ===================================
+   TABLES - Responsive & Oval
+   =================================== */
+.table-responsive {
+    border-radius: 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 800px;
+}
+
+.table-custom thead {
+    background: linear-gradient(135deg, var(--forest-green) 0%, var(--leaf-green) 100%);
+    color: white;
+}
+
+.table-custom thead th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    border: none;
+    white-space: nowrap;
+}
+
+.table-custom thead th:first-child {
+    border-top-left-radius: 15px;
+}
+
+.table-custom thead th:last-child {
+    border-top-right-radius: 15px;
+}
+
+.table-custom tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.2s;
+}
+
+.table-custom tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.table-custom tbody td {
+    padding: 1rem;
+}
+
+@media (max-width: 768px) {
+    .table-custom thead th,
+    .table-custom tbody td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* ===================================
+   BADGES - Oval & Colorful
+   =================================== */
+.badge-status {
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-transform: capitalize;
+    font-size: 0.875rem;
+}
+
+.badge-status.pending {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+}
+
+.badge-status.approved {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #065f46;
+}
+
+.badge-status.rejected {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #991b1b;
+}
+
+.badge-status.active {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e40af;
+}
+
+/* ===================================
+   SECTION-SPECIFIC COLORS
+   =================================== */
+#insurance-section .section-title { color: var(--sky-blue); }
+#inventory-section .section-title { color: var(--golden-harvest); }
+#claims-section .section-title { color: var(--emerald); }
+#damage-reports-section .section-title { color: var(--warning-orange); }
+#announcements-section .section-title { color: var(--purple); }
+#request-letters-section .section-title { color: var(--teal); }
+#farmers-list-section .section-title { color: var(--lime); }
+#staff-management-section .section-title { color: var(--indigo); }
+
+/* ===================================
+   MOBILE OPTIMIZATIONS
+   =================================== */
+@media (max-width: 576px) {
+    /* Larger touch targets */
+    .btn, .btn-action, button {
+        min-height: 48px;
+        min-width: 48px;
+    }
+    
+    /* Better spacing */
+    .mb-4 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Readable text */
+    body {
+        font-size: 16px;
+    }
+}
+
+/* ===================================
+   LOADING SPINNER
+   =================================== */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3rem;
+}
+
+/* ===================================
+   UTILITY CLASSES
+   =================================== */
+.text-agriculture {
+    color: var(--forest-green);
+}
+
+.bg-agriculture {
+    background: linear-gradient(135deg, var(--forest-green) 0%, var(--leaf-green) 100%);
+}
+
+.shadow-agriculture {
+    box-shadow: 0 4px 20px rgba(45, 80, 22, 0.2);
+}

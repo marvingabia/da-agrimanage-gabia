@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Municipal Agriculture Office</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .navbar-brand i {
+            font-size: 2rem;
+            color: #6b9b47;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white !important;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(107, 155, 71, 0.3);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 155, 71, 0.4);
+            color: white;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, rgba(45, 80, 22, 0.95) 0%, rgba(74, 124, 89, 0.95) 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect fill="%2387CEEB" width="1200" height="400"/><ellipse cx="600" cy="300" rx="600" ry="100" fill="%236B8E23" opacity="0.8"/></svg>');
+            background-size: cover;
+            background-position: center;
+            padding: 5rem 0 3rem 0;
+            color: white;
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .about-section {
+            padding: 5rem 0;
+        }
+        
+        .about-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d5016;
+            margin-bottom: 1.5rem;
+        }
+        
+        .about-section p {
+            font-size: 1.1rem;
+            color: #64748b;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .mission-vision {
+            background: linear-gradient(135deg, #f8faf9 0%, #ffffff 100%);
+        }
+        
+        .card-custom {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            border: 2px solid rgba(107, 155, 71, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-5px);
+            border-color: rgba(107, 155, 71, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-custom i {
+            font-size: 3rem;
+            color: #4a7c59;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-custom h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .team-section {
+            background: white;
+        }
+        
+        .team-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            background: linear-gradient(135deg, #f8faf9 0%, #ffffff 100%);
+            border: 2px solid rgba(107, 155, 71, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .team-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(107, 155, 71, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 8px 25px rgba(107, 155, 71, 0.3);
+        }
+        
+        .team-card h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .team-card p {
+            color: #4a7c59;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #1a4731 0%, #2d5016 100%);
+            color: white;
+            padding: 3rem 0 1.5rem 0;
+        }
+        
+        .footer h5 {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #6b9b47;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .about-section h2 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-leaf"></i>
+                AgriSystem
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="background: rgba(255,255,255,0.2); border: none;">
+                <i class="fas fa-bars" style="color: white;"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="/login" class="btn btn-login">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>About Us</h1>
+            <p>Learn more about our mission to empower farmers and develop agriculture in Bulalacao</p>
+        </div>
+    </section>
+
+    <!-- About Content -->
+    <section class="about-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2>Who We Are</h2>
+                    <p>The Municipal Agriculture Office of Bulalacao, Oriental Mindoro is dedicated to promoting sustainable agricultural development and improving the livelihood of our farming community.</p>
+                    <p>We provide comprehensive support services including seed distribution, fertilizer assistance, equipment rental, training programs, and crop insurance to help farmers achieve better yields and income.</p>
+                    <p>Our office serves all 15 barangays of Bulalacao, working closely with farmers, agricultural technicians, and local government units to ensure food security and economic growth in our municipality.</p>
+                </div>
+                <div class="col-lg-6">
+                    <div style="background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%); border-radius: 1.5rem; padding: 3rem; color: white; box-shadow: 0 15px 40px rgba(0,0,0,0.1);">
+                        <h3 style="font-size: 2rem; margin-bottom: 1.5rem;"><i class="fas fa-quote-left me-2"></i>Our Commitment</h3>
+                        <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 0;">"We are committed to empowering every farmer in Bulalacao with the knowledge, resources, and support they need to thrive in modern agriculture while preserving our environment for future generations."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section class="about-section mission-vision">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <i class="fas fa-bullseye"></i>
+                        <h3>Our Mission</h3>
+                        <p>To provide quality agricultural services, promote sustainable farming practices, and enhance the socio-economic status of farmers through innovative programs, technical assistance, and efficient resource management.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <i class="fas fa-eye"></i>
+                        <h3>Our Vision</h3>
+                        <p>A progressive and self-sufficient agricultural community in Bulalacao where farmers are empowered, food security is achieved, and sustainable development is realized for all.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Values -->
+    <section class="about-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Our Core Values</h2>
+                <p style="font-size: 1.1rem; color: #64748b;">The principles that guide our work and service to the community</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card-custom text-center">
+                        <i class="fas fa-handshake"></i>
+                        <h3>Integrity</h3>
+                        <p>We uphold honesty, transparency, and accountability in all our dealings with farmers and stakeholders.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-custom text-center">
+                        <i class="fas fa-users"></i>
+                        <h3>Service</h3>
+                        <p>We are committed to providing excellent service and support to every farmer in our community.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-custom text-center">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>Innovation</h3>
+                        <p>We embrace modern technology and innovative solutions to improve agricultural productivity.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="about-section team-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Our Team</h2>
+                <p style="font-size: 1.1rem; color: #64748b;">Dedicated professionals working for agricultural development</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h4>Municipal Agriculturist</h4>
+                        <p>Office Head</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h4>Agricultural Technicians</h4>
+                        <p>Field Officers</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <h4>Support Staff</h4>
+                        <p>Administrative Team</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5><i class="fas fa-leaf me-2"></i>AgriSystem</h5>
+                    <p style="color: rgba(255,255,255,0.8);">Municipal Agriculture Office of Bulalacao, Oriental Mindoro. Empowering farmers through technology and sustainable practices.</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="/"><i class="fas fa-home me-2"></i>Home</a></li>
+                        <li><a href="/about"><i class="fas fa-info-circle me-2"></i>About Us</a></li>
+                        <li><a href="/contact"><i class="fas fa-envelope me-2"></i>Contact</a></li>
+                        <li><a href="/login"><i class="fas fa-sign-in-alt me-2"></i>Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Info</h5>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>Poblacion, Bulalacao, Oriental Mindoro</li>
+                        <li><i class="fas fa-phone me-2"></i>+63 123 456 7890</li>
+                        <li><i class="fas fa-envelope me-2"></i>agri.bulalacao@gmail.com</li>
+                        <li><i class="fas fa-clock me-2"></i>Mon-Fri: 8:00 AM - 5:00 PM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Municipal Agriculture Office - Bulalacao, Oriental Mindoro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

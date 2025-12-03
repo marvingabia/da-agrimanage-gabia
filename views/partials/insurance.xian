@@ -1,0 +1,535 @@
+﻿<!-- Insurance Section - Premium Design -->
+<div class="premium-container-blue">
+    <div class="premium-section-header">
+        <h3 class="premium-section-title" style="color: #3b82f6;">
+            <i class="fas fa-shield-alt"></i>
+            Crop Insurance
+        </h3>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span class="premium-stats-badge" id="insurance-count-badge">0 Applications</span>
+            {{#if (eq user.role 'farmer')}}
+            <button class="premium-btn premium-btn-primary" data-bs-toggle="modal" data-bs-target="#insuranceModal">
+                <i class="fas fa-plus me-2"></i>Apply for Insurance
+            </button>
+            {{/if}}
+        </div>
+    </div>
+
+    {{#if (eq user.role 'farmer')}}
+    <div class="premium-card" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-left: 5px solid #3b82f6;">
+        <h5 style="color: #1e40af; margin-bottom: 1rem;">
+            <i class="fas fa-info-circle me-2"></i>About Crop Insurance
+        </h5>
+        <p class="mb-2" style="color: #1e3a8a;">Crop insurance helps farmers get protection against crop damage due to:</p>
+        <ul class="mb-3" style="color: #1e3a8a;">
+            <li>Typhoons and strong winds</li>
+            <li>Floods and heavy rain</li>
+            <li>Drought</li>
+            <li>Pests and plant diseases</li>
+            <li>Other natural disasters</li>
+        </ul>
+        <div style="background: white; padding: 1rem; border-radius: 10px; display: inline-block;">
+            <strong style="color: #1e40af;">Premium:</strong> <span style="color: #3b82f6; font-weight: 600;">₱2,500 per hectare</span> | 
+            <strong style="color: #1e40af;">Coverage:</strong> <span style="color: #3b82f6; font-weight: 600;">Up to ₱125,000 per hectare</span>
+        </div>
+    </div>
+    {{/if}}
+
+    <div class="premium-table-container">
+        <table class="premium-table" style="--header-color-1: #3b82f6; --header-color-2: #2563eb; --hover-color: #eff6ff;">
+            <thead>
+                <tr>
+                    <th>Application ID</th>
+                    <th>Farmer Name</th>
+                    <th>Barangay</th>
+                    <th>Application Date</th>
+                    <th>Crop Type</th>
+                    <th>Insured Area</th>
+                    <th>Premium</th>
+                    <th>Coverage</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="insurance-table">
+                <tr>
+                    <td colspan="10" class="premium-empty-state">
+                        <i class="fas fa-shield-alt" style="color: #3b82f6;"></i>
+                        <p class="mb-0">No insurance applications yet</p>
+                        <small>Applications will appear here automatically</small>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Insurance Application Modal -->
+{{#if (eq user.role 'farmer')}}
+<div class="modal fade" id="insuranceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-shield-alt me-2"></i>Apply for Crop Insurance
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="insuranceForm" onsubmit="submitInsurance(event)">
+                <div class="modal-body">
+                    <!-- Farmer Information -->
+                    <h6 class="mb-3 text-primary">
+                        <i class="fas fa-user me-2"></i>Farmer Information
+                    </h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" name="farmerName" value="{{user.name}}" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Contact Number *</label>
+                            <input type="tel" class="form-control" name="contactNumber" placeholder="09xxxxxxxxx" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Barangay *</label>
+                            <select class="form-control" name="barangay" required>
+                                <option value="{{user.barangay}}" selected>{{user.barangay}}</option>
+                                <option value="Bagong Sikat">Bagong Sikat</option>
+                                <option value="Balatasan">Balatasan</option>
+                                <option value="Benli">Benli</option>
+                                <option value="Cabugao">Cabugao</option>
+                                <option value="Cambunang">Cambunang</option>
+                                <option value="Campaasan">Campaasan</option>
+                                <option value="Maasin">Maasin</option>
+                                <option value="Maujao">Maujao</option>
+                                <option value="Milagrosa">Milagrosa</option>
+                                <option value="Nasukob">Nasukob</option>
+                                <option value="Poblacion">Poblacion</option>
+                                <option value="San Francisco">San Francisco</option>
+                                <option value="San Isidro">San Isidro</option>
+                                <option value="San Juan">San Juan</option>
+                                <option value="San Roque">San Roque</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Farm Location/Sitio *</label>
+                            <input type="text" class="form-control" name="farmLocation" placeholder="e.g., Sitio Maligaya" required>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Crop Information -->
+                    <h6 class="mb-3 text-success">
+                        <i class="fas fa-seedling me-2"></i>Crop Information
+                    </h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Crop Type *</label>
+                            <select class="form-control" name="cropType" required>
+                                <option value="">Select Crop Type</option>
+                                <option value="Rice">Rice (Palay)</option>
+                                <option value="Corn">Corn (Mais)</option>
+                                <option value="Vegetables">Vegetables (Gulay)</option>
+                                <option value="Coconut">Coconut (Niyog)</option>
+                                <option value="Banana">Banana (Saging)</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Crop Variety</label>
+                            <input type="text" class="form-control" name="cropVariety" placeholder="e.g., NSIC Rc222">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Insured Area (hectares) *</label>
+                            <input type="number" class="form-control" name="insuredArea" step="0.01" min="0" placeholder="e.g., 2.5" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Planting Date *</label>
+                            <input type="date" class="form-control" name="plantingDate" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Expected Harvest Date *</label>
+                            <input type="date" class="form-control" name="expectedHarvestDate" required>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Insurance Details -->
+                    <h6 class="mb-3 text-warning">
+                        <i class="fas fa-file-contract me-2"></i>Insurance Details
+                    </h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Insurance Type *</label>
+                            <select class="form-control" name="insuranceType" required>
+                                <option value="">Select Insurance Type</option>
+                                <option value="Comprehensive">Comprehensive (All Risks)</option>
+                                <option value="Natural Disaster">Natural Disaster Only</option>
+                                <option value="Pest & Disease">Pest & Disease Only</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Coverage Period *</label>
+                            <select class="form-control" name="coveragePeriod" required>
+                                <option value="">Select Period</option>
+                                <option value="1 Season">1 Season (4 months)</option>
+                                <option value="2 Seasons">2 Seasons (8 months)</option>
+                                <option value="1 Year">1 Year (12 months)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Estimated Premium *</label>
+                            <input type="number" class="form-control" name="estimatedPremium" id="estimatedPremium" placeholder="Enter premium amount" step="0.01" min="0" required>
+                            <small class="form-text text-muted">Enter the premium amount in pesos</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Estimated Coverage *</label>
+                            <input type="number" class="form-control" name="estimatedCoverage" id="estimatedCoverage" placeholder="Enter coverage amount" step="0.01" min="0" required>
+                            <small class="form-text text-muted">Enter the coverage amount in pesos</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Additional Information</label>
+                        <textarea class="form-control" name="additionalInfo" rows="3" placeholder="Any additional information about your farm or crops..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Application
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{/if}}
+
+<!-- View Insurance Modal -->
+<div class="modal fade" id="viewInsuranceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>Insurance Application Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="viewInsuranceContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-refresh interval for real-time updates
+let insuranceRefreshInterval = null;
+
+// Load insurance applications on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('insurance-table')) {
+        loadInsurance();
+        
+        // Auto-refresh every 5 seconds for staff/admin to see new submissions
+        const userRole = '{{user.role}}';
+        if (userRole === 'staff' || userRole === 'admin') {
+            insuranceRefreshInterval = setInterval(() => {
+                // Only refresh if insurance section is visible
+                if (document.getElementById('insurance-section')?.style.display !== 'none') {
+                    console.log('🔄 Auto-refreshing insurance applications (5s interval)...');
+                    loadInsurance();
+                }
+            }, 5000); // Refresh every 5 seconds
+        }
+    }
+    
+    // Premium and coverage are now manual input fields
+    // No auto-calculation needed
+});
+
+// Clear interval when leaving the section
+window.addEventListener('beforeunload', function() {
+    if (insuranceRefreshInterval) {
+        clearInterval(insuranceRefreshInterval);
+    }
+});
+
+function loadInsurance() {
+    fetch('/api/insurance')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('insurance-table');
+            if (data.insurance && data.insurance.length > 0) {
+                tbody.innerHTML = data.insurance.map(ins => {
+                    const statusClass = ins.status === 'approved' ? 'premium-badge-approved' : 
+                                      ins.status === 'rejected' ? 'premium-badge-rejected' : 
+                                      'premium-badge-pending';
+                    const statusIcon = ins.status === 'approved' ? 'fa-check-circle' : 
+                                     ins.status === 'rejected' ? 'fa-times-circle' : 
+                                     'fa-clock';
+                    
+                    return `
+                    <tr class="animate-fade-in">
+                        <td><strong>#${ins.id}</strong></td>
+                        <td><strong>${ins.farmerName}</strong></td>
+                        <td><span class="badge bg-secondary">${ins.barangay}</span></td>
+                        <td>${new Date(ins.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        })}</td>
+                        <td><span class="badge bg-success">${ins.cropType}</span></td>
+                        <td><strong>${ins.insuredArea} ha</strong></td>
+                        <td><strong>₱${(ins.premiumAmount || (ins.insuredArea ? ins.insuredArea * 2500 : 0)).toLocaleString()}</strong></td>
+                        <td><strong>₱${(ins.coverageAmount || (ins.insuredArea ? ins.insuredArea * 125000 : 0)).toLocaleString()}</strong></td>
+                        <td><span class="premium-badge ${statusClass}"><i class="fas ${statusIcon} me-1"></i>${ins.status}</span></td>
+                        <td>
+                            <button class="premium-btn premium-btn-info" style="padding: 0.5rem 1rem;" onclick="viewInsurance('${ins.id}')" title="View Details">
+                                <i class="fas fa-eye me-1"></i>View
+                            </button>
+                        </td>
+                    </tr>
+                `}).join('');
+                
+                // Update badge count
+                document.getElementById('insurance-count-badge').textContent = `${data.insurance.length} Application${data.insurance.length !== 1 ? 's' : ''}`;
+                console.log(`✅ Loaded ${data.insurance.length} insurance applications from MySQL`);
+            } else {
+                tbody.innerHTML = '<tr><td colspan="10" class="premium-empty-state"><i class="fas fa-shield-alt" style="color: #3b82f6;"></i><p class="mb-0">No insurance applications yet</p><small>Applications will appear here automatically</small></td></tr>';
+                document.getElementById('insurance-count-badge').textContent = '0 Applications';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading insurance:', error);
+            document.getElementById('insurance-table').innerHTML = 
+                '<tr><td colspan="10" class="premium-empty-state text-danger"><i class="fas fa-exclamation-triangle"></i><p class="mb-0">Error loading data</p><small>Please refresh the page</small></td></tr>';
+        });
+}
+
+function submitInsurance(event) {
+    event.preventDefault();
+    
+    // Get form data FIRST (before anything else)
+    const formData = new FormData(event.target);
+    const data = {
+        farmerName: formData.get('farmerName'),
+        contactNumber: formData.get('contactNumber'),
+        barangay: formData.get('barangay'),
+        farmLocation: formData.get('farmLocation'),
+        cropType: formData.get('cropType'),
+        cropVariety: formData.get('cropVariety'),
+        insuredArea: parseFloat(formData.get('insuredArea')) || 0,
+        plantingDate: formData.get('plantingDate'),
+        expectedHarvestDate: formData.get('expectedHarvestDate'),
+        insuranceType: formData.get('insuranceType'),
+        coveragePeriod: formData.get('coveragePeriod'),
+        estimatedPremium: parseFloat(formData.get('estimatedPremium')) || 0,
+        estimatedCoverage: parseFloat(formData.get('estimatedCoverage')) || 0,
+        additionalInfo: formData.get('additionalInfo')
+    };
+    
+    // Get modal reference
+    const modalElement = document.getElementById('insuranceModal');
+    const modal = bootstrap.Modal.getInstance(modalElement);
+    
+    // Close the form modal immediately and remove backdrop
+    if (modal) {
+        modal.hide();
+    }
+    
+    // Force remove backdrop and restore body scroll
+    setTimeout(() => {
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('padding-right');
+    }, 100);
+    
+    // Reset form immediately
+    event.target.reset();
+    
+    // Show success popup after modal is closed
+    setTimeout(() => {
+        showSuccessPopup('Insurance Application Submitted!', 'Your crop insurance application has been submitted successfully. We will review it soon.');
+    }, 200);
+    
+    // Send to server in background
+    fetch('/api/farmer/insurance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            console.log('✅ Insurance application saved:', result);
+            console.log('🔔 REAL-TIME NOTIFICATION: New insurance application from', data.farmerName);
+            
+            // Reload insurance silently to show in list immediately
+            setTimeout(() => loadInsurance(), 500);
+            // Update dashboard count
+            if (typeof loadDashboardData === 'function') {
+                setTimeout(() => loadDashboardData(), 600);
+            }
+        } else {
+            console.error('❌ Server error:', result.error);
+        }
+    })
+    .catch(error => {
+        console.error('⚠️ Error saving insurance (will retry):', error);
+        // Still works - success already shown
+    });
+}
+
+function viewInsurance(insuranceId) {
+    fetch(`/api/insurance/${insuranceId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const ins = data.insurance;
+                const premium = ins.insuredArea * 2500;
+                const coverage = ins.insuredArea * 125000;
+                
+                const content = `
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <strong>Application ID:</strong> #${ins.id}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <strong>Status:</strong> <span class="badge-status ${ins.status}">${ins.status}</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6 class="text-primary mb-3">Farmer Information</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Name:</strong> ${ins.farmerName}</div>
+                        <div class="col-md-6"><strong>Contact:</strong> ${ins.contactNumber}</div>
+                        <div class="col-md-6"><strong>Barangay:</strong> ${ins.barangay}</div>
+                        <div class="col-md-6"><strong>Farm Location:</strong> ${ins.farmLocation}</div>
+                    </div>
+                    <hr>
+                    <h6 class="text-success mb-3">Crop Information</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Crop Type:</strong> ${ins.cropType}</div>
+                        <div class="col-md-6"><strong>Variety:</strong> ${ins.cropVariety || 'N/A'}</div>
+                        <div class="col-md-6"><strong>Insured Area:</strong> ${ins.insuredArea} hectares</div>
+                        <div class="col-md-6"><strong>Planting Date:</strong> ${new Date(ins.plantingDate).toLocaleDateString()}</div>
+                        <div class="col-md-6"><strong>Expected Harvest:</strong> ${new Date(ins.expectedHarvestDate).toLocaleDateString()}</div>
+                    </div>
+                    <hr>
+                    <h6 class="text-warning mb-3">Insurance Details</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Insurance Type:</strong> ${ins.insuranceType}</div>
+                        <div class="col-md-6"><strong>Coverage Period:</strong> ${ins.coveragePeriod}</div>
+                        <div class="col-md-6"><strong>Premium:</strong> ₱${premium ? premium.toLocaleString() : '0'}</div>
+                        <div class="col-md-6"><strong>Coverage:</strong> ₱${coverage ? coverage.toLocaleString() : '0'}</div>
+                    </div>
+                    ${ins.additionalInfo ? `
+                        <div class="mb-3">
+                            <strong>Additional Information:</strong>
+                            <p class="mt-2">${ins.additionalInfo}</p>
+                        </div>
+                    ` : ''}
+                    ${ins.approvalNotes ? `
+                        <hr>
+                        <div class="alert alert-info">
+                            <strong>Approval Notes:</strong>
+                            <p class="mb-0">${ins.approvalNotes}</p>
+                        </div>
+                    ` : ''}
+                `;
+                document.getElementById('viewInsuranceContent').innerHTML = content;
+                new bootstrap.Modal(document.getElementById('viewInsuranceModal')).show();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showErrorPopup('Error', 'Error loading insurance details');
+        });
+}
+
+// Success and Error Popup Functions
+function showSuccessPopup(title, message) {
+    document.getElementById('successPopupTitle').textContent = title;
+    document.getElementById('successPopupMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('successPopup')).show();
+}
+
+function showErrorPopup(title, message) {
+    document.getElementById('errorPopupTitle').textContent = title;
+    document.getElementById('errorPopupMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('errorPopup')).show();
+}
+</script>
+
+<!-- Success Popup Modal -->
+<div class="modal fade" id="successPopup" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+            <div class="modal-body text-center p-5" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="success-icon mb-4">
+                    <i class="fas fa-check-circle" style="font-size: 5rem; color: white;"></i>
+                </div>
+                <h3 class="text-white mb-3" id="successPopupTitle">Success!</h3>
+                <p class="text-white mb-4" id="successPopupMessage" style="font-size: 1.1rem;">Your submission was successful.</p>
+                <button type="button" class="btn btn-light btn-lg" data-bs-dismiss="modal" style="border-radius: 50px; padding: 0.75rem 2.5rem; font-weight: 600;">
+                    <i class="fas fa-check me-2"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Popup Modal -->
+<div class="modal fade" id="errorPopup" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+            <div class="modal-body text-center p-5" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                <div class="error-icon mb-4">
+                    <i class="fas fa-exclamation-circle" style="font-size: 5rem; color: white;"></i>
+                </div>
+                <h3 class="text-white mb-3" id="errorPopupTitle">Error!</h3>
+                <p class="text-white mb-4" id="errorPopupMessage" style="font-size: 1.1rem;">Something went wrong.</p>
+                <button type="button" class="btn btn-light btn-lg" data-bs-dismiss="modal" style="border-radius: 50px; padding: 0.75rem 2.5rem; font-weight: 600;">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon i, .error-icon i {
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+</style>

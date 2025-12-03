@@ -7,8 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID">
+    <!-- Google OAuth disabled - configure in GOOGLE_OAUTH_SETUP.md to enable -->
+    <!-- <script src="https://accounts.google.com/gsi/client" async defer></script> -->
+    <!-- <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID"> -->
     <style>
         * {
             margin: 0;
@@ -18,14 +19,18 @@
         
         body {
             font-family: 'Inter', sans-serif;
+            min-height: 100vh;
             height: 100vh;
             background: linear-gradient(135deg, #2d5016 0%, #4a7c59 50%, #1a4731 100%);
             background-attachment: fixed;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            margin: 0;
+            padding: 0;
             position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
         
         .background-overlay {
@@ -61,14 +66,17 @@
             z-index: 10;
             width: 100%;
             max-width: 450px;
-            padding: 2rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .login-card {
             background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(25px);
             border-radius: 25px;
-            padding: 2rem 2.5rem;
+            padding: 2rem;
             box-shadow: 
                 0 25px 50px rgba(0, 0, 0, 0.3),
                 0 0 0 1px rgba(255, 255, 255, 0.1),
@@ -77,7 +85,10 @@
             text-align: center;
             position: relative;
             z-index: 10;
-            max-height: 90vh;
+            width: 100%;
+            max-width: 420px;
+            margin: auto;
+            max-height: 95vh;
             overflow-y: auto;
         }
         
@@ -423,13 +434,31 @@
         }
         
         @media (max-width: 768px) {
+            body {
+                padding: 0;
+                overflow-y: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
             .login-container {
-                padding: 0.75rem;
+                padding: 1rem;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
             }
             
             .login-card {
                 padding: 1.5rem 1.25rem;
-                max-height: 95vh;
+                max-height: none;
+                min-height: auto;
+                border-radius: 20px;
+                margin: auto;
+                width: 100%;
+                max-width: 95%;
             }
             
             .login-title {
@@ -461,13 +490,28 @@
         }
         
         @media (max-width: 480px) {
+            body {
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
             .login-container {
-                padding: 0.5rem;
+                padding: 0.75rem;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             
             .login-card {
                 padding: 1.25rem 1rem;
-                max-height: 98vh;
+                border-radius: 15px;
+                margin: auto;
+                width: 100%;
+                max-width: 95%;
+                min-height: auto;
             }
             
             .login-title {
@@ -501,6 +545,7 @@
             .login-btn, .google-btn {
                 padding: 0.75rem;
                 font-size: 0.95rem;
+                width: 100%;
             }
             
             .form-group {
@@ -518,6 +563,19 @@
             .divider {
                 margin: 0.75rem 0;
             }
+            
+            .form-control {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .login-title {
+                font-size: 1.25rem;
+                line-height: 1.3;
+            }
+            
+            .login-subtitle, .login-department {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -525,7 +583,7 @@
     <div class="background-overlay"></div>
     <div class="municipality-logo"></div>
     
-    <div class="login-container"></div>
+    <div class="login-container">
         <div class="login-card">
             <div class="login-header">
                 <div class="municipality-logo-small">
@@ -625,30 +683,12 @@
                 <span>OR CONTINUE WITH</span>
             </div>
             
-            <div class="google-signin-container">
-                <!-- Google Sign-In Button -->
-                <div id="g_id_onload"
-                     data-client_id="1234567890-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com"
-                     data-context="signin"
-                     data-ux_mode="popup"
-                     data-callback="handleCredentialResponse"
-                     data-auto_prompt="false">
-                </div>
-                
-                <div class="g_id_signin" 
-                     data-type="standard" 
-                     data-size="large" 
-                     data-theme="outline" 
-                     data-text="continue_with"
-                     data-shape="rectangular"
-                     data-logo_alignment="left"
-                     data-width="100%">
-                </div>
-                
-                <!-- Custom Google button for demo/fallback -->
-                <button class="btn google-btn" onclick="simulateGoogleSignIn()" id="customGoogleBtn">
+            <!-- Google OAuth Disabled - Use email/password login -->
+            <!-- To enable: Configure Google OAuth in GOOGLE_OAUTH_SETUP.md -->
+            <div class="google-signin-container" style="display: none;">
+                <button class="btn google-btn" onclick="alert('Google OAuth not configured. Please use email/password login.')" id="customGoogleBtn">
                     <i class="fab fa-google" style="color: #4285f4;"></i>
-                    Continue with Google (Demo)
+                    Continue with Google
                 </button>
             </div>
             
@@ -702,7 +742,14 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" placeholder="Create a password" required minlength="6">
+                    <input type="password" class="form-control" id="farmerPassword" name="password" placeholder="Create a password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="farmerConfirmPassword" placeholder="Re-enter your password" required minlength="6">
+                    <small id="farmerPasswordError" class="text-danger" style="display: none; margin-top: 0.5rem;">
+                        <i class="fas fa-exclamation-circle me-1"></i>Passwords do not match!
+                    </small>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Land Area (hectares)</label>
@@ -771,7 +818,14 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" placeholder="Create a password" required minlength="6">
+                    <input type="password" class="form-control" id="staffPassword" name="password" placeholder="Create a password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="staffConfirmPassword" placeholder="Re-enter your password" required minlength="6">
+                    <small id="staffPasswordError" class="text-danger" style="display: none; margin-top: 0.5rem;">
+                        <i class="fas fa-exclamation-circle me-1"></i>Passwords do not match!
+                    </small>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Staffing Management</label>
@@ -786,16 +840,14 @@
                         <option value="Performance Management" style="background: white; color: #1e293b;">Performance Management</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Position</label>
-                    <input type="text" class="form-control" name="position" placeholder="Enter your position" required>
-                </div>
                 <button type="submit" class="btn login-btn">
                     <i class="fas fa-user-tie me-2"></i>Register as Staff
                 </button>
             </form>
         </div>
     </div>
+    </div>
+    <!-- End of login-container -->
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -905,9 +957,37 @@
             }
         });
         
+        // Farmer password validation
+        const farmerPassword = document.getElementById('farmerPassword');
+        const farmerConfirmPassword = document.getElementById('farmerConfirmPassword');
+        const farmerPasswordError = document.getElementById('farmerPasswordError');
+        
+        if (farmerConfirmPassword) {
+            farmerConfirmPassword.addEventListener('input', function() {
+                if (farmerConfirmPassword.value && farmerPassword.value !== farmerConfirmPassword.value) {
+                    farmerPasswordError.style.display = 'block';
+                    farmerConfirmPassword.style.borderColor = '#dc3545';
+                } else {
+                    farmerPasswordError.style.display = 'none';
+                    farmerConfirmPassword.style.borderColor = '';
+                }
+            });
+        }
+        
         // Handle registration form submissions
         document.getElementById('farmerRegisterForm').addEventListener('submit', function(e) {
             const submitBtn = this.querySelector('button[type="submit"]');
+            
+            // Validate password match
+            if (farmerPassword && farmerConfirmPassword && farmerPassword.value !== farmerConfirmPassword.value) {
+                e.preventDefault();
+                
+                alert('Password Mismatch!\n\nYour passwords do not match. Please make sure both password fields are the same.');
+                
+                farmerConfirmPassword.focus();
+                return;
+            }
+            
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
             submitBtn.disabled = true;
             
@@ -920,8 +1000,36 @@
             submitBtn.parentNode.appendChild(loadingMsg);
         });
         
+        // Staff password validation
+        const staffPassword = document.getElementById('staffPassword');
+        const staffConfirmPassword = document.getElementById('staffConfirmPassword');
+        const staffPasswordError = document.getElementById('staffPasswordError');
+        
+        if (staffConfirmPassword) {
+            staffConfirmPassword.addEventListener('input', function() {
+                if (staffConfirmPassword.value && staffPassword.value !== staffConfirmPassword.value) {
+                    staffPasswordError.style.display = 'block';
+                    staffConfirmPassword.style.borderColor = '#dc3545';
+                } else {
+                    staffPasswordError.style.display = 'none';
+                    staffConfirmPassword.style.borderColor = '';
+                }
+            });
+        }
+        
         document.getElementById('staffRegisterForm').addEventListener('submit', function(e) {
             const submitBtn = this.querySelector('button[type="submit"]');
+            
+            // Validate password match
+            if (staffPassword && staffConfirmPassword && staffPassword.value !== staffConfirmPassword.value) {
+                e.preventDefault();
+                
+                alert('Password Mismatch!\n\nYour passwords do not match. Please make sure both password fields are the same.');
+                
+                staffConfirmPassword.focus();
+                return;
+            }
+            
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
             submitBtn.disabled = true;
             

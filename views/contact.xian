@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Municipal Agriculture Office</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .navbar-brand i {
+            font-size: 2rem;
+            color: #6b9b47;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white !important;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(107, 155, 71, 0.3);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 155, 71, 0.4);
+            color: white;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, rgba(45, 80, 22, 0.95) 0%, rgba(74, 124, 89, 0.95) 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect fill="%2387CEEB" width="1200" height="400"/><ellipse cx="600" cy="300" rx="600" ry="100" fill="%236B8E23" opacity="0.8"/></svg>');
+            background-size: cover;
+            background-position: center;
+            padding: 5rem 0 3rem 0;
+            color: white;
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .contact-section {
+            padding: 5rem 0;
+        }
+        
+        .contact-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border: 2px solid rgba(107, 155, 71, 0.1);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(107, 155, 71, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .contact-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 25px rgba(107, 155, 71, 0.3);
+        }
+        
+        .contact-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-card p {
+            color: #64748b;
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .contact-card a {
+            color: #4a7c59;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .contact-card a:hover {
+            color: #2d5016;
+        }
+        
+        .form-section {
+            background: linear-gradient(135deg, #f8faf9 0%, #ffffff 100%);
+            padding: 5rem 0;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 3rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border: 2px solid rgba(107, 155, 71, 0.1);
+        }
+        
+        .form-container h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d5016;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid rgba(107, 155, 71, 0.2);
+            border-radius: 0.75rem;
+            padding: 0.875rem 1.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #4a7c59;
+            box-shadow: 0 0 0 0.2rem rgba(107, 155, 71, 0.1);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #6b9b47 0%, #4a7c59 100%);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(107, 155, 71, 0.3);
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 155, 71, 0.4);
+            color: white;
+        }
+        
+        .map-section {
+            padding: 5rem 0;
+        }
+        
+        .map-container {
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(107, 155, 71, 0.1);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #1a4731 0%, #2d5016 100%);
+            color: white;
+            padding: 3rem 0 1.5rem 0;
+        }
+        
+        .footer h5 {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #6b9b47;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-container {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-leaf"></i>
+                AgriSystem
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="background: rgba(255,255,255,0.2); border: none;">
+                <i class="fas fa-bars" style="color: white;"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="/login" class="btn btn-login">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Contact Us</h1>
+            <p>Get in touch with us for inquiries, assistance, or feedback</p>
+        </div>
+    </section>
+
+    <!-- Contact Info -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="contact-card text-center">
+                        <div class="contact-icon mx-auto">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3>Visit Us</h3>
+                        <p>Municipal Agriculture Office</p>
+                        <p>Poblacion, Bulalacao</p>
+                        <p>Oriental Mindoro, Philippines</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card text-center">
+                        <div class="contact-icon mx-auto">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <h3>Call Us</h3>
+                        <p>Office: <a href="tel:+631234567890">+63 123 456 7890</a></p>
+                        <p>Mobile: <a href="tel:+639123456789">+63 912 345 6789</a></p>
+                        <p>Mon-Fri: 8:00 AM - 5:00 PM</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card text-center">
+                        <div class="contact-icon mx-auto">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>Email Us</h3>
+                        <p><a href="mailto:agri.bulalacao@gmail.com">agri.bulalacao@gmail.com</a></p>
+                        <p><a href="mailto:info@bulalacao-agri.gov.ph">info@bulalacao-agri.gov.ph</a></p>
+                        <p>We'll respond within 24 hours</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="form-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="form-container">
+                        <h2><i class="fas fa-paper-plane me-2"></i>Send Us a Message</h2>
+                        <p style="color: #64748b; margin-bottom: 2rem;">Have questions or need assistance? Fill out the form below and we'll get back to you soon.</p>
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="barangay" class="form-label">Barangay</label>
+                                    <select class="form-select" id="barangay" name="barangay">
+                                        <option value="">Select Barangay</option>
+                                        <option value="Bagong Sikat">Bagong Sikat</option>
+                                        <option value="Balatasan">Balatasan</option>
+                                        <option value="Benli">Benli</option>
+                                        <option value="Cabugao">Cabugao</option>
+                                        <option value="Cambunang">Cambunang</option>
+                                        <option value="Campaasan">Campaasan</option>
+                                        <option value="Maasin">Maasin</option>
+                                        <option value="Maujao">Maujao</option>
+                                        <option value="Milagrosa">Milagrosa</option>
+                                        <option value="Nasukob">Nasukob</option>
+                                        <option value="Poblacion">Poblacion</option>
+                                        <option value="San Francisco">San Francisco</option>
+                                        <option value="San Isidro">San Isidro</option>
+                                        <option value="San Juan">San Juan</option>
+                                        <option value="San Roque">San Roque</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="subject" name="subject" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="message" name="message" rows="6" required></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-submit">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 style="font-size: 2.5rem; font-weight: 700; color: #2d5016;">Find Us on the Map</h2>
+                <p style="font-size: 1.1rem; color: #64748b;">Located in the heart of Bulalacao, Oriental Mindoro</p>
+            </div>
+            <div class="map-container">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31234.567890123456!2d121.3!3d12.3!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDE4JzAwLjAiTiAxMjHCsDE4JzAwLjAiRQ!5e0!3m2!1sen!2sph!4v1234567890123!5m2!1sen!2sph" 
+                    width="100%" 
+                    height="450" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5><i class="fas fa-leaf me-2"></i>AgriSystem</h5>
+                    <p style="color: rgba(255,255,255,0.8);">Municipal Agriculture Office of Bulalacao, Oriental Mindoro. Empowering farmers through technology and sustainable practices.</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="/"><i class="fas fa-home me-2"></i>Home</a></li>
+                        <li><a href="/about"><i class="fas fa-info-circle me-2"></i>About Us</a></li>
+                        <li><a href="/contact"><i class="fas fa-envelope me-2"></i>Contact</a></li>
+                        <li><a href="/login"><i class="fas fa-sign-in-alt me-2"></i>Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Info</h5>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>Poblacion, Bulalacao, Oriental Mindoro</li>
+                        <li><i class="fas fa-phone me-2"></i>+63 123 456 7890</li>
+                        <li><i class="fas fa-envelope me-2"></i>agri.bulalacao@gmail.com</li>
+                        <li><i class="fas fa-clock me-2"></i>Mon-Fri: 8:00 AM - 5:00 PM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Municipal Agriculture Office - Bulalacao, Oriental Mindoro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

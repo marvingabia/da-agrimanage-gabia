@@ -1,0 +1,492 @@
+﻿<!-- Announcements Section - Premium Design -->
+<div class="premium-container-blue">
+    <div class="premium-section-header">
+        <h3 class="premium-section-title" style="color: #3b82f6;">
+            <i class="fas fa-bullhorn"></i>
+            Announcements
+        </h3>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span class="premium-stats-badge" id="announcements-count-badge">0 Announcements</span>
+            {{#if (eq user.role 'staff')}}
+            <button class="premium-btn premium-btn-primary" data-bs-toggle="modal" data-bs-target="#announcementModal">
+                <i class="fas fa-plus me-2"></i>Create Announcement
+            </button>
+            {{/if}}
+        </div>
+    </div>
+
+    <div class="premium-table-container">
+        <table class="premium-table" style="--header-color-1: #3b82f6; --header-color-2: #2563eb; --hover-color: #eff6ff;">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Date & Time</th>
+                    <th>Location</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="announcements-table">
+                <tr>
+                    <td colspan="7" class="premium-empty-state">
+                        <i class="fas fa-bullhorn" style="color: #3b82f6;"></i>
+                        <p class="mb-0">No announcements yet</p>
+                        <small>Announcements will appear here automatically</small>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Announcement Modal (Staff Only) -->
+{{#if (eq user.role 'staff')}}
+<div class="modal fade" id="announcementModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-bullhorn me-2"></i>Create Announcement
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="announcementForm" onsubmit="submitAnnouncement(event)">
+                <div class="modal-body">
+                    <!-- Basic Information -->
+                    <h6 class="mb-3 text-primary">
+                        <i class="fas fa-info-circle me-2"></i>Basic Information
+                    </h6>
+                    <div class="mb-3">
+                        <label class="form-label">Title *</label>
+                        <input type="text" class="form-control" name="title" placeholder="e.g., Free Seed Distribution Program" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Message *</label>
+                        <textarea class="form-control" name="message" rows="4" placeholder="Detailed announcement message..." required></textarea>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Meeting/Event Details -->
+                    <h6 class="mb-3 text-success">
+                        <i class="fas fa-calendar-alt me-2"></i>Event Details
+                    </h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Type of Meeting/Event *</label>
+                            <select class="form-control" name="type" required>
+                                <option value="">Select Type</option>
+                                <option value="meeting">General Meeting (Pulong)</option>
+                                <option value="training">Training/Seminar (Pagsasanay)</option>
+                                <option value="distribution">Distribution (Pamamahagi)</option>
+                                <option value="claim_window">Claim Window (Pagkuha ng Tulong)</option>
+                                <option value="inspection">Field Inspection (Inspeksyon)</option>
+                                <option value="general">General Announcement</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Priority Level *</label>
+                            <select class="form-control" name="priority" required>
+                                <option value="normal">Normal</option>
+                                <option value="high">High (Mahalaga)</option>
+                                <option value="urgent">Urgent (Agarang)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Event Date *</label>
+                            <input type="date" class="form-control" name="eventDate" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Event Time *</label>
+                            <input type="time" class="form-control" name="eventTime" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Location/Venue *</label>
+                        <input type="text" class="form-control" name="venue" placeholder="e.g., Municipal Agriculture Office, Barangay Hall" required>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Target Barangays -->
+                    <h6 class="mb-3 text-warning">
+                        <i class="fas fa-map-marker-alt me-2"></i>Target Barangays
+                    </h6>
+                    <div class="mb-3">
+                        <label class="form-label">Select Barangays (Select all that apply)</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="targetBarangays" value="All" id="barangay-all" onchange="toggleAllBarangays(this)">
+                                    <label class="form-check-label" for="barangay-all">
+                                        <strong>All Barangays</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Bagong Sikat" id="barangay-1">
+                                    <label class="form-check-label" for="barangay-1">Bagong Sikat</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Balatasan" id="barangay-2">
+                                    <label class="form-check-label" for="barangay-2">Balatasan</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Benli" id="barangay-3">
+                                    <label class="form-check-label" for="barangay-3">Benli</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Cabugao" id="barangay-4">
+                                    <label class="form-check-label" for="barangay-4">Cabugao</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Cambunang" id="barangay-5">
+                                    <label class="form-check-label" for="barangay-5">Cambunang</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Campaasan" id="barangay-6">
+                                    <label class="form-check-label" for="barangay-6">Campaasan</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Maasin" id="barangay-7">
+                                    <label class="form-check-label" for="barangay-7">Maasin</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Maujao" id="barangay-8">
+                                    <label class="form-check-label" for="barangay-8">Maujao</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Milagrosa" id="barangay-9">
+                                    <label class="form-check-label" for="barangay-9">Milagrosa</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Nasukob" id="barangay-10">
+                                    <label class="form-check-label" for="barangay-10">Nasukob</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="Poblacion" id="barangay-11">
+                                    <label class="form-check-label" for="barangay-11">Poblacion</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="San Francisco" id="barangay-12">
+                                    <label class="form-check-label" for="barangay-12">San Francisco</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="San Isidro" id="barangay-13">
+                                    <label class="form-check-label" for="barangay-13">San Isidro</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="San Juan" id="barangay-14">
+                                    <label class="form-check-label" for="barangay-14">San Juan</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input barangay-checkbox" type="checkbox" name="targetBarangays" value="San Roque" id="barangay-15">
+                                    <label class="form-check-label" for="barangay-15">San Roque</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-2"></i>Post Announcement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{/if}}
+
+<!-- View Announcement Modal -->
+<div class="modal fade" id="viewAnnouncementModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-bullhorn me-2"></i>Announcement Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="viewAnnouncementContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load announcements on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('announcements-table')) {
+        loadAnnouncements();
+    }
+});
+
+function toggleAllBarangays(checkbox) {
+    const barangayCheckboxes = document.querySelectorAll('.barangay-checkbox');
+    barangayCheckboxes.forEach(cb => {
+        cb.checked = checkbox.checked;
+    });
+}
+
+function loadAnnouncements() {
+    fetch('/api/announcements')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('announcements-table');
+            if (data.announcements && data.announcements.length > 0) {
+                tbody.innerHTML = data.announcements.map(ann => {
+                    const statusClass = ann.status === 'active' ? 'premium-badge-approved' : 
+                                      ann.status === 'archived' ? 'premium-badge-rejected' : 
+                                      'premium-badge-pending';
+                    const statusIcon = ann.status === 'active' ? 'fa-check-circle' : 
+                                     ann.status === 'archived' ? 'fa-archive' : 'fa-clock';
+                    const priorityClass = ann.priority === 'urgent' ? 'bg-danger' : 
+                                        ann.priority === 'high' ? 'bg-warning' : 
+                                        ann.priority === 'normal' ? 'bg-info' : 'bg-secondary';
+                    
+                    return `
+                    <tr class="animate-fade-in">
+                        <td><strong>${ann.title}</strong></td>
+                        <td><span class="badge bg-info"><i class="fas fa-tag me-1"></i>${ann.type}</span></td>
+                        <td>
+                            <div><i class="fas fa-calendar me-1" style="color: #3b82f6;"></i>${new Date(ann.eventDate).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                            })}</div>
+                            <small><i class="fas fa-clock me-1"></i>${ann.eventTime || 'TBA'}</small>
+                        </td>
+                        <td><i class="fas fa-map-marker-alt me-1" style="color: #3b82f6;"></i>${ann.venue}</td>
+                        <td><span class="badge ${priorityClass}"><i class="fas fa-flag me-1"></i>${ann.priority}</span></td>
+                        <td><span class="${statusClass}"><i class="fas ${statusIcon} me-1"></i>${ann.status}</span></td>
+                        <td>
+                            <button class="premium-btn premium-btn-info" style="padding: 0.5rem 1rem;" onclick="viewAnnouncement('${ann.id}')" title="View Details">
+                                <i class="fas fa-eye me-1"></i>View
+                            </button>
+                        </td>
+                    </tr>
+                `}).join('');
+                
+                // Update badge count
+                document.getElementById('announcements-count-badge').textContent = `${data.announcements.length} Announcement${data.announcements.length !== 1 ? 's' : ''}`;
+            } else {
+                tbody.innerHTML = '<tr><td colspan="7" class="premium-empty-state"><i class="fas fa-bullhorn" style="color: #3b82f6;"></i><p class="mb-0">No announcements yet</p><small>Announcements will appear here automatically</small></td></tr>';
+                document.getElementById('announcements-count-badge').textContent = '0 Announcements';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading announcements:', error);
+            document.getElementById('announcements-table').innerHTML = 
+                '<tr><td colspan="7" class="premium-empty-state text-danger"><i class="fas fa-exclamation-triangle"></i><p class="mb-0">Error loading data</p><small>Please refresh the page</small></td></tr>';
+        });
+}
+
+function submitAnnouncement(event) {
+    event.preventDefault();
+    
+    console.log('📝 Submitting announcement...');
+    
+    // Get form data
+    const formData = new FormData(event.target);
+    const targetBarangays = Array.from(formData.getAll('targetBarangays'));
+    
+    const data = {
+        title: formData.get('title'),
+        message: formData.get('message'),
+        type: formData.get('type'),
+        priority: formData.get('priority'),
+        eventDate: formData.get('eventDate'),
+        eventTime: formData.get('eventTime'),
+        venue: formData.get('venue'),
+        targetBarangays: targetBarangays.length > 0 ? targetBarangays : ['All']
+    };
+    
+    console.log('📢 Announcement data:', data);
+    
+    // Validate
+    if (!data.title || !data.message || !data.type || !data.eventDate || !data.venue) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    // Send to server FIRST
+    fetch('/api/staff/announcements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        console.log('📡 Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(result => {
+        console.log('✅ Server response:', result);
+        
+        if (result.success) {
+            // Close modal
+            const modalElement = document.getElementById('announcementModal');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+            
+            // Force remove backdrop
+            setTimeout(() => {
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('padding-right');
+            }, 100);
+            
+            // Reset form
+            event.target.reset();
+            
+            // Show success
+            alert(`✅ Success! Announcement "${data.title}" has been posted.`);
+            
+            // Reload announcements immediately
+            console.log('🔄 Reloading announcements...');
+            loadAnnouncements();
+        } else {
+            alert('❌ Failed to post announcement: ' + (result.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error posting announcement:', error);
+        alert('❌ Error: ' + error.message);
+    });
+}
+
+function viewAnnouncement(announcementId) {
+    fetch(`/api/announcements/${announcementId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const ann = data.announcement;
+                const content = `
+                    <div class="alert alert-${ann.priority === 'urgent' ? 'danger' : ann.priority === 'high' ? 'warning' : 'info'}">
+                        <h5><i class="fas fa-bullhorn me-2"></i>${ann.title}</h5>
+                        <p class="mb-0"><strong>Priority:</strong> ${ann.priority.toUpperCase()}</p>
+                    </div>
+                    <hr>
+                    <h6 class="text-primary mb-3">Event Details</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Type:</strong> ${ann.type}</div>
+                        <div class="col-md-6"><strong>Date:</strong> ${new Date(ann.eventDate).toLocaleDateString()}</div>
+                        <div class="col-md-6"><strong>Time:</strong> ${ann.eventTime || 'TBA'}</div>
+                        <div class="col-md-6"><strong>Venue:</strong> ${ann.venue}</div>
+                    </div>
+                    <hr>
+                    <h6 class="text-success mb-3">Message</h6>
+                    <p style="white-space: pre-wrap;">${ann.message}</p>
+                    <hr>
+                    <h6 class="text-warning mb-3">Target Barangays</h6>
+                    <p>${ann.targetBarangays.join(', ')}</p>
+                    <hr>
+                    <p class="text-muted mb-0">
+                        <small>Posted by: ${ann.createdByName || 'Staff'} on ${new Date(ann.createdAt).toLocaleString()}</small>
+                    </p>
+                `;
+                document.getElementById('viewAnnouncementContent').innerHTML = content;
+                new bootstrap.Modal(document.getElementById('viewAnnouncementModal')).show();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showErrorPopup('Error', 'Error loading announcement details');
+        });
+}
+
+// Success and Error Popup Functions
+function showSuccessPopup(title, message) {
+    document.getElementById('successPopupTitle').textContent = title;
+    document.getElementById('successPopupMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('successPopup')).show();
+}
+
+function showErrorPopup(title, message) {
+    document.getElementById('errorPopupTitle').textContent = title;
+    document.getElementById('errorPopupMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('errorPopup')).show();
+}
+</script>
+
+<!-- Success Popup Modal -->
+<div class="modal fade" id="successPopup" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+            <div class="modal-body text-center p-5" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="success-icon mb-4">
+                    <i class="fas fa-check-circle" style="font-size: 5rem; color: white;"></i>
+                </div>
+                <h3 class="text-white mb-3" id="successPopupTitle">Success!</h3>
+                <p class="text-white mb-4" id="successPopupMessage" style="font-size: 1.1rem;">Your submission was successful.</p>
+                <button type="button" class="btn btn-light btn-lg" data-bs-dismiss="modal" style="border-radius: 50px; padding: 0.75rem 2.5rem; font-weight: 600;">
+                    <i class="fas fa-check me-2"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Popup Modal -->
+<div class="modal fade" id="errorPopup" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+            <div class="modal-body text-center p-5" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                <div class="error-icon mb-4">
+                    <i class="fas fa-exclamation-circle" style="font-size: 5rem; color: white;"></i>
+                </div>
+                <h3 class="text-white mb-3" id="errorPopupTitle">Error!</h3>
+                <p class="text-white mb-4" id="errorPopupMessage" style="font-size: 1.1rem;">Something went wrong.</p>
+                <button type="button" class="btn btn-light btn-lg" data-bs-dismiss="modal" style="border-radius: 50px; padding: 0.75rem 2.5rem; font-weight: 600;">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-icon i, .error-icon i {
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+</style>

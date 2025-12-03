@@ -106,3 +106,7 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+# Security - Admin creation script with credentials
+create-admin.sql
+create-admin-*.sql

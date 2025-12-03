@@ -1444,9 +1444,9 @@
                 }, 1000);
                 
             } else {
-                // Default admin credentials for testing
-                document.getElementById('email').value = 'admin@gmail.com';
-                document.getElementById('password').value = 'Admin2025';
+                // No pre-filled credentials for security
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
                 document.getElementById('email').focus();
             }
         });

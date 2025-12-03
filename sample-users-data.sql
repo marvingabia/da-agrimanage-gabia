@@ -156,27 +156,11 @@ VALUES (
 );
 
 -- ============================================
--- UPDATE ADMIN (Make sure admin exists)
+-- ADMIN ACCOUNT
 -- ============================================
-
-INSERT INTO users (id, name, email, password, role, barangay, phone, authProvider, isApproved, status, createdAt)
-VALUES (
-    'admin-default-user',
-    'System Administrator',
-    'admin@gmail.com',
-    'Admin2025',
-    'admin',
-    'Main Office',
-    '09999999999',
-    'email',
-    TRUE,
-    'active',
-    NOW()
-)
-ON DUPLICATE KEY UPDATE 
-    name = 'System Administrator',
-    isApproved = TRUE,
-    status = 'active';
+-- For security reasons, admin account is NOT included in sample data.
+-- Please create admin account manually using create-admin.sql script.
+-- This prevents unauthorized access to admin functions.
 
 -- ============================================
 -- VERIFY INSERTED DATA

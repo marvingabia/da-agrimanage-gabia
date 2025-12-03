@@ -142,20 +142,26 @@ export const loginUser = async (req, res) => {
       });
     }
 
+    // Check if staff is approved by admin FIRST (before status check)
+    // Note: isApproved can be 1 (number), true (boolean), or 0/false
+    if (user.role === 'staff') {
+      const isApproved = user.isApproved === true || user.isApproved === 1 || user.approved === true;
+      
+      if (!isApproved) {
+        console.log(`⏳ Staff login attempt - pending approval: ${user.name} (${user.email})`);
+        return res.render("login", { 
+          title: "iBarangay Login - Agricultural Management System",
+          error: "Your staff registration is pending admin approval. You will be able to login once an administrator approves your account. Please check back later.",
+          success: null
+        });
+      }
+    }
+
     // Check if user is active
     if (user.status && user.status !== 'active') {
       return res.render("login", { 
         title: "iBarangay Login - Agricultural Management System",
         error: "Your account is not active. Please contact administrator."
-      });
-    }
-
-    // Check if staff is approved by admin
-    // Note: isApproved can be 1 (number) or true (boolean) depending on source
-    if (user.role === 'staff' && !user.isApproved && !user.approved) {
-      return res.render("login", { 
-        title: "iBarangay Login - Agricultural Management System",
-        error: "Your staff account is pending admin approval. Please wait for approval before logging in."
       });
     }
 

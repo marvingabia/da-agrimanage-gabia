@@ -345,9 +345,19 @@ function loadPendingStaff() {
             const tbody = document.getElementById('pending-staff-table');
             
             if (data.success && data.pendingStaff && data.pendingStaff.length > 0) {
-                console.log(`✅ Found ${data.pendingStaff.length} pending staff`);
+                // Filter out any approved staff (double-check on frontend)
+                const trulyPending = data.pendingStaff.filter(staff => !staff.approved && staff.approved !== true && staff.approved !== 1);
                 
-                tbody.innerHTML = data.pendingStaff.map(staff => `
+                console.log(`✅ Found ${trulyPending.length} pending staff (filtered from ${data.pendingStaff.length})`);
+                
+                if (trulyPending.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="staff-empty-state"><i class="fas fa-user-clock"></i><p class="mb-0">No pending staff registrations</p><small>New staff will appear here automatically</small></td></tr>';
+                    updateStaffBadge(0);
+                    document.getElementById('pending-count-badge').textContent = '0 Pending';
+                    return;
+                }
+                
+                tbody.innerHTML = trulyPending.map(staff => `
                     <tr class="animate-fade-in">
                         <td><strong>${staff.name}</strong></td>
                         <td>${staff.email}</td>
@@ -468,6 +478,8 @@ function loadApprovedStaff() {
 
 function approveStaff(staffId, staffName) {
     if (confirm(`Approve ${staffName}?\n\nThey will be able to login and access the system.`)) {
+        console.log(`🔄 Approving staff: ${staffName} (${staffId})`);
+        
         fetch('/api/admin/approve-staff/' + staffId, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
@@ -475,18 +487,24 @@ function approveStaff(staffId, staffName) {
         .then(response => response.json())
         .then(result => {
             if (result.success) {
+                console.log(`✅ Staff approved: ${staffName}`);
+                
                 // Show success message
                 showNotification('success', `✅ ${staffName} approved successfully!`);
                 
-                // Reload both tables
-                loadPendingStaff();
-                loadApprovedStaff();
+                // Force immediate reload of both tables
+                console.log('🔄 Reloading staff lists...');
+                setTimeout(() => {
+                    loadPendingStaff();
+                    loadApprovedStaff();
+                }, 500); // Small delay to ensure database is updated
             } else {
+                console.error('❌ Approval failed:', result.error);
                 showNotification('error', 'Error: ' + (result.error || 'Failed to approve'));
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('❌ Error approving staff:', error);
             showNotification('error', 'Error approving staff member');
         });
     }

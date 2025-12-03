@@ -87,15 +87,30 @@ body {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     pointer-events: auto !important;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
+/* Show hamburger on ALL mobile devices (portrait and landscape) */
 @media (max-width: 768px) {
     .hamburger-btn {
         display: flex !important;
         align-items: center;
         justify-content: center;
     }
-    
+}
+
+/* Also show on tablets in portrait mode */
+@media (max-width: 1024px) and (orientation: portrait) {
+    .hamburger-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Touch interactions for mobile */
+@media (max-width: 768px), (max-width: 1024px) and (orientation: portrait) {
     .hamburger-btn:hover,
     .hamburger-btn:focus {
         background: linear-gradient(135deg, var(--leaf-green) 0%, var(--forest-green) 100%);
@@ -105,6 +120,16 @@ body {
     .hamburger-btn:active {
         transform: scale(0.92);
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    /* Ensure button is always clickable */
+    .hamburger-btn {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
 }
 

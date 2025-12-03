@@ -40,7 +40,7 @@
         transform: translateX(0);
     }
     
-    /* Hamburger button */
+    /* Hamburger button - Always visible on mobile */
     .hamburger-btn {
         display: flex !important;
         align-items: center;
@@ -62,16 +62,28 @@
         -webkit-tap-highlight-color: transparent;
         touch-action: manipulation;
         pointer-events: auto !important; /* Ensure it's always clickable */
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
     }
     
-    .hamburger-btn:hover {
+    .hamburger-btn:hover,
+    .hamburger-btn:focus {
         background: linear-gradient(135deg, #4a7c2c 0%, #2d5016 100%);
         box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+        outline: none;
     }
     
     .hamburger-btn:active {
         transform: scale(0.92);
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    /* Ensure button works in all orientations */
+    .hamburger-btn {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
     }
     
     /* Sidebar overlay */
@@ -576,9 +588,30 @@
 }
 
 /* ===================================
+   PORTRAIT ORIENTATION (Most common on mobile)
+   =================================== */
+@media (max-width: 768px) and (orientation: portrait) {
+    .hamburger-btn {
+        display: flex !important;
+        position: fixed !important;
+        z-index: 10000 !important;
+    }
+    
+    .sidebar {
+        max-width: 85vw;
+    }
+}
+
+/* ===================================
    LANDSCAPE ORIENTATION
    =================================== */
 @media (max-width: 768px) and (orientation: landscape) {
+    .hamburger-btn {
+        display: flex !important;
+        position: fixed !important;
+        z-index: 10000 !important;
+    }
+    
     .modal-body {
         max-height: 50vh;
     }

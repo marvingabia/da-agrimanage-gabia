@@ -53,11 +53,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(process.cwd(), "public")));
 
+// Session configuration for Vercel serverless
 app.use(session({
-  secret: "xianfire-secret-key",
+  secret: process.env.SESSION_SECRET || "xianfire-secret-key-change-in-production",
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: 'lax'
+  },
+  // For Vercel, we need to trust the proxy
+  proxy: process.env.NODE_ENV === 'production'
 }));
+
+// Trust proxy for Vercel
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
 
 app.engine("xian", async (filePath, options, callback) => {
   try {

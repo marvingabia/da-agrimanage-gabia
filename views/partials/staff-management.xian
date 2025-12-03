@@ -274,13 +274,14 @@
                         <th>Phone</th>
                         <th>Barangay</th>
                         <th>Staffing Management</th>
+                        <th>Approved Date</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="approved-staff-table">
                     <tr>
-                        <td colspan="7" class="staff-empty-state">
+                        <td colspan="8" class="staff-empty-state">
                             <i class="fas fa-user-check"></i>
                             <p class="mb-0">No approved staff members yet</p>
                             <small>Approve pending staff to see them here</small>
@@ -407,13 +408,21 @@ function loadApprovedStaff() {
     fetch('/api/admin/all-staff')
         .then(response => {
             console.log('📡 Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
             return response.json();
         })
         .then(data => {
             console.log('📊 Approved staff data:', data);
+            console.log('📊 Staff count:', data.staff ? data.staff.length : 0);
+            
             const tbody = document.getElementById('approved-staff-table');
+            
             if (data.success && data.staff && data.staff.length > 0) {
-                console.log(`✅ Found ${data.staff.length} approved staff`);
+                console.log(`✅ Found ${data.staff.length} approved staff members`);
+                console.log('👥 Staff list:', data.staff.map(s => s.name).join(', '));
+                
                 tbody.innerHTML = data.staff.map(staff => `
                     <tr class="animate-fade-in">
                         <td><strong>${staff.name}</strong></td>
@@ -421,6 +430,11 @@ function loadApprovedStaff() {
                         <td>${staff.phone || 'N/A'}</td>
                         <td>${staff.barangay || 'N/A'}</td>
                         <td><span class="staff-badge badge-info">${staff.staffingManagement || 'N/A'}</span></td>
+                        <td>${new Date(staff.createdAt).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric'
+                        })}</td>
                         <td><span class="badge bg-success">Active</span></td>
                         <td>
                             <button class="staff-action-btn btn-info" onclick="viewStaff('${staff.id}')">
@@ -435,14 +449,20 @@ function loadApprovedStaff() {
                 document.getElementById('approved-count-badge').textContent = `${data.staff.length} Active`;
             } else {
                 console.log('ℹ️ No approved staff members yet');
-                tbody.innerHTML = '<tr><td colspan="7" class="staff-empty-state"><i class="fas fa-user-check"></i><p class="mb-0">No approved staff members yet</p><small>Approve pending staff to see them here</small></td></tr>';
+                console.log('📊 Data received:', JSON.stringify(data));
+                tbody.innerHTML = '<tr><td colspan="8" class="staff-empty-state"><i class="fas fa-user-check"></i><p class="mb-0">No approved staff members yet</p><small>Approve pending staff to see them here</small></td></tr>';
                 document.getElementById('approved-count-badge').textContent = '0 Active';
             }
         })
         .catch(error => {
             console.error('❌ Error loading approved staff:', error);
+            console.error('❌ Error details:', error.message);
             document.getElementById('approved-staff-table').innerHTML = 
-                '<tr><td colspan="7" class="text-center py-4 text-danger">Error loading data. Please refresh the page.</td></tr>';
+                `<tr><td colspan="8" class="text-center py-4 text-danger">
+                    <i class="fas fa-exclamation-triangle mb-2"></i>
+                    <p class="mb-0">Error loading data: ${error.message}</p>
+                    <small>Please refresh the page or check console for details</small>
+                </td></tr>`;
         });
 }
 

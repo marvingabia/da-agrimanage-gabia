@@ -34,10 +34,35 @@
         transform: translateX(-100%);
         width: 280px;
         max-width: 85vw;
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height */
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior: contain; /* Prevent scroll chaining */
     }
     
     .sidebar.show {
         transform: translateX(0);
+    }
+    
+    /* Smooth scrolling for sidebar */
+    .sidebar {
+        scroll-behavior: smooth;
+    }
+    
+    /* Hide scrollbar but keep functionality */
+    .sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
     }
     
     /* Hamburger button - Always visible on mobile */
@@ -599,6 +624,15 @@
     
     .sidebar {
         max-width: 85vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow-y: auto !important;
+    }
+    
+    /* Ensure content is scrollable */
+    .sidebar .position-sticky {
+        position: relative !important;
+        height: auto !important;
     }
 }
 
@@ -618,6 +652,22 @@
     
     .sidebar {
         max-width: 70vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow-y: auto !important;
+    }
+    
+    /* Ensure content is scrollable in landscape */
+    .sidebar .position-sticky {
+        position: relative !important;
+        height: auto !important;
+    }
+    
+    /* Compact nav items in landscape */
+    .sidebar .nav-link {
+        padding: 12px 16px;
+        margin: 3px 8px;
+        font-size: 0.9rem;
     }
 }
 

@@ -170,31 +170,67 @@ body {
 /* ===================================
    MAIN CONTENT - Responsive
    =================================== */
-main {
-    margin-left: 280px;
+main,
+main.col-md-9,
+main.col-lg-10 {
+    margin-left: 280px !important;
     padding: 20px;
     min-height: 100vh;
-    width: calc(100% - 280px);
+    width: calc(100% - 280px) !important;
+    max-width: calc(100% - 280px) !important;
+    flex: none !important;
+    transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
+/* Desktop: Ensure main content doesn't overlap with sidebar */
+@media (min-width: 769px) {
+    main,
+    main.col-md-9,
+    main.col-lg-10 {
+        margin-left: 280px !important;
+        width: calc(100% - 280px) !important;
+        max-width: calc(100% - 280px) !important;
+    }
+}
+
+/* Mobile: Full width, no sidebar overlap */
 @media (max-width: 768px) {
-    main {
-        margin-left: 0;
-        padding: 70px 15px 15px;
-        width: 100%;
+    main,
+    main.col-md-9,
+    main.col-lg-10 {
+        margin-left: 0 !important;
+        padding: 70px 15px 15px !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
 }
 
 /* Fix for container-fluid */
 .container-fluid {
-    padding: 0;
-    margin: 0;
-    width: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
 }
 
-.container-fluid .row {
-    margin: 0;
-    width: 100%;
+.container-fluid > .row {
+    margin: 0 !important;
+    width: 100% !important;
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+/* Ensure sidebar stays fixed */
+.container-fluid > .row > .sidebar {
+    position: fixed !important;
+    flex: none !important;
+}
+
+/* Desktop layout */
+@media (min-width: 769px) {
+    body {
+        overflow-x: hidden;
+    }
 }
 
 /* Dashboard Cards - Oval Shape */

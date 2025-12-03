@@ -6,7 +6,9 @@
 import mysql from 'mysql2/promise';
 
 // Database Configuration
-// You can change the database name here or use environment variables
+// Supports both local MySQL (Laragon/XAMPP) and PlanetScale
+const isPlanetScale = process.env.DB_HOST?.includes('psdb.cloud');
+
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',           // Default phpMyAdmin user
@@ -14,7 +16,13 @@ const dbConfig = {
     database: process.env.DB_NAME || 'da_agrimanage',  // Change this to your database name
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    // PlanetScale specific settings
+    ...(isPlanetScale && {
+        ssl: {
+            rejectUnauthorized: true
+        }
+    })
 };
 
 // Create connection pool
